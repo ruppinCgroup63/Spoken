@@ -1,12 +1,53 @@
-import React, { useState } from 'react';
 
-function RegistrationPage3() {
+import React, { useState, useRef ,useEffect } from 'react';
 
+import { useLocation, useNavigate } from 'react-router-dom';
+import SignatureCanvas from 'react-signature-canvas'; // import the signature canvas component
+
+
+function RegistrationPage3(props) {
+    const navigate = useNavigate();
+    const { state } = useLocation();
+    let userObj = state;
+
+    const sigCanvas = useRef(null);
+
+     console.log(userObj);
+
+    const [user, setUsers] = useState({
+        username: userObj.user.username ,
+        email: userObj.user.email,
+        password: userObj.user.password,
+        confirmPassword: userObj.user.confirmPassword,
+        phone: userObj.user.phone,
+        transcription: userObj.user.transcription ,
+        parcticeArea: userObj.user.parcticeArea,
+        job: userObj.user.job,
+        employee: userObj.user.employee,
+        Signature : '' ,
+    });
+
+   
+
+  
+    const handleEnd  = () => {
+        if (sigCanvas.current) {
+        
+          setUsers(prevUser => ({
+            ...prevUser,
+            Signature: sigCanvas.current.toDataURL()
+        }));
+          // אפשר להוסיף כאן פעולות נוספות שתרצה לבצע כאשר ה-Canvas מאבד פוקוס
+        }
+      };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle form submission
+            props.sendtoParent(user);
+            navigate('/');
+      
     };
+    
  
     return (
         <>
@@ -43,15 +84,28 @@ function RegistrationPage3() {
                             <span style={{fontSize:'12px'}}>set your signature in the rectangle below</span>
                             <br></br>
                             <br></br>
-                       
-   
-   
+                            <SignatureCanvas
+                                ref={sigCanvas}
+                                penColor='black'
+                                canvasProps={{ width: 300, height: 150, className: 'signature-canvas',style:{ border: '1px solid black' ,borderRadius: '10px' } }}
+                                onEnd = {handleEnd}
+                                
+                            />
                             <br />
+                            <div className="button-container" style={{ display: 'flex' }}>
                             <div className="form-control mt-6">
-                                <button type="submit" onClick={() => window.location.href = '/'} className="btn btn-xs sm:btn-sm md:btn-md lg:btn-lg btn-primary">Save</button>
+                                <button style={{ marginLeft: 'auto' }} type="button" onClick={() => { navigate('/Register2' , {state: {user}})
+                                }
+                            } 
+                            className="btn btn-xs sm:btn-sm  btn-outline btn-primary">Back</button>
                             </div>
+                            
+                            <div style={{ flexGrow: '1' }}></div> 
                             <div className="form-control mt-6">
-                                <button type="button" onClick={() => window.location.href = '/register2'} className="btn  btn-xs sm:btn-sm md:btn-md lg:btn-lg btn-outline btn-primary">Back</button>
+                                <button style={{ padding: '0.25rem 1rem',marginRight: 'auto'}} type="submit"                                                 
+                                className="btn btn-xs sm:btn-sm  btn-primary">Save</button>
+                            </div>
+                            
                             </div>
                         </form>
                     </div>

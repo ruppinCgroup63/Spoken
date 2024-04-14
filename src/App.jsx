@@ -12,19 +12,26 @@ function App() {
 
   const [usersList, setUsersList] = useState([]);
 
+ 
+
+
   const getUserFromChild = (user) => {
-    setUsersList(prevUsersList => [...prevUsersList, user]);  //מקבלת את היוזר מהילד ומכניסה אותו לרשימה
-  }
+  
+    setUsersList(prevUsersList => [...prevUsersList, user]); 
+};
+
   console.log(usersList);
+  //console.log(userData);
+
 
   return (
 
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login  userList={usersList}/>} />
-        <Route path="/Register" element={<RegistrationPage userList={usersList} sendtoParent={getUserFromChild} />} />
-        <Route path="/Register2" element={<RegistrationPage2 />} />
-        <Route path="/Register3" element={<RegistrationPage3 />} />
+        <Route path="/Register" element={<RegistrationPage  />} />
+        <Route path="/Register2" element={<RegistrationPage2  />} />
+        <Route path="/Register3" element={<RegistrationPage3 sendtoParent={getUserFromChild}/>} />
 
       </Routes>
     </BrowserRouter>
