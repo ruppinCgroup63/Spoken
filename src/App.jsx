@@ -5,6 +5,7 @@ import RegistrationPage from './FuncComps/FCRegister'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import RegistrationPage2 from './FuncComps/FCRegister2'
 import RegistrationPage3 from './FuncComps/FCRegister3'
+import HomePage from './FuncComps/HOME.jsx/FCHomePage';
 
 
 
@@ -25,7 +26,8 @@ function App() {
 
 
   return (
-
+    <div>
+      <div>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login  userList={usersList}/>} />
@@ -35,7 +37,9 @@ function App() {
 
       </Routes>
     </BrowserRouter>
-
+      </div>
+      <HomePage> home</HomePage>
+    </div>
 
 
   )
