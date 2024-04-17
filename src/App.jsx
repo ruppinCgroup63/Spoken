@@ -34,11 +34,10 @@ function App() {
         <Route path="/Register" element={<RegistrationPage  />} />
         <Route path="/Register2" element={<RegistrationPage2  />} />
         <Route path="/Register3" element={<RegistrationPage3 sendtoParent={getUserFromChild}/>} />
-
+        <Route path="/HomePage" element={<HomePage />} />
       </Routes>
     </BrowserRouter>
       </div>
-      <HomePage> home</HomePage>
     </div>
 
 
