@@ -5,7 +5,7 @@ import Card from './FCCard';
 
 function HomePage() {
 
-  const userName = 'User'; //רק לבדיקה
+  const userName = 'User'; //test
 
   return (
 <div className="bg-gray-100 min-h-screen" style={{ backgroundColor: "#E4E9F2" }}>
@@ -20,13 +20,14 @@ function HomePage() {
   <div>
     <div className="flex justify-start items-center p-5">
       <button className="flex items-center" style={{ borderColor: 'none' }} >
-        <span className="mr-2"><button className="btn btn-primary flex items-center" style={{ backgroundColor: "#04D9B2" }}>+</button></span>New Template
+        <span className="mr-2"><button className="btn btn-primary flex items-center" style={{ backgroundColor: "#04D9B2", borderColor: "rgb(4, 217, 178)", color:'white' }}>+</button></span>New Template
       </button>
+      
     </div>
 
     <div className="flex justify-between items-center p-5">
-      <h1 className="text-xl" style={{ color: '#070A40' }}>Recent</h1> {/* Change the color here */}
-      <button className="btn btn-primary flex items-center" style={{ backgroundColor: "#E4E9F2", color: '#22d4ba6' }}> {/* Change the color here */}
+      <h1 className="text-xl" style={{ color: '#070A40' }}>Recent</h1> 
+      <button className="btn btn-primary flex items-center" style={{ backgroundColor: "#E4E9F2", color: '#22d4ba6' }}> 
         <span className="mr-2">All templates</span>
       </button>
     </div>

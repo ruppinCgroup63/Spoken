@@ -30,9 +30,6 @@ function Card() {
     <div className="badge badge-outline">הנדסה</div> 
     <div className="badge badge-outline">בניין</div>
   </div>
-  <div className="card-actions justify-end mt-4">
-    <button className="btn btn-primary">Use Template</button>
-  </div>
 </div>
 
   );
