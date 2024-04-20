@@ -9,9 +9,7 @@ function CreateTemplate() {
     let templateObj = state;
 
     const [template, setTemplate] = useState({
-        name: '',
-
-
+        name: templateObj? templateObj.template.name :'',
     });
 
     //בדיקת שגיאות

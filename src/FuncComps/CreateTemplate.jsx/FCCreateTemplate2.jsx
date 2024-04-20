@@ -1,104 +1,97 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-
+const Block = ({ index }) => {
+  return (
+    <div className="my-2 p-4 bg-white shadow-md rounded-md">
+      <input
+        type="text"
+        placeholder={`Headline for block ${index}`} // Added template literal backticks
+        className="input input-bordered input-sm w-full mb-2"
+      />
+      <textarea
+        placeholder="Enter text..."
+        className="textarea textarea-bordered w-full h-24"
+      ></textarea>
+    </div>
+  );
+};
 
 function CreateTemplate2() {
-    const navigate = useNavigate();
-    const { state } = useLocation();
-    let templateObj = state;
-     
-    console.log(templateObj);
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  let templateObj = state ;
+  console.log(templateObj);
 
-    const [template, setTemplate] = useState({
-        name: '',
-
-
+  const [blocks, setBlocks] = useState([]);
+  const [template, setTemplate] = useState({
+     name:  templateObj ? templateObj.template.name : '' 
     });
 
-    //בדיקת שגיאות
-    const [errors, setErrors] = useState({
-        name: '',
+    console.log(template.name);
 
-    });
+  const addBlock = () => {
+    setBlocks((prevBlocks) => [...prevBlocks, <Block index={prevBlocks.length + 1} key={prevBlocks.length} />]);
+  };
 
-
-    const handleValidation = (name, isValid, errorMessage) => {
-        setErrors(prevErrors => ({
-            ...prevErrors,
-            [name]: isValid ? '' : errorMessage,
-        }));
-    };
-
-
-    //ולידציה לשם משתמש
-    const validaterName = (e) => {
-        const text = e.target.value;
-        const regexUserName = /^[a-zA-Z\s]{1,60}$/;
-        const isValid = regexUserName.test(text);
-        handleValidation('name', isValid, 'Invalid input! Only English letters');
-        if (isValid) {
-            setTemplate(prevUser => ({
-                ...prevUser,
-                name: text
-            }));
-        }
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Handle form submission
-        navigate('/');
-    };
-
-
-
-    return (
-        <>
-            <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
-                <div className="card max-w-xs mx-auto bg-base-100 shadow-xl p-5">
-                    <div className="card-body flex items-center justify-center">
-                        <br />
-                        <form onSubmit={handleSubmit}>
-                            <label className="btn btn-circle swap swap-rotate" style={{ position: 'absolute', top: '30px', left: '20px' }}>
-
-                                {/* this hidden checkbox controls the state */}
-                                <input type="checkbox" />
-
-                                {/* close icon */}
-                                <svg className="swap-off fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512"><polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" /></svg>
-
-                            </label>
-                            <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', }} className="steps">
-                                <div style={{ marginRight: '1rem' }} className="step step-primary" data-content="✓">name</div>
-                                <div style={{ marginRight: '1rem' }} className="step step-primary">Template<br></br>structure</div>
-                                <div style={{ marginRight: '1rem' }} className="step ">Extras</div>
-                            </div>
-                            <br /><br />
-                            <h3 className="card-title text-dark-blue-500" style={{ display: 'block', margin: '0 auto', marginBottom: '0.5rem' }}>template structure</h3>
-
-                           
-                            <div className="button-container" style={{ display: 'flex' }}>
-                                <div className="form-control mt-6">
-                                    <button style={{ marginLeft: 'auto' }} type="button" onClick={() => {
-                                       
-                                        navigate('/Register' , {state: {user}})
-                                    }
-                                    }
-                                        className="btn  btn-xs sm:btn-sm btn-outline btn-primary">Back</button>
-                                </div>
-                                <div style={{ flexGrow: '1' }}></div>
-                                <div className="form-control mt-6">
-                                    <button style={{ padding: '0.25rem 1rem', marginRight: 'auto' }} type="submit"
-                                        className="btn btn-xs sm:btn-sm btn-primary">Continue</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    navigate('/');
+  };
+  return (
+    <div className="flex items-center justify-center bg-light-blue-500 py-10"> {/* Removed min-h-screen and adjusted padding */}
+      <div className="card max-w-xs mx-auto bg-base-100 shadow-xl">
+        <div className="card-body">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Navigation Steps */}
+            <div className="steps space-x-2 mb-4"> {/* Adjusted bottom margin */}
+              <div className="step step-primary" data-content="✓">Name</div>
+              <div className="step step-primary">Template structure</div>
+              <div className="step">Key<br></br>words</div>
             </div>
-        </>
-    );
+            <h3 className="card-title text-dark-blue-500" style={{ display: 'block', margin: '0 auto', marginBottom: '0.5rem' }}>template structure</h3>
+            
+            
+            <div>
+            <label className={`input input-bordered flex items-center gap-2 relative`} >
+                <input 
+                type="text" 
+                className={`grow`}
+                value={template.name} 
+                placeholder="User Name"
+                onChange={(e) => setTemplate({ ...template, name: e.target.value })}
+                />
+              </label>
+              </div>
+
+            {/* Blocks */}
+            <div className="space-y-4"> {/* Added space between blocks */}
+              {blocks}
+            </div>
+
+            {/* Add Block Button */}
+            <div className="text-center"> {/* Centered button */}
+              <button
+                type="button"
+                className="btn btn-circle btn-success"
+                onClick={addBlock}
+              >
+                +
+              </button>
+            </div>
+
+            
+
+            {/* Action Buttons */}
+            <div className="flex justify-between mt-6"> {/* Adjusted margin */}
+              <button type="button" onClick={() => navigate('/CreateTemplate' , {state: {template}})} className="btn btn-outline btn-primary">Back</button>
+              <button type="submit" className="btn btn-primary">Continue</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default CreateTemplate2;
