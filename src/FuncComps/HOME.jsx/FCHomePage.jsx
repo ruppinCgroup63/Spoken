@@ -1,10 +1,10 @@
 import React from 'react';
 import Card from './FCCard';
 //import Navbar from './FCNavbar';
-
+import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
-
+  const navigate = useNavigate();
   const userName = 'User'; //test
 
   return (
@@ -20,7 +20,7 @@ function HomePage() {
   <div>
     <div className="flex justify-start items-center p-5">
       <button className="flex items-center" style={{ borderColor: 'none' }} >
-        <span className="mr-2"><button className="btn btn-primary flex items-center" style={{ backgroundColor: "#04D9B2", borderColor: "rgb(4, 217, 178)", color:'white' }}>+</button></span>New Template
+        <span className="mr-2"><button onClick={() => { navigate('/CreateTemplate') }} className="btn btn-primary flex items-center" style={{ backgroundColor: "#04D9B2", borderColor: "rgb(4, 217, 178)", color:'white' }}>+</button></span>New Template
       </button>
       
     </div>

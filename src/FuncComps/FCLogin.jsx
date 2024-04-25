@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const apiUrl = 'https://localhost:7224/api/Users/Login';
 
 function Login(props) {
   const navigate = useNavigate();
@@ -10,15 +11,23 @@ function Login(props) {
 
 
   const [user, setUsers] = useState({
-    email: '',
-    password: '',
+    UserName: '',
+    Email: '',
+    Password: '',
+    ConfirmPassword: '',
+    Phone: '',
+    Transcription: '',
+    ParcticeArea: '',
+    Job:'',
+    Employee: true,
+    Signature: '',
 
   });
 
   //בדיקת שגיאות
   const [errors, setErrors] = useState({
-    email: '',
-    password: '',
+    Email: '',
+    Password: '',
   });
 
   const handleValidation = (name, isValid, errorMessage) => {
@@ -34,11 +43,11 @@ function Login(props) {
   const text = e.target.value;
   const regexEmail = /^[^\s@]+@[^\s@]+\.(?:com)$/;
   const isValid = regexEmail.test(text);
-  handleValidation('email', isValid, 'follow the format abc@gmail.com abc@yahoo.com');
+  handleValidation('Email', isValid, 'follow the format abc@gmail.com abc@yahoo.com');
   if (isValid) {
       setUsers(prevUser => ({
           ...prevUser,
-          email: text
+          Email: text
       }));
   }
 };
@@ -48,51 +57,53 @@ function Login(props) {
     const text = e.target.value;
     const regexPassworde = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:'",.<>\/?])[a-zA-Z\d!@#$%^&*()_+\-=\[\]{};:'",.<>\/?]{7,12}$/;
     const isValid = regexPassworde.test(text);
-    handleValidation('password', isValid, 'Invalid password! Password must contain between 7 and 12 characters, at least one special character, one uppercase letter, and one number.');
+    handleValidation('Password', isValid, 'Invalid password! Password must contain between 7 and 12 characters, at least one special character, one uppercase letter, and one number.');
     if (isValid) {
       setUsers(prevUser => ({
         ...prevUser,
-        password: text
+        Password: text
       }));
     }
   };
 
+  console.log(user);
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (user.email == "admin" && user.password == "ad12343211ad") {
-      navigate('/SystemAdmin');
-      return;
-    }
-    if (errors.email != "" || errors.password != "") {
-      console.log("Cannot login Invalid email or password");
 
-      return;
-  
-    }
-    if (Users.length > 0) {
-
-      let checkUser = Users.find(obj => obj.email === user.email && obj.password === user.password);
-      if (checkUser) {
-        console.log('Success');
-        localStorage.setItem('users', JSON.stringify(checkUser));
-        clearFields();
-        navigate('/HomePage'); // להוסיף העברת הנתונים לדף בית 
-        return ;
-
-    
-      }
-      else {
-        console.log('לא מצא משתמש כזה');
-     
-      }
-    }
-    else {
-      console.log('אתה חייב להרשם קודם');
-    
-    }
+      // Fetch users from the API
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: new Headers({
+          'Content-Type': 'application/json; charset=UTF-8',
+        }),
+        body: JSON.stringify(user)
+      })
+      .then(res => {
+        if (!res.ok) { // Check if response status is not OK
+          throw new Error('Network response was not ok');
+        }
+        return res.json();
+      })
+      .then(loggedInUser => {
+        if (loggedInUser) {
+          console.log('Login successful!');
+          // Store user data in session storage and navigate to home page
+          sessionStorage.setItem('user', JSON.stringify(loggedInUser));
+          clearFields();
+          navigate('/HomePage');
+        } else {
+          console.log('Invalid email or password!'); // Notify user of invalid credentials
+        }
+      })
+      .catch(error => {
+        console.log("Login error:", error);
+      });
+ 
   };
+
+  
   const clearFields = () => {
-    setUsers({ username: '', password: '' });
+    setUsers({ Email: '', Password: '' });
 
   };
 
@@ -105,45 +116,45 @@ function Login(props) {
           </div>
           <form onSubmit={handleSubmit} >
             <div className="form-control" >
-              <label className={`input input-bordered flex items-center gap-2 relative ${errors.email ? 'input-error' : ''}`} style={{ backgroundColor: "#E4E9F2", borderColor: '#070A40' }}>
+              <label className={`input input-bordered flex items-center gap-2 relative ${errors.Email ? 'input-error' : ''}`} style={{ backgroundColor: "#E4E9F2", borderColor: '#070A40' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70">
                   <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
                 </svg>
                 <input
                   type="text"
-                  className={`grow ${errors.email ? 'input-error' : ''}`}
+                  className={`grow ${errors.Email ? 'input-error' : ''}`}
                   placeholder="Email"
                   onBlur={validateEmail}
-                  aria-describedby={errors.email ? 'email-error' : ''}
-                  value={user.email}
-                  onChange={(e) => setUsers({ ...user, email: e.target.value })}
-                  style={{ borderColor: errors.email ? '#e53e3e' : '' }}
+                  aria-describedby={errors.Email ? 'Email-error' : ''}
+                  value={user.Email}
+                  onChange={(e) => setUsers({ ...user, Email: e.target.value })}
+                  style={{ borderColor: errors.Email ? '#e53e3e' : '' }}
                 />
               </label>
-              {errors.email && (
-                <p id="email-error" className="text-red-500 mt-2">{errors.email}</p>
+              {errors.Email && (
+                <p id="Email-error" className="text-red-500 mt-2">{errors.Email}</p>
               )}
             </div>
             <br></br>
             <div className="form-control">
-              <label className={`input input-bordered flex items-center gap-2 relative ${errors.password ? 'input-error' : ''}`} style={{ backgroundColor: "#E4E9F2", borderColor: '#070A40' }}>
+              <label className={`input input-bordered flex items-center gap-2 relative ${errors.Password ? 'input-error' : ''}`} style={{ backgroundColor: "#E4E9F2", borderColor: '#070A40' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70">
                   <path fillRule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clipRule="evenodd" />
                 </svg>
                 <input
                   type="password"
-                  className={`grow ${errors.password ? 'input-error' : ''}`}
+                  className={`grow ${errors.Password ? 'input-error' : ''}`}
                   placeholder='Password'
                   onBlur={validatePassword}
-                  aria-describedby={errors.password ? 'password-error' : ''}
-                  value={user.password}
-                  onChange={(e) => setUsers({ ...user, password: e.target.value })}
-                  style={{ borderColor: errors.password ? '#e53e3e' : '' }}
+                  aria-describedby={errors.Password ? 'Password-error' : ''}
+                  value={user.Password}
+                  onChange={(e) => setUsers({ ...user, Password: e.target.value })}
+                  style={{ borderColor: errors.Password ? '#e53e3e' : '' }}
 
                 />
               </label>
-              {errors.password && (
-                <p id="password-error" className="text-red-500 mt-2">{errors.password}</p>
+              {errors.Password && (
+                <p id="Password-error" className="text-red-500 mt-2">{errors.Password}</p>
               )}
             </div>
 

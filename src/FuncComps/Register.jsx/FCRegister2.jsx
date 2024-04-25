@@ -10,22 +10,22 @@ function RegistrationPage2() {
 
 
     const [user, setUsers] = useState({
-        username: userObj.user.username ,
-        email: userObj.user.email,
-        password: userObj.user.password,
-        confirmPassword: userObj.user.confirmPassword,
-        phone: userObj.user.phone,
-        transcription: userObj.user.transcription ,
-        parcticeArea: userObj ? userObj.user.parcticeArea : '',
-        job:  userObj ? userObj.user.job: '',
-        employee:  userObj ? userObj.user.employee: false,
+        UserName: userObj.user.UserName ,
+        Email: userObj.user.Email,
+        Password: userObj.user.Password,
+        ConfirmPassword: userObj.user.ConfirmPassword,
+        Phone: userObj.user.Phone,
+        Transcription: userObj.user.Transcription ,
+        ParcticeArea: userObj ? userObj.user.ParcticeArea : '',
+        Job:  userObj ? userObj.user.Job: '',
+        Employee:  userObj ? userObj.user.Employee: false,
     });
 
     //console.log(user);
 
     const [errors, setErrors] = useState({
-        parcticeArea: '',
-        job: '',
+        ParcticeArea: '',
+        Job: '',
     });
 
 
@@ -37,7 +37,7 @@ function RegistrationPage2() {
         const isChecked = e.target.checked; // האם התיבה סומנה או לא
         setUsers(prevUser => ({
             ...prevUser,
-            employee: isChecked
+            Employee: isChecked
         }));
     };
     // ניהול הולידציות
@@ -52,11 +52,11 @@ function RegistrationPage2() {
         const text = e.target.value;
         const regexUserName = /^[a-zA-Z\s]{1,60}$/;
         const isValid = regexUserName.test(text);
-        handleValidation('parcticeArea', isValid, 'Invalid input! Only English letters');
+        handleValidation('ParcticeArea', isValid, 'Invalid input! Only English letters');
         if (isValid) {
             setUsers(prevUser => ({
                 ...prevUser,
-                parcticeArea: text
+                ParcticeArea: text
             }));
         }
     };
@@ -66,11 +66,11 @@ function RegistrationPage2() {
         const text = e.target.value;
         const regexUserName = /^[a-zA-Z\s]{1,60}$/;
         const isValid = regexUserName.test(text);
-        handleValidation('job', isValid, 'Invalid input! Only English letters');
+        handleValidation('Job', isValid, 'Invalid input! Only English letters');
         if (isValid) {
             setUsers(prevUser => ({
                 ...prevUser,
-                job: text
+                Job: text
             }));
         }
     };
@@ -123,38 +123,38 @@ function RegistrationPage2() {
                             </div>
                             <br /><br />
                             <div className="form-control">
-                                <label className={`input input-bordered flex items-center gap-2 relative ${errors.parcticeArea ? 'input-error' : ''}`} >
+                                <label className={`input input-bordered flex items-center gap-2 relative ${errors.ParcticeArea ? 'input-error' : ''}`} >
                                     <input
                                         type="text"
-                                        className={`grow ${errors.parcticeArea ? 'input-error' : ''}`}
+                                        className={`grow ${errors.ParcticeArea ? 'input-error' : ''}`}
                                         placeholder="Parctice Area"
                                         onBlur={validateParcticeArea}
-                                        aria-describedby={errors.parcticeArea ? 'parcticeArea-error' : ''}
-                                        value={user.parcticeArea}
-                                        onChange={(e) => setUsers({ ...user, parcticeArea: e.target.value })}
-                                        style={{ borderColor: errors.parcticeArea ? '#e53e3e' : '' }}
+                                        aria-describedby={errors.ParcticeArea ? 'ParcticeArea-error' : ''}
+                                        value={user.ParcticeArea}
+                                        onChange={(e) => setUsers({ ...user, ParcticeArea: e.target.value })}
+                                        style={{ borderColor: errors.ParcticeArea ? '#e53e3e' : '' }}
                                     />
                                 </label>
-                                {errors.parcticeArea && (
-                                    <p id="parcticeArea-error" className="text-red-500 mt-2">{errors.parcticeArea}</p>
+                                {errors.ParcticeArea && (
+                                    <p id="ParcticeArea-error" className="text-red-500 mt-2">{errors.ParcticeArea}</p>
                                 )}
                             </div>
                             <br />
                             <div className="form-control">
-                                <label className={`input input-bordered flex items-center gap-2 relative ${errors.job ? 'input-error' : ''}`} >
+                                <label className={`input input-bordered flex items-center gap-2 relative ${errors.Job ? 'input-error' : ''}`} >
                                     <input
                                         type="text"
-                                        className={`grow ${errors.job ? 'input-error' : ''}`}
+                                        className={`grow ${errors.Job ? 'input-error' : ''}`}
                                         placeholder="Job"
                                         onBlur={validateJob}
-                                        aria-describedby={errors.job ? 'job-error' : ''}
-                                        value={user.job}
-                                        onChange={(e) => setUsers({ ...user, job: e.target.value })}
-                                        style={{ borderColor: errors.job ? '#e53e3e' : '' }}
+                                        aria-describedby={errors.Job ? 'Job-error' : ''}
+                                        value={user.Job}
+                                        onChange={(e) => setUsers({ ...user, Job: e.target.value })}
+                                        style={{ borderColor: errors.Job ? '#e53e3e' : '' }}
                                     />
                                 </label>
-                                {errors.job && (
-                                    <p id="job-error" className="text-red-500 mt-2">{errors.job}</p>
+                                {errors.Job && (
+                                    <p id="Job-error" className="text-red-500 mt-2">{errors.Job}</p>
                                 )}
                             </div>
                             <br />
@@ -164,7 +164,7 @@ function RegistrationPage2() {
                                     <input
                                         type="checkbox"
                                         className="checkbox checkbox-primary"
-                                        checked={user.employee} // קישור ערך תיבת הסימון לstate של ה־user
+                                        checked={user.Employee} // קישור ערך תיבת הסימון לstate של ה־user
                                         onChange={handleEmployeeChange} // הוספת הפונקציה המתעדכנת בערך של תיבת הסימון
 
                                     />
