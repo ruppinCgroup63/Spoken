@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ErrorMessage from './FCErrorMessage';
+
 
 const apiUrl = 'https://localhost:7224/api/Users/Login';
 
@@ -29,6 +31,10 @@ function Login(props) {
     Email: '',
     Password: '',
   });
+
+  const [emailExists, setEmailExists] = useState(false); // סטייט למעקב אם האימייל כבר קיים
+
+
 
   const handleValidation = (name, isValid, errorMessage) => {
     setErrors(prevErrors => ({
@@ -85,18 +91,21 @@ function Login(props) {
         return res.json();
       })
       .then(loggedInUser => {
-        if (loggedInUser) {
+        if (loggedInUser.email != null) {
           console.log('Login successful!');
           // Store user data in session storage and navigate to home page
           sessionStorage.setItem('user', JSON.stringify(loggedInUser));
           clearFields();
           navigate('/HomePage');
-        } else {
+        } 
+        else {
           console.log('Invalid email or password!'); // Notify user of invalid credentials
+          setEmailExists(true);
         }
       })
       .catch(error => {
         console.log("Login error:", error);
+        setEmailExists(true); // עדכון הסטייט לאמת אם האימייל כבר קיים
       });
  
   };
@@ -115,6 +124,8 @@ function Login(props) {
             <div className="w-28 h-28"><img src="/public/login/spokenLogo.png" alt="Error" className="w-full h-full object-contain" /></div>
           </div>
           <form onSubmit={handleSubmit} >
+          {emailExists && <ErrorMessage message="Invalid email or password!" />} {/* תצוגת הודעת השגיאה */}
+          <br></br>
             <div className="form-control" >
               <label className={`input input-bordered flex items-center gap-2 relative ${errors.Email ? 'input-error' : ''}`} style={{ backgroundColor: "#E4E9F2", borderColor: '#070A40' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70">
