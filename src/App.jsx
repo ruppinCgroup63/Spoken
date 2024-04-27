@@ -38,6 +38,7 @@ function App() {
         <Route path="/HomePage" element={<HomePage />} />
         <Route path="/CreateTemplate" element={<CreateTemplate/>} />
         <Route path="/CreateTemplate2" element={<CreateTemplate2/>} />
+        
       </Routes>
     </BrowserRouter>
       </div>
