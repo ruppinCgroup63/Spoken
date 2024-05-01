@@ -36,13 +36,20 @@ const DraggableItem = ({ item, index, moveItem }) => {
   );
 };
 
-function CreateTemplate2() {
+function CreateTemplate3() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const templateObj = state;
+  console.log(templateObj.items.id);
+  console.log(templateObj);
+  
 
   const [blocks, setBlocks] = useState([]);
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState([{
+    id : templateObj ? templateObj.items.id : '',
+    type : templateObj ? templateObj.items.type : '',
+    text : templateObj ? templateObj.items.text : '',
+    }]);
   const [template, setTemplate] = useState({
     name: templateObj ? templateObj.template.name : '' 
   });
@@ -64,7 +71,7 @@ function CreateTemplate2() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-     navigate('/CreateTemplate3',{state: {template,items}});     
+    navigate('/');
   };
 
   return (
@@ -75,8 +82,8 @@ function CreateTemplate2() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="steps space-x-2 mb-4">
                 <div className="step step-primary" data-content="✓">Name</div>
-                <div className="step step-primary">Template structure</div>
-                <div className="step">Key<br></br>words</div>
+                <div className="step step-primary"data-content="✓" >Template structure</div>
+                <div className="step step-primary">Key<br></br>words</div>
               </div>
               <h3 className="card-title text-dark-blue-500">Template structure</h3>
               <div style={{ margin: '10px', padding: '10px', minHeight: '300px', border: '2px solid black', position: 'relative' }}>
@@ -88,7 +95,7 @@ function CreateTemplate2() {
                     onChange={(e) => setTemplate({ ...template, name: e.target.value })}
                   />
                 {items.map((item, index) => (
-                  <DraggableItem key={item.id} item={item} index={index} moveItem={moveItem} />
+                  <DraggableItem key={items.id} item={item} index={index} moveItem={moveItem} />
                 ))}
               </div>
 
@@ -108,4 +115,4 @@ function CreateTemplate2() {
   );
 }
 
-export default CreateTemplate2;
+export default CreateTemplate3;

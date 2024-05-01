@@ -7,7 +7,7 @@ export default {
     "./assets/FuncComps/FCLogin.jsx",
     "./assets/FuncComps/FCRegister.jsx",
   ],
-  darkMode: 'class',
+  darkMode: "class",
   theme: {
     extend: {
       colors: {

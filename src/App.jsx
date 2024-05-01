@@ -8,6 +8,8 @@ import RegistrationPage3 from './FuncComps/Register.jsx/FCRegister3'
 import HomePage from './FuncComps/HOME.jsx/FCHomePage';
 import CreateTemplate from './FuncComps/CreateTemplate.jsx/FCCreateTemplate'
 import CreateTemplate2 from './FuncComps/CreateTemplate.jsx/FCCreateTemplate2'
+import CreateTemplate3 from './FuncComps/CreateTemplate.jsx/FCCreateTemplate3';
+
 
 
 function App() {
@@ -38,7 +40,7 @@ function App() {
         <Route path="/HomePage" element={<HomePage />} />
         <Route path="/CreateTemplate" element={<CreateTemplate/>} />
         <Route path="/CreateTemplate2" element={<CreateTemplate2/>} />
-        
+        <Route path="/CreateTemplate3" element={<CreateTemplate3/>} />
       </Routes>
     </BrowserRouter>
       </div>
