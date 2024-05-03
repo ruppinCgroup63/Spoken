@@ -14,6 +14,7 @@ function CreateTemplate() {
   //בדיקת שגיאות
   const [errors, setErrors] = useState({
     name: "",
+    Description: "",
   });
 
   const handleValidation = (name, isValid, errorMessage) => {
@@ -168,25 +169,25 @@ function CreateTemplate() {
               <div className="form-control">
                 <label
                   className={`input input-bordered flex items-center gap-2 relative ${
-                    errors.name ? "input-error" : ""
+                    errors.Description ? "input-error" : ""
                   }`}
                 >
                   <input
                     type="text"
-                    className={`grow ${errors.name ? "input-error" : ""}`}
+                    className={`grow ${errors.Description ? "input-error" : ""}`}
                     placeholder="new client..."
                     onBlur={validaterDescription}
-                    aria-describedby={errors.name ? "name-error" : ""}
+                    aria-describedby={errors.Description ? "Description-error" : ""}
                     value={template.Description}
                     onChange={(e) =>
                       setTemplate({ ...template, Description: e.target.value })
                     }
-                    style={{ borderColor: errors.name ? "#e53e3e" : "" }}
+                    style={{ borderColor: errors.Description ? "#e53e3e" : "" }}
                   />
                 </label>
-                {errors.name && (
-                  <p id="name-error" className="text-red-500 mt-2">
-                    {errors.name}
+                {errors.Description && (
+                  <p id="Description-error" className="text-red-500 mt-2">
+                    {errors.Description}
                   </p>
                 )}
               </div>

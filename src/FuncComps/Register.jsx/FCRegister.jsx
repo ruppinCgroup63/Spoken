@@ -1,13 +1,14 @@
-import React, { useState  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 
+const apiUrl = 'https://localhost:7224/api/Langs';
 
 function RegistrationPage() {
     const navigate = useNavigate();
     const { state } = useLocation();
     let userObj = state;
-    
+
     console.log(userObj);
     console.log('check:' + userObj);
 
@@ -17,8 +18,8 @@ function RegistrationPage() {
         Password: userObj ? userObj.user.Password : '',
         ConfirmPassword: userObj ? userObj.user.ConfirmPassword : '',
         Phone: userObj ? userObj.user.Phone : '',
-        Transcription: userObj ? userObj.user.Transcription : '',
-     
+        LangName: userObj ? userObj.user.LangName : '',
+
     });
 
     //בדיקת שגיאות
@@ -28,12 +29,42 @@ function RegistrationPage() {
         Password: '',
         ConfirmPassword: '',
         Phone: '',
-        Transcription: '',
-    }); 
+        LangName: '',
+    });
 
-   
-    
-   
+    const [language, setLang] = useState([]);
+
+    useEffect(() => {
+        getAllLang();
+    }, []); // רק כאשר הדף נטען , הפעלת getAllLang
+
+
+    const getAllLang = () => {
+
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json; charset=UTF-8',
+            })
+        })
+            .then(res => {
+                if (!res.ok) { // Check if response status is not OK
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
+            .then(data => {
+                console.log(data);
+                setLang(data); // שמירת השפות שמתקבלות מהשרת בסטייט
+
+            })
+            .catch(error => {
+                console.log("language error:", error);
+            });
+
+
+
+    }
 
     // ניהול הולידציות
     const handleValidation = (name, isValid, errorMessage) => {
@@ -41,7 +72,7 @@ function RegistrationPage() {
             ...prevErrors,
             [name]: isValid ? '' : errorMessage,
         }));
-    }; 
+    };
 
 
     //ולידציה לשם משתמש
@@ -116,20 +147,20 @@ function RegistrationPage() {
     };
 
 
-    
+    //ולידציה לבחירת שפת תמלול
     const validateLanguage = (e) => {
         const selectedLanguage = e.target.value;
         const isValid = selectedLanguage !== '';
-        handleValidation('Transcription', isValid, 'Please select a Transcription language');
+        handleValidation('LangName', isValid, 'Please select a LangName language');
         if (isValid) {
             setUsers(prevUser => ({
                 ...prevUser,
-                Transcription: selectedLanguage
+                LangName: selectedLanguage
             }));
         }
     };
-   // console.log(user);
-   // console.log(errors);
+    // console.log(user);
+    // console.log(errors);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -138,22 +169,23 @@ function RegistrationPage() {
         let userFields = Object.values(user);
         if (validations.some((value) => value !== '')) {
             console.log('Entering an invalid value in one of the fields');
-        } else if (userFields.some((value) => value === '')) {                   
+        } else if (userFields.some((value) => value === '')) {
             console.log('You need to fill in all the fields ');
         } else {
-          
-            clearAllFileds();                   
+
+            clearAllFileds();
             navigate('/register2', {
                 state: {
-                  user: {
-                    ...user,
-                    Job: userObj ? userObj.user.Job : '',
-                    ParcticeArea: userObj ? userObj.user.ParcticeArea : '',
-                    Employee: userObj ? userObj.user.Employee : false
-                  }
+                    user: {
+                        ...user,
+                        Job: userObj ? userObj.user.Job : '',
+                        DomainName: userObj ? userObj.user.DomainName : '',
+                        Employee: userObj ? userObj.user.Employee : false
+                    }
                 }
-              });
-    }};
+            });
+        }
+    };
 
 
     const clearAllFileds = () => {
@@ -163,7 +195,7 @@ function RegistrationPage() {
             Password: '',
             ConfirmPassword: '',
             Phone: '',
-            Transcription: '',
+            LangName: '',
         });
     };
 
@@ -188,7 +220,7 @@ function RegistrationPage() {
 
                             </label>
                             <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }} className="steps">
-                                <div style={{ marginRight: '1rem'  }} className="step step-primary">General</div>
+                                <div style={{ marginRight: '1rem' }} className="step step-primary">General</div>
                                 <div style={{ marginRight: '1rem' }} className="step ">More<br></br>details</div>
                                 <div style={{ marginRight: '1rem' }} className="step ">Signature</div>
                             </div>
@@ -262,7 +294,7 @@ function RegistrationPage() {
                             </div>
                             <br />
                             <div className="form-control">
-                                <label  className={`input input-bordered flex items-center gap-2 relative ${errors.ConfirmPassword ? 'input-error' : ''}`}>
+                                <label className={`input input-bordered flex items-center gap-2 relative ${errors.ConfirmPassword ? 'input-error' : ''}`}>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70">
                                         <path fillRule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clipRule="evenodd" />
                                     </svg>
@@ -303,32 +335,33 @@ function RegistrationPage() {
                             </div>
 
                             <div className="form-control">
-                                <label className="label" htmlFor="Transcription">
+                                <label className="label" htmlFor="LangName">
                                 </label>
-                                <select className={`select select-bordered w-full ${errors.Transcription ? 'input-error' : ''}`}
-                                onChange={validateLanguage}
-                                value={user.Transcription}
-                                aria-describedby={errors.Transcription ? 'Transcription-error' : ''}
+                                <select className={`select select-bordered w-full ${errors.LangName ? 'input-error' : ''}`}
+                                    onChange={validateLanguage}
+                                    value={user.LangName}
+                                    aria-describedby={errors.LangName ? 'LangName-error' : ''}
                                 >
                                     <option disabled value="">Choose a language</option>
-                                    <option value="hebrew">Hebrew</option>
-                                    <option value="english">English</option>
+                                    {language.map((lang, index) => (
+                                        <option key={index} value={lang.language}>{lang.language}</option>
+                                    ))}
                                 </select>
-                                {errors.Transcription && (
-                                 <p id="Transcription-error" className="text-red-500 mt-2">{errors.Transcription}</p>
+                                {errors.LangName && (
+                                    <p id="LangName-error" className="text-red-500 mt-2">{errors.LangName}</p>
                                 )}
                             </div>
                             <div className="button-container" style={{ display: 'flex' }}>
-                            <div style={{ marginLeft: 'auto' }} className="form-control mt-6">
-                                <button 
-                            onClick={() => navigate('/')  } type="button" 
-                                className="btn  btn-xs sm:btn-sm btn-outline btn-primary" style={{borderColor:'#070A40' , color:'#070A40'  }}>Back</button>
-                            </div>
-                            <div style={{ flexGrow: '1' }}></div> 
-                            <div className="form-control mt-6">
-                                <button  style={{ padding: '0.25rem 1rem',marginRight: 'auto' , backgroundColor: '#070A40'}} type="submit" 
-                                className="btn btn-xs sm:btn-sm  btn-primary">Continue</button>
-                            </div>
+                                <div style={{ marginLeft: 'auto' }} className="form-control mt-6">
+                                    <button
+                                        onClick={() => navigate('/')} type="button"
+                                        className="btn  btn-xs sm:btn-sm btn-outline btn-primary" style={{ borderColor: '#070A40', color: '#070A40' }}>Back</button>
+                                </div>
+                                <div style={{ flexGrow: '1' }}></div>
+                                <div className="form-control mt-6">
+                                    <button style={{ padding: '0.25rem 1rem', marginRight: 'auto', backgroundColor: '#070A40' }} type="submit"
+                                        className="btn btn-xs sm:btn-sm  btn-primary">Continue</button>
+                                </div>
                             </div>
                         </form>
                     </div>

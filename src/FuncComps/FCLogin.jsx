@@ -5,6 +5,7 @@ import ErrorMessage from './FCErrorMessage';
 
 const apiUrl = 'https://localhost:7224/api/Users/Login';
 
+
 function Login(props) {
   const navigate = useNavigate();
 
@@ -18,8 +19,8 @@ function Login(props) {
     Password: '',
     ConfirmPassword: '',
     Phone: '',
-    Transcription: '',
-    ParcticeArea: '',
+    LangName: '',
+    DomainName: '',
     Job:'',
     Employee: true,
     Signature: '',
@@ -96,7 +97,7 @@ function Login(props) {
           // Store user data in session storage and navigate to home page
           sessionStorage.setItem('user', JSON.stringify(loggedInUser));
           clearFields();
-          navigate('/HomePage');
+          navigate('/HomePage' );
         } 
         else {
           console.log('Invalid email or password!'); // Notify user of invalid credentials

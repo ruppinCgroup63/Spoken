@@ -15,8 +15,8 @@ function RegistrationPage2() {
         Password: userObj.user.Password,
         ConfirmPassword: userObj.user.ConfirmPassword,
         Phone: userObj.user.Phone,
-        Transcription: userObj.user.Transcription ,
-        ParcticeArea: userObj ? userObj.user.ParcticeArea : '',
+        LangName: userObj.user.LangName ,
+        DomainName: userObj ? userObj.user.DomainName : '',
         Job:  userObj ? userObj.user.Job: '',
         Employee:  userObj ? userObj.user.Employee: false,
     });
@@ -24,7 +24,7 @@ function RegistrationPage2() {
     //console.log(user);
 
     const [errors, setErrors] = useState({
-        ParcticeArea: '',
+        DomainName: '',
         Job: '',
     });
 
@@ -48,15 +48,15 @@ function RegistrationPage2() {
         }));
     };
 
-    const validateParcticeArea = (e) => {
+    const validateDomainName = (e) => {
         const text = e.target.value;
         const regexUserName = /^[a-zA-Z\s]{1,60}$/;
         const isValid = regexUserName.test(text);
-        handleValidation('ParcticeArea', isValid, 'Invalid input! Only English letters');
+        handleValidation('DomainName', isValid, 'Invalid input! Only English letters');
         if (isValid) {
             setUsers(prevUser => ({
                 ...prevUser,
-                ParcticeArea: text
+                DomainName: text
             }));
         }
     };
@@ -123,20 +123,20 @@ function RegistrationPage2() {
                             </div>
                             <br /><br />
                             <div className="form-control">
-                                <label className={`input input-bordered flex items-center gap-2 relative ${errors.ParcticeArea ? 'input-error' : ''}`} >
+                                <label className={`input input-bordered flex items-center gap-2 relative ${errors.DomainName ? 'input-error' : ''}`} >
                                     <input
                                         type="text"
-                                        className={`grow ${errors.ParcticeArea ? 'input-error' : ''}`}
+                                        className={`grow ${errors.DomainName ? 'input-error' : ''}`}
                                         placeholder="Parctice Area"
-                                        onBlur={validateParcticeArea}
-                                        aria-describedby={errors.ParcticeArea ? 'ParcticeArea-error' : ''}
-                                        value={user.ParcticeArea}
-                                        onChange={(e) => setUsers({ ...user, ParcticeArea: e.target.value })}
-                                        style={{ borderColor: errors.ParcticeArea ? '#e53e3e' : '' }}
+                                        onBlur={validateDomainName}
+                                        aria-describedby={errors.DomainName ? 'DomainName-error' : ''}
+                                        value={user.DomainName}
+                                        onChange={(e) => setUsers({ ...user, DomainName: e.target.value })}
+                                        style={{ borderColor: errors.DomainName ? '#e53e3e' : '' }}
                                     />
                                 </label>
-                                {errors.ParcticeArea && (
-                                    <p id="ParcticeArea-error" className="text-red-500 mt-2">{errors.ParcticeArea}</p>
+                                {errors.DomainName && (
+                                    <p id="DomainName-error" className="text-red-500 mt-2">{errors.DomainName}</p>
                                 )}
                             </div>
                             <br />

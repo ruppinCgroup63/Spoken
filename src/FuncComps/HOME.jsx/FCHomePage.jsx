@@ -1,16 +1,27 @@
-import React from 'react';
+
 import Card from './FCCard';
 //import Navbar from './FCNavbar';
+import React, { useState , useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
   const navigate = useNavigate();
-  const userName = 'User'; //test
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    const userFromStorage = JSON.parse(sessionStorage.getItem('user'));
+    console.log(userFromStorage);
+    if (userFromStorage) {
+      setUserName(userFromStorage.userName);
+    }
+  }, []); 
+
+
 
   return (
 <div className="bg-gray-100 min-h-screen" style={{ backgroundColor: "#E4E9F2" }}>
   <header className="flex justify-between items-center p-5 bg-white">
-    <h1 className="text-xl">Hello! <a href="/profile" className="text-blue-500">{userName}</a></h1>
+    <h1 className="text-xl">Hello <a href="/profile" className="text-blue-500">{userName} !</a></h1>
     <label className="btn btn-circle swap swap-rotate" style={{ position: 'static', top: '30px', right: '20px', backgroundColor: 'white' }}>
       <input type="checkbox" />
       <svg className="swap-off fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512"><path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" /></svg>
