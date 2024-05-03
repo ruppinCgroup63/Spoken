@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -6,8 +6,7 @@ import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 
 const ItemType = "DRAGGABLE_ITEM";
-
-const DraggableItem = ({ item, index, moveItem }) => {
+const DraggableItem = ({ item, index, moveItem, updateItem }) => {
   const [, drag] = useDrag(
     () => ({
       type: ItemType,
@@ -32,9 +31,9 @@ const DraggableItem = ({ item, index, moveItem }) => {
   return (
     <ResizableBox
       width={300}
-      height={50}
-      minConstraints={[100, 50]}
-      maxConstraints={[350, 50]}
+      height={100}
+      minConstraints={[100, 100]}
+      maxConstraints={[350, 100]}
       resizeHandles={["e", "w"]}
       className="resizable"
     >
@@ -42,18 +41,19 @@ const DraggableItem = ({ item, index, moveItem }) => {
         ref={(node) => drag(drop(node))}
         style={{ padding: "5px", overflow: "hidden" }}
       >
-        {item.type === "input" ? (
-          <input
-            type="text"
-            defaultValue={item.text}
-            style={{ width: "100%" }}
-          />
-        ) : (
-          <textarea
-            defaultValue={item.text}
-            style={{ width: "100%", height: "90%" }}
-          />
-        )}
+        <input
+          type="text"
+          placeholder="Enter title"
+          defaultValue={item.title}
+          onChange={(e) => updateItem(index, "title", e.target.value)}
+          style={{ width: "100%", marginBottom: "5px" }}
+        />
+        <textarea
+          placeholder="Enter text"
+          defaultValue={item.text}
+          onChange={(e) => updateItem(index, "text", e.target.value)}
+          style={{ width: "100%", height: "45px" }}
+        />
       </div>
     </ResizableBox>
   );
@@ -62,20 +62,41 @@ const DraggableItem = ({ item, index, moveItem }) => {
 function CreateTemplate2() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const templateObj = state;
-
-  const [blocks, setBlocks] = useState([]);
   const [items, setItems] = useState([]);
-  const [template, setTemplate] = useState({
-    name: templateObj ? templateObj.template.name : "",
-  });
-  console.log(templateObj);
+  const [template, setTemplate] = useState({ name: "" });
+
+  console.log(state);
+  // טעינת נתונים כאשר הקומפוננטה נטענת או כאשר משתנה ה-state
+  useEffect(() => {
+    if (state) {
+      setTemplate(state.template);
+      if (state.origin === "CreateTemplate3") {
+        setItems(state.items);
+        setTemplate(state.templateDetails);
+      }
+    }
+  }, [state]);
+  console.log(items);
+  console.log(state.templateDetails);
+
+  //const addItem = useCallback((type) => {
+  //const id = Math.random().toString(36).substring(2, 9);
+  //setItems((items) => [
+  //...items,
+  //{ id, type, text: type === "input" ? "כותרת" : "פסקה" },
+  //]);
+  //}, []);
+
   const addItem = useCallback((type) => {
     const id = Math.random().toString(36).substring(2, 9);
-    setItems((items) => [
-      ...items,
-      { id, type, text: type === "input" ? "כותרת" : "פסקה" },
-    ]);
+    const newItem = {
+      id,
+      type,
+      title: "", // כותרת חדשה לפריט
+      text: "", // טקסט חדש לפריט
+      keyword: "", // אפשרות להוסיף מילת מפתח כבר ביצירה
+    };
+    setItems((items) => [...items, newItem]);
   }, []);
 
   const moveItem = useCallback((dragIndex, hoverIndex) => {
@@ -88,10 +109,23 @@ function CreateTemplate2() {
     });
   }, []);
 
+  const updateItem = useCallback((index, field, value) => {
+    setItems((currentItems) =>
+      currentItems.map((item, i) => {
+        if (i === index) {
+          return { ...item, [field]: value };
+        }
+        return item;
+      })
+    );
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     //console.log(template);
-    navigate("/CreateTemplate3", { state: { template, items } });
+    navigate("/CreateTemplate3", {
+      state: { template, items, origin: "CreateTemplate2" },
+    });
   };
 
   return (
@@ -160,7 +194,9 @@ function CreateTemplate2() {
                 <button
                   type="button"
                   onClick={() =>
-                    navigate("/CreateTemplate", { state: { template } })
+                    navigate("/CreateTemplate", {
+                      state: { template, origin: "CreateTemplate2" },
+                    })
                   }
                   className="btn btn-outline btn-primary"
                 >

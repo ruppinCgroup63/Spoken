@@ -7,7 +7,7 @@ import "react-resizable/css/styles.css";
 
 const ItemType = "DRAGGABLE_ITEM";
 
-const DraggableItem = ({ item, index, moveItem }) => {
+const DraggableItem = ({ item, index, moveItem, updateItem }) => {
   const [, drag] = useDrag(
     () => ({
       type: ItemType,
@@ -32,9 +32,9 @@ const DraggableItem = ({ item, index, moveItem }) => {
   return (
     <ResizableBox
       width={300}
-      height={50}
-      minConstraints={[100, 50]}
-      maxConstraints={[350, 50]}
+      height={100}
+      minConstraints={[100, 100]}
+      maxConstraints={[350, 100]}
       resizeHandles={["e", "w"]}
       className="resizable"
     >
@@ -42,37 +42,58 @@ const DraggableItem = ({ item, index, moveItem }) => {
         ref={(node) => drag(drop(node))}
         style={{ padding: "5px", overflow: "hidden" }}
       >
-        {item.type === "input" ? (
-          <input
-            type="text"
-            defaultValue={item.text}
-            style={{ width: "100%" }}
-          />
-        ) : (
-          <textarea
-            defaultValue={item.text}
-            style={{ width: "100%", height: "90%" }}
-          />
-        )}
+        <input
+          type="text"
+          placeholder="Enter title"
+          value={item.title}
+          onChange={(e) => updateItem(index, "title", e.target.value)}
+          style={{ width: "100%", marginBottom: "5px" }}
+        />
+        <textarea
+          placeholder="Enter text"
+          value={item.text}
+          onChange={(e) => updateItem(index, "text", e.target.value)}
+          style={{ width: "100%", height: "45px" }}
+        />
       </div>
     </ResizableBox>
   );
 };
+
 function CreateTemplate3() {
-  const { state } = useLocation();
-  const { template, items } = state; // קבלת המידע שהועבר
-
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const { items } = state;
+  const [templateDetails, setTemplateDetails] = useState(
+    state.template,
+    { isPublic: false } || { name: "", Description: "", isPublic: false }
+  );
+  console.log(templateDetails);
+  const updateItem = useCallback(
+    (index, field, value) => {
+      const newItems = [...items];
+      newItems[index] = { ...newItems[index], [field]: value };
+      // Assuming `items` is part of the state, this might actually need a setter
+    },
+    [items]
+  );
 
-  const [templateDetails, setTemplate] = useState({
-    name: template ? template.name : "",
-    Description: template ? template.Description : "",
-  });
-  console.log(template);
-  console.log(items);
+  const moveItem = useCallback(
+    (dragIndex, hoverIndex) => {
+      const newItems = [...items];
+      const dragItem = newItems[dragIndex];
+      newItems.splice(dragIndex, 1);
+      newItems.splice(hoverIndex, 0, dragItem);
+      // Assuming `items` is part of the state, this might actually need a setter
+    },
+    [items]
+  );
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/HomePage", { state: { templateDetails, items } });
+    navigate("/HomePage", {
+      state: { templateDetails, items, origin: "CreateTemplate3" },
+    });
   };
 
   return (
@@ -90,28 +111,54 @@ function CreateTemplate3() {
                 </div>
                 <div className="step step-primary">Key Words</div>
               </div>
-
-              <div>
-                <input
-                  type="text"
-                  className="input input-bordered input-sm w-full mb-4"
-                  value={template.name}
-                  placeholder="Template Name"
-                  onChange={(e) =>
-                    setTemplate({ ...template, name: e.target.value })
-                  }
-                />
-                <div className="container">
-                  {items.map((item, index) => (
-                    <DraggableItem key={index} item={item} />
-                  ))}
-                </div>
+              <input
+                type="text"
+                className="input input-bordered input-sm w-full mb-4"
+                value={templateDetails.name}
+                placeholder="Template Name"
+                onChange={(e) =>
+                  setTemplateDetails({
+                    ...templateDetails,
+                    name: e.target.value,
+                  })
+                }
+              />
+              <div className="container">
+                {items.map((item, index) => (
+                  <DraggableItem
+                    key={index}
+                    item={item}
+                    index={index}
+                    moveItem={moveItem}
+                    updateItem={updateItem}
+                  />
+                ))}
               </div>
+              <label className="label cursor-pointer justify-start space-x-2">
+                <span className="label-text">Make template public?</span>
+                <input
+                  type="checkbox"
+                  checked={templateDetails.isPublic}
+                  onChange={(e) =>
+                    setTemplateDetails({
+                      ...templateDetails,
+                      isPublic: e.target.checked,
+                    })
+                  }
+                  className="checkbox checkbox-primary"
+                />
+              </label>
               <div className="flex justify-between mt-6">
                 <button
                   type="button"
                   onClick={() =>
-                    navigate("/CreateTemplate2", { state: { items } })
+                    navigate("/CreateTemplate2", {
+                      state: {
+                        templateDetails,
+                        items,
+                        origin: "CreateTemplate3",
+                      },
+                    })
                   }
                   className="btn btn-outline btn-primary"
                 >
@@ -128,4 +175,5 @@ function CreateTemplate3() {
     </DndProvider>
   );
 }
+
 export default CreateTemplate3;
