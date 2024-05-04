@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -40,7 +40,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
     >
       <div
         ref={(node) => drag(drop(node))}
-        style={{ padding: "5px", overflow: "hidden" }}
+        style={{ padding: "5px", overflow: "hidden", position: "relative" }}
       >
         <input
           type="text"
@@ -55,6 +55,22 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
           onChange={(e) => updateItem(index, "text", e.target.value)}
           style={{ width: "100%", height: "45px" }}
         />
+        <input
+          type="text"
+          placeholder="Keyword"
+          value={item.keyword || item.title} // Default to title if keyword is not set
+          onChange={(e) => updateItem(index, "keyword", e.target.value)}
+          style={{
+            position: "absolute",
+            top: "5px",
+            right: "5px",
+            width: "auto",
+            padding: "3px",
+            fontSize: "12px",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+          }}
+        />
       </div>
     </ResizableBox>
   );
@@ -65,10 +81,9 @@ function CreateTemplate3() {
   const { state } = useLocation();
   const { items } = state;
   const [templateDetails, setTemplateDetails] = useState(
-    state.template,
-    { isPublic: false } || { name: "", Description: "", isPublic: false }
+    state.templateDetails || { name: "", description: "", isPublic: false }
   );
-  console.log(templateDetails);
+
   const updateItem = useCallback(
     (index, field, value) => {
       const newItems = [...items];
@@ -106,12 +121,18 @@ function CreateTemplate3() {
                 <div className="step step-primary" data-content="✓">
                   Name
                 </div>
-                <div className="step step-primary" data-content="✓">
-                  Structure
-                </div>
+                <div className="step step-primary">Structure</div>
                 <div className="step step-primary">Key Words</div>
               </div>
               <h3 className="card-title text-dark-blue-500">Key Words</h3>
+              <p>
+                In this page, you need to define a keyword for each block. The
+                keyword will assist you during the automated transcription
+                process. When you speak the keyword, the transcription will
+                start writing into that specific block. By default, the text's
+                title is set as the keyword, but you can change it to any word
+                you prefer.
+              </p>
               <div
                 style={{
                   margin: "10px",
