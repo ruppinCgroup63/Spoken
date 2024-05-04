@@ -111,43 +111,54 @@ function CreateTemplate3() {
                 </div>
                 <div className="step step-primary">Key Words</div>
               </div>
-              <input
-                type="text"
-                className="input input-bordered input-sm w-full mb-4"
-                value={templateDetails.name}
-                placeholder="Template Name"
-                onChange={(e) =>
-                  setTemplateDetails({
-                    ...templateDetails,
-                    name: e.target.value,
-                  })
-                }
-              />
-              <div className="container">
-                {items.map((item, index) => (
-                  <DraggableItem
-                    key={index}
-                    item={item}
-                    index={index}
-                    moveItem={moveItem}
-                    updateItem={updateItem}
-                  />
-                ))}
-              </div>
-              <label className="label cursor-pointer justify-start space-x-2">
-                <span className="label-text">Make template public?</span>
+              <h3 className="card-title text-dark-blue-500">Key Words</h3>
+              <div
+                style={{
+                  margin: "10px",
+                  padding: "10px",
+                  minHeight: "300px",
+                  border: "2px solid black",
+                  position: "relative",
+                }}
+              >
                 <input
-                  type="checkbox"
-                  checked={templateDetails.isPublic}
+                  type="text"
+                  className="input input-bordered input-sm w-full mb-4"
+                  value={templateDetails.name}
+                  placeholder="Template Name"
                   onChange={(e) =>
                     setTemplateDetails({
                       ...templateDetails,
-                      isPublic: e.target.checked,
+                      name: e.target.value,
                     })
                   }
-                  className="checkbox checkbox-primary"
                 />
-              </label>
+                <div className="container">
+                  {items.map((item, index) => (
+                    <DraggableItem
+                      key={index}
+                      item={item}
+                      index={index}
+                      moveItem={moveItem}
+                      updateItem={updateItem}
+                    />
+                  ))}
+                </div>
+                <label className="label cursor-pointer justify-start space-x-2">
+                  <span className="label-text">Make template public?</span>
+                  <input
+                    type="checkbox"
+                    checked={templateDetails.isPublic}
+                    onChange={(e) =>
+                      setTemplateDetails({
+                        ...templateDetails,
+                        isPublic: e.target.checked,
+                      })
+                    }
+                    className="checkbox checkbox-primary"
+                  />
+                </label>
+              </div>
               <div className="flex justify-between mt-6">
                 <button
                   type="button"

@@ -6,7 +6,8 @@ import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 
 const ItemType = "DRAGGABLE_ITEM";
-const DraggableItem = ({ item, index, moveItem, updateItem }) => {
+
+const DraggableItem = ({ item, index, moveItem, updateItem, removeItem }) => {
   const [, drag] = useDrag(
     () => ({
       type: ItemType,
@@ -36,21 +37,43 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
       maxConstraints={[350, 100]}
       resizeHandles={["e", "w"]}
       className="resizable"
+      style={{ margin: "auto" }} // Centering the boxes within the div
     >
       <div
         ref={(node) => drag(drop(node))}
-        style={{ padding: "5px", overflow: "hidden" }}
+        style={{ padding: "5px", overflow: "hidden", position: "relative" }}
       >
+        <button
+          onClick={() => removeItem(index)}
+          style={{
+            position: "absolute",
+            top: "5px",
+            right: "5px",
+            zIndex: 10,
+            backgroundColor: "#04D9B2",
+            color: "black",
+            width: "1.8rem",
+          }}
+          className="btn btn-xs"
+        >
+          <img
+            src="/public/createTemplate/Trash.png"
+            alt="Delete"
+            style={{ height: "10px", width: "9.17px" }} // עיצוב מותאם לגודל התמונה
+            className="object-contain"
+          />
+        </button>
+
         <input
           type="text"
           placeholder="Enter title"
-          defaultValue={item.title}
+          value={item.title}
           onChange={(e) => updateItem(index, "title", e.target.value)}
           style={{ width: "100%", marginBottom: "5px" }}
         />
         <textarea
           placeholder="Enter text"
-          defaultValue={item.text}
+          value={item.text}
           onChange={(e) => updateItem(index, "text", e.target.value)}
           style={{ width: "100%", height: "45px" }}
         />
@@ -62,41 +85,19 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
 function CreateTemplate2() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const [items, setItems] = useState([]);
-  const [template, setTemplate] = useState({ name: "" });
-
-  console.log(state);
-  // טעינת נתונים כאשר הקומפוננטה נטענת או כאשר משתנה ה-state
-  useEffect(() => {
-    if (state) {
-      setTemplate(state.template);
-      if (state.origin === "CreateTemplate3") {
-        setItems(state.items);
-        setTemplate(state.templateDetails);
-      }
-    }
-  }, [state]);
-  console.log(items);
-  console.log(state.templateDetails);
-
-  //const addItem = useCallback((type) => {
-  //const id = Math.random().toString(36).substring(2, 9);
-  //setItems((items) => [
-  //...items,
-  //{ id, type, text: type === "input" ? "כותרת" : "פסקה" },
-  //]);
-  //}, []);
+  const [items, setItems] = useState(state.items || []);
+  const [template, setTemplate] = useState(state.template || { name: "" });
 
   const addItem = useCallback((type) => {
     const id = Math.random().toString(36).substring(2, 9);
-    const newItem = {
-      id,
-      type,
-      title: "", // כותרת חדשה לפריט
-      text: "", // טקסט חדש לפריט
-      keyword: "", // אפשרות להוסיף מילת מפתח כבר ביצירה
-    };
-    setItems((items) => [...items, newItem]);
+    setItems((items) => [
+      ...items,
+      { id, type, title: "", text: "", keyword: "" },
+    ]);
+  }, []);
+
+  const removeItem = useCallback((index) => {
+    setItems((items) => items.filter((_, i) => i !== index));
   }, []);
 
   const moveItem = useCallback((dragIndex, hoverIndex) => {
@@ -111,18 +112,14 @@ function CreateTemplate2() {
 
   const updateItem = useCallback((index, field, value) => {
     setItems((currentItems) =>
-      currentItems.map((item, i) => {
-        if (i === index) {
-          return { ...item, [field]: value };
-        }
-        return item;
-      })
+      currentItems.map((item, i) =>
+        i === index ? { ...item, [field]: value } : item
+      )
     );
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    //console.log(template);
     navigate("/CreateTemplate3", {
       state: { template, items, origin: "CreateTemplate2" },
     });
@@ -139,9 +136,7 @@ function CreateTemplate2() {
                   Name
                 </div>
                 <div className="step step-primary">Template structure</div>
-                <div className="step">
-                  Key<br></br>words
-                </div>
+                <div className="step">Key Words</div>
               </div>
               <h3 className="card-title text-dark-blue-500">
                 Template structure
@@ -170,34 +165,31 @@ function CreateTemplate2() {
                     item={item}
                     index={index}
                     moveItem={moveItem}
+                    updateItem={updateItem}
+                    removeItem={removeItem}
                   />
                 ))}
-              </div>
-
-              <div className="flex gap-2 justify-center">
-                <button
-                  type="button"
-                  className="btn btn-success btn-outline"
-                  onClick={() => addItem("input")}
-                >
-                  הוסף כותרת
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-success btn-outline"
-                  onClick={() => addItem("textarea")}
-                >
-                  הוסף פיסקה
-                </button>
+                <div className="flex gap-2 justify-center">
+                  <button
+                    type="button"
+                    className="btn btn-success btn-outline"
+                    onClick={() => addItem("input")}
+                  >
+                    Add Title
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-success btn-outline"
+                    onClick={() => addItem("textarea")}
+                  >
+                    Add Section
+                  </button>
+                </div>
               </div>
               <div className="flex justify-between mt-6">
                 <button
                   type="button"
-                  onClick={() =>
-                    navigate("/CreateTemplate", {
-                      state: { template, origin: "CreateTemplate2" },
-                    })
-                  }
+                  onClick={() => navigate("/CreateTemplate")}
                   className="btn btn-outline btn-primary"
                 >
                   Back
