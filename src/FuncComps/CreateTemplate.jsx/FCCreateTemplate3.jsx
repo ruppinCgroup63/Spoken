@@ -37,23 +37,24 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
       maxConstraints={[350, 100]}
       resizeHandles={["e", "w"]}
       className="resizable"
+      style={{ margin: "auto" }} // Centering the boxes within the div
     >
       <div
         ref={(node) => drag(drop(node))}
-        style={{ padding: "5px", overflow: "hidden", position: "relative" }}
+        style={{ padding: "5px", overflow: "hidden", position: "relative",border: "1px solid  silver" }}
       >
         <input
           type="text"
-          placeholder="Enter title"
+          placeholder=" Enter title"
           value={item.title}
           onChange={(e) => updateItem(index, "title", e.target.value)}
-          style={{ width: "100%", marginBottom: "5px" }}
+          style={{ width: "100%", marginBottom: "5px" ,border: "1px solid  silver"}}
         />
         <textarea
-          placeholder="Enter text"
+          placeholder=" Enter text"
           value={item.text}
           onChange={(e) => updateItem(index, "text", e.target.value)}
-          style={{ width: "100%", height: "45px" }}
+          style={{ width: "100%", height: "45px", border: "1px solid  silver"}}
         />
         <input
           type="text"

@@ -8,6 +8,7 @@ import "react-resizable/css/styles.css";
 const ItemType = "DRAGGABLE_ITEM";
 
 const DraggableItem = ({ item, index, moveItem, updateItem, removeItem }) => {
+
   const [, drag] = useDrag(
     () => ({
       type: ItemType,
@@ -41,7 +42,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem, removeItem }) => {
     >
       <div
         ref={(node) => drag(drop(node))}
-        style={{ padding: "5px", overflow: "hidden", position: "relative" }}
+        style={{ padding: "5px", overflow: "hidden", position: "relative" , border: "1px solid  silver" , marginTop:'2rem' }}
       >
         <button
           onClick={() => removeItem(index)}
@@ -66,16 +67,16 @@ const DraggableItem = ({ item, index, moveItem, updateItem, removeItem }) => {
 
         <input
           type="text"
-          placeholder="Enter title"
+          placeholder=" Enter title"
           value={item.title}
           onChange={(e) => updateItem(index, "title", e.target.value)}
-          style={{ width: "100%", marginBottom: "5px" }}
+          style={{ width: "100%", marginBottom: "5px" , border: "1px solid  silver"}}
         />
         <textarea
-          placeholder="Enter text"
+          placeholder=" Enter text"
           value={item.text}
           onChange={(e) => updateItem(index, "text", e.target.value)}
-          style={{ width: "100%", height: "45px" }}
+          style={{ width: "100%", height: "45px" , border: "1px solid  silver"}}
         />
       </div>
     </ResizableBox>
@@ -169,7 +170,7 @@ function CreateTemplate2() {
                     removeItem={removeItem}
                   />
                 ))}
-                <div className="flex gap-2 justify-center">
+                <div className="flex gap-2 justify-center" style={{marginTop:'2rem'}}>
                   <button
                     type="button"
                     className="btn btn-success btn-outline"
@@ -186,7 +187,7 @@ function CreateTemplate2() {
                   </button>
                 </div>
               </div>
-              <div className="flex justify-between mt-6">
+              <div className="flex justify-between mt-6" >
                 <button
                   type="button"
                   onClick={() => navigate("/CreateTemplate")}
