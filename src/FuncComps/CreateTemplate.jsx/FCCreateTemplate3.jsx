@@ -41,20 +41,29 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
     >
       <div
         ref={(node) => drag(drop(node))}
-        style={{ padding: "5px", overflow: "hidden", position: "relative",border: "1px solid  silver" }}
+        style={{
+          padding: "5px",
+          overflow: "hidden",
+          position: "relative",
+          border: "1px solid  silver",
+        }}
       >
         <input
           type="text"
           placeholder=" Enter title"
           value={item.title}
           onChange={(e) => updateItem(index, "title", e.target.value)}
-          style={{ width: "100%", marginBottom: "5px" ,border: "1px solid  silver"}}
+          style={{
+            width: "100%",
+            marginBottom: "5px",
+            border: "1px solid  silver",
+          }}
         />
         <textarea
           placeholder=" Enter text"
           value={item.text}
           onChange={(e) => updateItem(index, "text", e.target.value)}
-          style={{ width: "100%", height: "45px", border: "1px solid  silver"}}
+          style={{ width: "100%", height: "45px", border: "1px solid  silver" }}
         />
         <input
           type="text"
@@ -81,8 +90,8 @@ function CreateTemplate3() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { items } = state;
-  const [templateDetails, setTemplateDetails] = useState(
-    state.templateDetails || { name: "", description: "", isPublic: false }
+  const [template, setTemplate] = useState(
+    state.template || { name: "", description: "", isPublic: false }
   );
 
   const updateItem = useCallback(
@@ -108,9 +117,10 @@ function CreateTemplate3() {
   const handleSubmit = (e) => {
     e.preventDefault();
     navigate("/HomePage", {
-      state: { templateDetails, items, origin: "CreateTemplate3" },
+      state: { template, items, origin: "CreateTemplate3" },
     });
   };
+  console.log(template);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -146,11 +156,11 @@ function CreateTemplate3() {
                 <input
                   type="text"
                   className="input input-bordered input-sm w-full mb-4"
-                  value={templateDetails.name}
+                  value={template.name}
                   placeholder="Template Name"
                   onChange={(e) =>
-                    setTemplateDetails({
-                      ...templateDetails,
+                    setTemplate({
+                      ...template,
                       name: e.target.value,
                     })
                   }
@@ -170,10 +180,10 @@ function CreateTemplate3() {
                   <span className="label-text">Make template public?</span>
                   <input
                     type="checkbox"
-                    checked={templateDetails.isPublic}
+                    checked={template.isPublic}
                     onChange={(e) =>
-                      setTemplateDetails({
-                        ...templateDetails,
+                      setTemplate({
+                        ...template,
                         isPublic: e.target.checked,
                       })
                     }
@@ -187,7 +197,7 @@ function CreateTemplate3() {
                   onClick={() =>
                     navigate("/CreateTemplate2", {
                       state: {
-                        templateDetails,
+                        template,
                         items,
                         origin: "CreateTemplate3",
                       },
