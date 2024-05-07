@@ -103,7 +103,6 @@ function CreateTemplate3() {
     (index, field, value) => {
       const newItems = [...items];
       newItems[index] = { ...newItems[index], [field]: value };
-      // Assuming `items` is part of the state, this might actually need a setter
     },
     [items]
   );
@@ -114,7 +113,6 @@ function CreateTemplate3() {
       const dragItem = newItems[dragIndex];
       newItems.splice(dragIndex, 1);
       newItems.splice(hoverIndex, 0, dragItem);
-      // Assuming `items` is part of the state, this might actually need a setter
     },
     [items]
   );
@@ -126,6 +124,7 @@ function CreateTemplate3() {
     });
   };
   console.log(template);
+  console.log(items);
 
   return (
     <DndProvider backend={HTML5Backend}>
