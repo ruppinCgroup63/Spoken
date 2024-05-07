@@ -1,0 +1,25 @@
+.arrow {
+    display: inline-block;
+    margin-left: 5px;
+  
+    
+  }
+  
+  .arrow-down::after {
+    content: "▼";
+  }
+  
+  .arrow-up::after {
+    content: "▲";
+  }
+  .cursor-pointer{
+    font-size: 10px;
+    color: "#2D37EC";
+  }
+  .keyWordP{
+    font-size: 10px;
+    margin-top: 0.2rem;
+    color:'#070A40';
+  }
+
+  

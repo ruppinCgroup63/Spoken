@@ -74,8 +74,8 @@ function CreateTemplate() {
 
   return (
     <>
-      <div className="flex items-center justify-center bg-light-blue-500 py-10">
-        <div className="card max-w-xs mx-auto bg-base-100 shadow-xl p-5">
+      <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
+        <div className="card w-full max-w-md bg-base-100 shadow-xl p-5" style={{ backgroundColor: "#E4E9F2" }}>
           <div className="card-body flex items-center justify-center">
             <br />
             <form onSubmit={handleSubmit}>
@@ -132,9 +132,8 @@ function CreateTemplate() {
               </h3>
               <div className="form-control">
                 <label
-                  className={`input input-bordered flex items-center gap-2 relative ${
-                    errors.name ? "input-error" : ""
-                  }`}
+                  className={`input input-bordered flex items-center gap-2 relative ${errors.name ? "input-error" : ""
+                    }`}
                 >
                   <input
                     type="text"
@@ -168,9 +167,8 @@ function CreateTemplate() {
               </h3>
               <div className="form-control">
                 <label
-                  className={`input input-bordered flex items-center gap-2 relative ${
-                    errors.Description ? "input-error" : ""
-                  }`}
+                  className={`input input-bordered flex items-center gap-2 relative ${errors.Description ? "input-error" : ""
+                    }`}
                 >
                   <input
                     type="text"

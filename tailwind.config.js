@@ -13,7 +13,7 @@ export default {
       colors: {
         // Define your custom colors here
         OurColor1: "#332A6",
-        OurColor2: "#070a40",
+        OurColor2: "#070A40",
         OurColor3: "#2D4BA6",
         OurColor4: "#E4E9F2",
         OurColor5: "#04D9B2",

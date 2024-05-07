@@ -4,10 +4,12 @@ import { useDrag, useDrop, DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
+import "./createTemplat3.css"
 
 const ItemType = "DRAGGABLE_ITEM";
 
 const DraggableItem = ({ item, index, moveItem, updateItem }) => {
+
   const [, drag] = useDrag(
     () => ({
       type: ItemType,
@@ -45,7 +47,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
           padding: "5px",
           overflow: "hidden",
           position: "relative",
-          border: "1px solid  silver",
+          border: "1px solid silver",
         }}
       >
         <input
@@ -93,7 +95,10 @@ function CreateTemplate3() {
   const [template, setTemplate] = useState(
     state.template || { name: "", description: "", isPublic: false }
   );
-
+  const [isOpen, setIsOpen] = useState(false);
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
   const updateItem = useCallback(
     (index, field, value) => {
       const newItems = [...items];
@@ -124,52 +129,63 @@ function CreateTemplate3() {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex items-center justify-center bg-light-blue-500 py-10">
-        <div className="card max-w-lg mx-auto bg-base-100 shadow-xl">
-          <div className="card-body">
+      <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
+        <div className="card w-full max-w-md bg-base-100 shadow-xl p-5" style={{ backgroundColor: "#E4E9F2" }}>
+          <div className="card-body flex items-center justify-center">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="steps space-x-2 mb-4">
-                <div className="step step-primary" data-content="✓">
+              <div className="steps space-x-2 mb-4" >
+                <div className="step step-primary" style={{ color: "#070A40" }} data-content="✓">
                   Name
                 </div>
                 <div className="step step-primary">Structure</div>
                 <div className="step step-primary">Key Words</div>
               </div>
-              <h3 className="card-title text-dark-blue-500">Key Words</h3>
-              <p>
-                In this page, you need to define a keyword for each block. The
-                keyword will assist you during the automated transcription
-                process. When you speak the keyword, the transcription will
-                start writing into that specific block. By default, the text's
-                title is set as the keyword, but you can change it to any word
-                you prefer.
-              </p>
+              <h3 className="text-dark-blue-500" style={{ margin: '0 auto', textAlign: 'center', fontSize: '20px', color: "#070A40" }}><b>Key Words</b></h3>
+              
               <div
                 style={{
                   margin: "10px",
                   padding: "10px",
                   minHeight: "300px",
-                  border: "2px solid black",
+                  border: "1px solid #070A40",
                   position: "relative",
+                  borderRadius:"0.6rem"
                 }}
               >
-                <input
-                  type="text"
-                  className="input input-bordered input-sm w-full mb-4"
-                  value={template.name}
-                  placeholder="Template Name"
-                  onChange={(e) =>
-                    setTemplate({
-                      ...template,
-                      name: e.target.value,
-                    })
-                  }
-                />
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ marginRight: 'auto',fontSize:'14px',color: "#070A40"}}> <b> Name:</b> {template.name}</span>
+                </div>
+                <div style={{ borderBottom: '1px solid silver', width: '100%' ,marginBottom:'2rem' }}></div>
+
+
+
+                <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+                  <span style={{ marginRight: 'auto',color:"#070A40" }}>  <span style={{ color: 'red' }}><b>*</b></span> <b>Defining keywords</b> </span>
+                  
+                  <div className="info-container">
+                <span style={{ color: "#2D37EC" }} className={`cursor-pointer info-title ${isOpen ? "open" : ""}`} onClick={() => setIsOpen(!isOpen)}>
+                 More info
+                  <span className={`arrow ${isOpen ? "arrow-up" : "arrow-down"}`}></span> 
+                </span>             
+              </div>     
+                </div>
+                {isOpen && (
+                  <div>
+                    <p className="keyWordP">
+                      In this page, you need to define a keyword for each block. The keyword will assist you during the automated transcription process. When you speak the keyword, the transcription will start writing into that specific block. By default, the text's title is set as the keyword, but you can change it to any word you prefer.
+                    </p>
+                  </div>
+                )}
+                <div style={{ borderBottom: '1px solid silver', width: '100%' ,marginBottom:'2rem' }}></div>
+
+
+
+
                 <div className="container">
                   {items.map((item, index) => (
                     <DraggableItem
                       key={index}
-                      item={item}
+                      item={item}כן
                       index={index}
                       moveItem={moveItem}
                       updateItem={updateItem}
@@ -179,6 +195,7 @@ function CreateTemplate3() {
                 <label className="label cursor-pointer justify-start space-x-2">
                   <span className="label-text">Make template public?</span>
                   <input
+                    style={{ borderColor: '#070A40', backgroundColor: template.isPublic ? '#070A40' : '#E4E9F2' }}
                     type="checkbox"
                     checked={template.isPublic}
                     onChange={(e) =>
@@ -194,6 +211,10 @@ function CreateTemplate3() {
               <div className="flex justify-between mt-6">
                 <button
                   type="button"
+                  style={{
+                    color: '#070A40', backgroundColor: 'rgba(255, 255, 255, 0)', /* שקיפות מלאה */
+                    borderColor: '#070A40' /* שקיפות מלאה */
+                  }}
                   onClick={() =>
                     navigate("/CreateTemplate2", {
                       state: {
@@ -203,12 +224,12 @@ function CreateTemplate3() {
                       },
                     })
                   }
-                  className="btn btn-outline btn-primary"
+                  className="btn btn-outline btn-primary new"
                 >
                   Back
                 </button>
-                <button type="submit" className="btn btn-primary">
-                  Continue
+                <button type="submit" className="btn btn-primary" style={{ backgroundColor: '#070A40', color: '#E4E9F2', borderColor: '#070A40'}}>
+                  Save template
                 </button>
               </div>
             </form>
