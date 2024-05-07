@@ -109,7 +109,7 @@ function CreateTemplate() {
                   textOverflow: "ellipsis",
                  
                 }}
-                className="steps"
+                className="steps space-x-2 mb-4"
               >
                 <div
                   style={{ marginRight: "1rem" }}

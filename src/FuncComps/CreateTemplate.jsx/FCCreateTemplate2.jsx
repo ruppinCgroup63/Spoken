@@ -12,6 +12,10 @@ function CreateTemplate2() {
   const [items, setItems] = useState(state.items || []);
   const [template, setTemplate] = useState(state.template || { name: "" });
 
+  const changeTemplateName = () =>{
+    setTemplate({ ...template, name: e.target.value })
+
+  } 
   const addItem = useCallback((type) => {
     const id = Math.random().toString(36).substring(2, 9);
     setItems((items) => [
@@ -65,27 +69,80 @@ function CreateTemplate2() {
                 <div className="step step-primary">Template structure</div>
                 <div className="step">Key Words</div>
               </div>
-              <h3 className="card-title text-dark-blue-500">
-                Template structure
+              <h3
+                className="text-dark-blue-500"
+                style={{
+                  margin: "0 auto",
+                  textAlign: "center",
+                  fontSize: "20px",
+                  color: "#070A40",
+                }}
+              >
+                <b>template structure</b>
               </h3>
               <div
                 style={{
                   margin: "10px",
                   padding: "10px",
                   minHeight: "300px",
-                  border: "2px solid black",
+                  border: "1px solid #070A40",
                   position: "relative",
+                  borderRadius: "0.6rem",
                 }}
               >
-                <input
-                  type="text"
-                  className="input input-bordered input-sm w-full"
-                  value={template.name}
-                  placeholder="Template Name"
-                  onChange={(e) =>
-                    setTemplate({ ...template, name: e.target.value })
-                  }
-                />
+                 {/*צריך לעשות את הכפתור עריכה */}
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span
+                    style={{
+                      marginRight: "auto",
+                      fontSize: "14px",
+                      color: "#070A40",
+                      position: "relative",
+                      top: "-3px" 
+                    }}
+                  >                  
+                    <b>Name:</b> {template.name}
+                  </span>
+                  <button
+                    style={{
+                      backgroundColor: "#04D9B2",
+                      color: "#E4E9F2",
+                      border: "none",
+                      borderRadius: "4px",
+                      padding: "5px 10px",
+                      cursor: "pointer",
+                      borderRadius: '6rem',
+                      position: "relative",
+                      top: "-3px"
+                    }}
+                    onClick={() => {
+                      <input
+                        type="text"
+                        value={template.name}
+                        onChange={(e) => setTemplate({ ...template, name: e.target.value })}
+                        style={{
+                          border: "1px solid #ccc",
+                          borderRadius: "4px",
+                          padding: "5px",
+                        }}
+                      />
+                    }}
+                  >
+                    <img
+                      src="/public/createTemplate/Edit.png"
+                      alt="Error"
+                      onClick={()=>changeTemplateName}
+                    />
+                  </button>
+                </div>
+                <div
+                  style={{
+                    borderBottom: "1px solid silver",
+                    width: "100%",
+                    marginBottom: "2rem",
+                  }}
+                ></div>
+
                 {items.map((item, index) => (
                   <DraggableItem_ForTemplate2
                     key={item.id}
@@ -97,28 +154,39 @@ function CreateTemplate2() {
                   />
                 ))}
               </div>
-              <div
-                className="flex gap-2 justify-center"
-                style={{ marginTop: "2rem" }}
-              >
-                <button
-                  type="button"
-                  className="btn btn-success btn-outline"
+
+
+              <div className="flex items-center justify-start mt-6 bg-white p-2 rounded-lg">
+                <img
+                  src="/public/createTemplate/add_box.png"
+                  alt="Error"
                   onClick={() => addItem("textarea")}
-                >
-                  Add Section
-                </button>
+                />
+                <span style={{marginLeft:'0.5rem',color:"#070A40"}}>
+                   text box 
+                   </span>
               </div>
+
 
               <div className="flex justify-between mt-6">
                 <button
                   type="button"
                   onClick={() => navigate("/CreateTemplate")}
                   className="btn btn-outline btn-primary"
+                  style={{
+                    color: "#070A40",
+                    backgroundColor: "rgba(255, 255, 255, 0)",
+                    borderColor: "#070A40",
+                  }}
                 >
                   Back
                 </button>
-                <button type="submit" className="btn btn-primary">
+                <button type="submit" className="btn btn-primary"
+                  style={{
+                    backgroundColor: "#070A40",
+                    color: "#E4E9F2",
+                    borderColor: "#070A40",
+                  }}>
                   Continue
                 </button>
               </div>

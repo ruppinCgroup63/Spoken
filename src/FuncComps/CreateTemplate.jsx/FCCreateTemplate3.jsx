@@ -2,7 +2,6 @@ import React, { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-//import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 import "./createTemplat3.css";
 import DraggableItem from "./CreateBlockForTemplate3";
@@ -14,6 +13,11 @@ function CreateTemplate3() {
   const [template, setTemplate] = useState(
     state.template || { name: "", description: "", isPublic: false }
   );
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
 
   const updateItem = useCallback(
     (index, field, value) => {
@@ -49,8 +53,12 @@ function CreateTemplate3() {
         >
           <div className="card-body flex items-center justify-center">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="steps space-x-2 mb-4" >
-                <div className="step step-primary" data-content="✓">
+              <div className="steps space-x-2 mb-4">
+                <div
+                  className="step step-primary"
+                  style={{ color: "#070A40" }}
+                  data-content="✓"
+                >
                   Name
                 </div>
                 <div className="step step-primary" data-content="✓">Structure</div>
@@ -84,9 +92,10 @@ function CreateTemplate3() {
                       marginRight: "auto",
                       fontSize: "14px",
                       color: "#070A40",
+                      position: "relative",
+                      top: "-3px" 
                     }}
                   >
-                    {" "}
                     <b>Name:</b> {template.name}
                   </span>
                 </div>
@@ -97,7 +106,58 @@ function CreateTemplate3() {
                     marginBottom: "2rem",
                   }}
                 ></div>
+                {/* חלק של מילת המפתח מתחת ל-Name */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    position: "relative",
+                  }}
+                >
+                  <span style={{ marginRight: "auto", color: "#070A40" }}>
+                    <span style={{ color: "red" }}>
+                      <b>*</b>
+                    </span>{" "}
+                    <b>Defining keywords</b>
+                  </span>
+                  <div className="info-container">
+                    <span
+                      style={{ color: "#2D37EC" }}
+                      className={`cursor-pointer info-title ${
+                        isOpen ? "open" : ""
+                      }`}
+                      onClick={() => setIsOpen(!isOpen)}
+                    >
+                      More info
+                      <span
+                        className={`arrow ${
+                          isOpen ? "arrow-up" : "arrow-down"
+                        }`}
+                      ></span>
+                    </span>
+                  </div>
+                </div>
+                {isOpen && (
+                  <div>
+                    <p className="keyWordP">
+                      In this page, you need to define a keyword for each block.
+                      The keyword will assist you during the automated
+                      transcription process. When you speak the keyword, the
+                      transcription will start writing into that specific block.
+                      By default, the text's title is set as the keyword, but
+                      you can change it to any word you prefer.
+                    </p>
+                  </div>
+                )}
+                <div
+                  style={{
+                    borderBottom: "1px solid silver",
+                    width: "100%",
+                    marginBottom: "2rem",
+                  }}
+                ></div>
 
+                {/* יתר הקוד נשאר כרגיל */}
                 <div className="container">
                   {items.map((item, index) => (
                     <DraggableItem
