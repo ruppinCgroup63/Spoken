@@ -138,7 +138,10 @@ function CreateTemplate2() {
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
-        <div className="card w-full max-w-md bg-base-100 shadow-xl p-5" style={{ backgroundColor: "#E4E9F2" }}>
+        <div
+          className="card w-full max-w-md bg-base-100 shadow-xl p-5"
+          style={{ backgroundColor: "#E4E9F2" }}
+        >
           <div className="card-body flex items-center justify-center">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="steps space-x-2 mb-4">
@@ -148,7 +151,7 @@ function CreateTemplate2() {
                 <div className="step step-primary">Template structure</div>
                 <div className="step">Key Words</div>
               </div>
-              <h3 className="card-title text-dark-blue-500 " >
+              <h3 className="card-title text-dark-blue-500">
                 Template structure
               </h3>
               <div
