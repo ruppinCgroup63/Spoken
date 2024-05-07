@@ -1,4 +1,4 @@
-/** @type {import('tailwindcss').Config} */
+
 export default {
   content: [
     "./index.html",
@@ -6,6 +6,7 @@ export default {
     "./App.jsx",
     "./assets/FuncComps/FCLogin.jsx",
     "./assets/FuncComps/FCRegister.jsx",
+    "./assets/FuncComps/CreateTemplate.jsx/FCCreateTemplate3",
   ],
   darkMode: "class",
   theme: {
@@ -14,6 +15,8 @@ export default {
         // Define your custom colors here
         OurColor1: "#332A6",
         OurColor2: "#070A40",
+        btn:"#070A40",
+        step:"#070A40",
         OurColor3: "#2D4BA6",
         OurColor4: "#E4E9F2",
         OurColor5: "#04D9B2",

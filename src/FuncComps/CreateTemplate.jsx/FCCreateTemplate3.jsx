@@ -49,15 +49,11 @@ function CreateTemplate3() {
         >
           <div className="card-body flex items-center justify-center">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="steps space-x-2 mb-4">
-                <div
-                  className="step step-primary"
-                  style={{ color: "#070A40" }}
-                  data-content="✓"
-                >
+              <div className="steps space-x-2 mb-4" >
+                <div className="step step-primary" data-content="✓">
                   Name
                 </div>
-                <div className="step step-primary">Structure</div>
+                <div className="step step-primary" data-content="✓">Structure</div>
                 <div className="step step-primary">Key Words</div>
               </div>
               <h3

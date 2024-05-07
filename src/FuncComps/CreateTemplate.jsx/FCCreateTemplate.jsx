@@ -107,6 +107,7 @@ function CreateTemplate() {
                   overflow: "hidden",
                   whiteSpace: "nowrap",
                   textOverflow: "ellipsis",
+                 
                 }}
                 className="steps"
               >
@@ -131,6 +132,9 @@ function CreateTemplate() {
                   display: "block",
                   margin: "0 auto",
                   marginBottom: "0.5rem",
+                  color:'#070A40',
+                  fontWeight: 'bold'
+
                 }}
               >
                 Template name?
@@ -167,6 +171,8 @@ function CreateTemplate() {
                   display: "block",
                   margin: "0 auto",
                   marginBottom: "0.5rem",
+                  color:'#070A40',
+                  fontWeight: 'bold'
                 }}
               >
                 Description
@@ -203,6 +209,7 @@ function CreateTemplate() {
                 <div style={{ flexGrow: "1" }}></div>
                 <div className="form-control mt-6">
                   <button
+                    style={{backgroundColor:'#070A40', color:'#E4E9F2'}}
                     type="submit"
                     className="btn btn-md btn-primary  btn-primary"
                   >

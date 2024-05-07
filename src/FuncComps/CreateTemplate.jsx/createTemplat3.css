@@ -1,8 +1,6 @@
 .arrow {
     display: inline-block;
-    margin-left: 5px;
-  
-    
+    margin-left: 10px;
   }
   
   .arrow-down::after {
@@ -22,4 +20,13 @@
     color:'#070A40';
   }
 
-  
+  .step-primary {
+    color: '#070A40' !important;
+  }
+
+  .steps .step-primary + .step-primary:before, .steps .step-primary:after {
+    --tw-bg-opacity: 1;
+    background-color: #070a40;
+    --tw-text-opacity: 1;
+    color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
+  }
