@@ -66,7 +66,9 @@ function CreateTemplate() {
     } else if (userFields.some((value) => value === "")) {
       console.log("You need to fill in all the fields ");
     } else {
-      navigate("/CreateTemplate2", { state: { template } });
+      navigate("/CreateTemplate2", {
+        state: { template, origin: "CreateTemplate" },
+      });
 
       // clearAllFileds();
     }
@@ -75,7 +77,10 @@ function CreateTemplate() {
   return (
     <>
       <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
-        <div className="card w-full max-w-md bg-base-100 shadow-xl p-5" style={{ backgroundColor: "#E4E9F2" }}>
+        <div
+          className="card w-full max-w-md bg-base-100 shadow-xl p-5"
+          style={{ backgroundColor: "#E4E9F2" }}
+        >
           <div className="card-body flex items-center justify-center">
             <br />
             <form onSubmit={handleSubmit}>
@@ -132,8 +137,9 @@ function CreateTemplate() {
               </h3>
               <div className="form-control">
                 <label
-                  className={`input input-bordered flex items-center gap-2 relative ${errors.name ? "input-error" : ""
-                    }`}
+                  className={`input input-bordered flex items-center gap-2 relative ${
+                    errors.name ? "input-error" : ""
+                  }`}
                 >
                   <input
                     type="text"
@@ -167,15 +173,18 @@ function CreateTemplate() {
               </h3>
               <div className="form-control">
                 <label
-                  className={`input input-bordered flex items-center gap-2 relative ${errors.Description ? "input-error" : ""
-                    }`}
+                  className={`input input-bordered flex items-center gap-2 relative ${
+                    errors.Description ? "input-error" : ""
+                  }`}
                 >
                   <input
                     type="text"
-                    className={`grow ${errors.Description ? "input-error" : ""}`}
+                    className={`grow ${
+                      errors.Description ? "input-error" : ""
+                    }`}
                     placeholder="new client..."
                     onBlur={validaterDescription}
-                    aria-describedby={errors.Description ? "Description-error" : ""}
+                    aria-describedby={errors.Description ? "name-error" : ""}
                     value={template.Description}
                     onChange={(e) =>
                       setTemplate({ ...template, Description: e.target.value })
@@ -184,7 +193,7 @@ function CreateTemplate() {
                   />
                 </label>
                 {errors.Description && (
-                  <p id="Description-error" className="text-red-500 mt-2">
+                  <p id="name-error" className="text-red-500 mt-2">
                     {errors.Description}
                   </p>
                 )}
