@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-//import { useLocation, useNavigate } from "react-router-dom";
 import { useDrag, useDrop } from "react-dnd";
-//import { HTML5Backend } from "react-dnd-html5-backend";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 import "./createTemplat3.css";
@@ -10,6 +8,7 @@ const ItemType = "DRAGGABLE_ITEM";
 
 const DraggableItem = ({ item, index, moveItem, updateItem }) => {
   const [showKeywordInput, setShowKeywordInput] = useState(false);
+  const [keyword, setKeyword] = useState(item.keyword || item.title); // Default to title if keyword is not set
 
   const [, drag] = useDrag(
     () => ({
@@ -32,8 +31,20 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
     [index]
   );
 
+  // Toggles keyword input visibility
   const handleKeywordToggle = () => {
     setShowKeywordInput(true);
+  };
+
+  // Handles keyword value change and toggles back to button
+  const handleKeywordChange = (e) => {
+    setKeyword(e.target.value);
+    updateItem(index, "keyword", e.target.value);
+  };
+
+  // When losing focus, toggle back to the button
+  const handleKeywordBlur = () => {
+    setShowKeywordInput(false);
   };
 
   return (
@@ -76,8 +87,9 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
           <input
             type="text"
             placeholder="Keyword"
-            value={item.keyword || item.title} // Default to title if keyword is not set
-            onChange={(e) => updateItem(index, "keyword", e.target.value)}
+            value={keyword}
+            onChange={handleKeywordChange}
+            onBlur={handleKeywordBlur}
             style={{
               position: "absolute",
               top: "5px",
@@ -96,15 +108,23 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
               position: "absolute",
               top: "5px",
               right: "5px",
-              backgroundColor: "#28a745",
-              color: "white",
-              padding: "0 5px",
-              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "transparent", // ללא צבע רקע
+              color: "#28a745", // או כל צבע שתבחרו למילת המפתח
+              padding: "0",
               border: "none",
               cursor: "pointer",
+              gap: "4px", // מרווח קטן בין האייקון לטקסט
             }}
           >
-            +
+            <img
+              src="/public/createTemplate/buttonAdd.png"
+              alt="button"
+              style={{ width: "16px", height: "16px" }}
+            />
+            {keyword}
           </button>
         )}
       </div>

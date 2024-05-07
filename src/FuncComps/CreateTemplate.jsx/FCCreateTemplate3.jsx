@@ -61,7 +61,9 @@ function CreateTemplate3() {
                 >
                   Name
                 </div>
-                <div className="step step-primary" data-content="✓">Structure</div>
+                <div className="step step-primary" data-content="✓">
+                  Structure
+                </div>
                 <div className="step step-primary">Key Words</div>
               </div>
               <h3
@@ -93,7 +95,7 @@ function CreateTemplate3() {
                       fontSize: "14px",
                       color: "#070A40",
                       position: "relative",
-                      top: "-3px" 
+                      top: "-3px",
                     }}
                   >
                     <b>Name:</b> {template.name}
@@ -157,7 +159,7 @@ function CreateTemplate3() {
                   }}
                 ></div>
 
-                {/* יתר הקוד נשאר כרגיל */}
+                {}
                 <div className="container">
                   {items.map((item, index) => (
                     <DraggableItem
