@@ -183,7 +183,7 @@ function RegistrationPage2() {
                                 <div style={{ flexGrow: '1' }}></div>
                                 <div className="form-control mt-6">
                                     <button style={{ padding: '0.25rem 1rem', marginRight: 'auto' }} type="submit"
-                                        className="btn btn-xs sm:btn-sm btn-primary">Continue</button>
+                                        className="btn btn-xs sm:btn-sm btn-primary continue">Continue</button>
                                 </div>
                             </div>
                         </form>

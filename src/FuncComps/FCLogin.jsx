@@ -122,7 +122,7 @@ function Login(props) {
       <div className="card w-96 bg-base-100 shadow-xl" style={{ backgroundColor: "#E4E9F2" }}>
         <div className="card-body text-center"> {/* Center text */}
           <div className="flex items-center justify-center">
-            <div className="w-28 h-28"><img src="/public/login/spokenLogo.png" alt="Error" className="w-full h-full object-contain" /></div>
+            <div className="w-15 h-13"><img src="/public/login/SpokenLogoNew.png" alt="Error" className="w-full h-full object-contain" style={{ width: "10rem", height: "4rem" }} /></div>
           </div>
           <form onSubmit={handleSubmit} >
           {emailExists && <ErrorMessage message="Invalid email or password!" />} {/* תצוגת הודעת השגיאה */}

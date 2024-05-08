@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
-import "./createTemplat3.css";
+import "./style.css";
 import DraggableItem from "./CreateBlockForTemplate3";
 
 function CreateTemplate3() {
@@ -36,6 +36,8 @@ function CreateTemplate3() {
     },
     [items]
   );
+
+  console.log(items,template);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -195,11 +197,7 @@ function CreateTemplate3() {
               <div className="flex justify-between mt-6">
                 <button
                   type="button"
-                  style={{
-                    color: "#070A40",
-                    backgroundColor: "rgba(255, 255, 255, 0)",
-                    borderColor: "#070A40",
-                  }}
+               
                   onClick={() =>
                     navigate("/CreateTemplate2", {
                       state: {
@@ -209,18 +207,14 @@ function CreateTemplate3() {
                       },
                     })
                   }
-                  className="btn btn-outline btn-primary new"
+                  className="btn btn-outline btn-primary new btn-sm back"
                 >
                   Back
                 </button>
                 <button
                   type="submit"
-                  className="btn btn-primary"
-                  style={{
-                    backgroundColor: "#070A40",
-                    color: "#E4E9F2",
-                    borderColor: "#070A40",
-                  }}
+                  className="btn btn-primary btn-sm continue"
+                 
                 >
                   Save template
                 </button>

@@ -1,15 +1,15 @@
 import { useState } from 'react'
 import './App.css'
 import Login from './FuncComps/FCLogin'
-import RegistrationPage from './FuncComps/Register.jsx/FCRegister'
+import RegistrationPage from './FuncComps/Register/FCRegister'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import RegistrationPage2 from './FuncComps/Register.jsx/FCRegister2'
-import RegistrationPage3 from './FuncComps/Register.jsx/FCRegister3'
-import HomePage from './FuncComps/HOME.jsx/FCHomePage';
-import CreateTemplate from './FuncComps/CreateTemplate.jsx/FCCreateTemplate'
-import CreateTemplate2 from './FuncComps/CreateTemplate.jsx/FCCreateTemplate2'
-import CreateTemplate3 from './FuncComps/CreateTemplate.jsx/FCCreateTemplate3';
-
+import RegistrationPage2 from './FuncComps/Register/FCRegister2'
+import RegistrationPage3 from './FuncComps/Register/FCRegister3'
+import HomePage from './FuncComps/HOME/FCHomePage';
+import CreateTemplate from './FuncComps/CreateTemplate/FCCreateTemplate'
+import CreateTemplate2 from './FuncComps/CreateTemplate/FCCreateTemplate2'
+import CreateTemplate3 from './FuncComps/CreateTemplate/FCCreateTemplate3';
+import "./FuncComps/CreateTemplate/style.css"
 
 
 function App() {

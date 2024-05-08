@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDrag, useDrop } from "react-dnd";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
-import "./createTemplat3.css";
+import "./style.css";
 
 const ItemType = "DRAGGABLE_ITEM";
 

@@ -26,7 +26,17 @@
 
   .steps .step-primary + .step-primary:before, .steps .step-primary:after {
     --tw-bg-opacity: 1;
-    background-color: #070a40;
+    background-color: #070a40 !important;
     --tw-text-opacity: 1;
     color: var(--fallback-pc,oklch(var(--pc)/var(--tw-text-opacity)));
   }
+.continue{
+  background-color: #070A40 !important; 
+  color: #E4E9F2 !important;
+  border-color: #070A40 !important;
+}
+.back{
+  color: #070A40 !important;
+  background-color: rgba(255, 255, 255, 0) !important;
+  border-color: #070A40 !important;
+}

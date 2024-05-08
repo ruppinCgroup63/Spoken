@@ -4,7 +4,7 @@ import { useDrag, useDrop } from "react-dnd";
 //import { HTML5Backend } from "react-dnd-html5-backend";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
-import "./createTemplat3.css";
+import "./style.css";
 
 const ItemType1 = "DRAGGABLE_ITEM";
 
@@ -56,26 +56,23 @@ const DraggableItem_ForTemplate2 = ({
           marginTop: "2rem",
         }}
       >
-        <button
-          onClick={() => removeItem(index)}
-          style={{
-            position: "absolute",
-            top: "5px",
-            right: "5px",
-            zIndex: 10,
-            backgroundColor: "#04D9B2",
-            color: "black",
-            width: "1.8rem",
-          }}
-          className="btn btn-xs"
-        >
+        
           <img
-            src="/public/createTemplate/Trash.png"
+            src="/public/createTemplate/Trash1.png"
             alt="Delete"
-            style={{ height: "10px", width: "9.17px" }} // עיצוב מותאם לגודל התמונה
+            style={{ 
+              height: "65px", // גובה התמונה
+              width: "65px",  // רוחב התמונה
+              position: "absolute",
+              top: "-14px",      
+              right: "-10px", 
+              cursor: "pointer",
+            
+              zIndex: 10, }} // עיצוב מותאם לגודל התמונה
             className="object-contain"
+            onClick={() => removeItem(index)}
           />
-        </button>
+ 
 
         <input
           type="text"

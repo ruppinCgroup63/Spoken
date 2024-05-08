@@ -6,6 +6,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
 import DraggableItem_ForTemplate2 from "./CreateBlockForTemplate2";
 
+
 function CreateTemplate2() {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -155,38 +156,53 @@ function CreateTemplate2() {
                 ))}
               </div>
 
-
+                 {/*הוספת תיבת טקסט */}
               <div className="flex items-center justify-start mt-6 bg-white p-2 rounded-lg">
                 <img
                   src="/public/createTemplate/add_box.png"
                   alt="Error"
                   onClick={() => addItem("textarea")}
+                  style={{ cursor: "pointer" }} // נוסיף סגנון כדי להציג את הסמן שהתמונה היא לחיצה
+
                 />
-                <span style={{marginLeft:'0.5rem',color:"#070A40"}}>
-                   text box 
+                <span style={{ marginLeft: '0.5rem', color: "#070A40", cursor: "pointer" }}  onClick={() => addItem("textarea")}>
+                   Text Box 
                    </span>
               </div>
-
+              <div className="flex items-center justify-start mt-6 bg-white p-2 rounded-lg">
+                <img
+                  src="/public/createTemplate/add_box.png"
+                  alt="Error"
+                  /*onClick={() => addItem("textarea")}*//* לשנות את זה שיוסיף חתימה ולא תיבת טקסט*/
+                  style={{ cursor: "pointer" }}
+                />
+                <span style={{ marginLeft: '0.5rem', color: "#070A40", cursor: "pointer" }}>
+                   Signature
+                   </span>
+              </div>
+              <div className="flex items-center justify-start mt-6 bg-white p-2 rounded-lg">
+                <img
+                  src="/public/createTemplate/add_box.png"
+                  alt="Error"
+                  /*onClick={() => addItem("textarea")}*//*לשנות את זה שיוסיף תמונה*/
+                  style={{ cursor: "pointer" }}
+                />
+                <span style={{ marginLeft: '0.5rem', color: "#070A40", cursor: "pointer" }}>
+                   Import File
+                   </span>
+              </div>
 
               <div className="flex justify-between mt-6">
                 <button
                   type="button"
                   onClick={() => navigate("/CreateTemplate")}
-                  className="btn btn-outline btn-primary"
-                  style={{
-                    color: "#070A40",
-                    backgroundColor: "rgba(255, 255, 255, 0)",
-                    borderColor: "#070A40",
-                  }}
+                  className="btn btn-outline btn-primary btn-sm back"
+                
                 >
                   Back
                 </button>
-                <button type="submit" className="btn btn-primary"
-                  style={{
-                    backgroundColor: "#070A40",
-                    color: "#E4E9F2",
-                    borderColor: "#070A40",
-                  }}>
+                <button type="submit" className="btn btn-primary btn-sm continue"
+                 >
                   Continue
                 </button>
               </div>

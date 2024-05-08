@@ -6,7 +6,10 @@ function CreateTemplate() {
   const { state } = useLocation();
   let templateObj = state;
 
+
+
   const [template, setTemplate] = useState({
+    id: Math.random().toString(36).substring(2, 9),
     name: templateObj ? templateObj.template.name : "",
     Description: templateObj ? templateObj.template.Description : "",
   });
@@ -55,6 +58,12 @@ function CreateTemplate() {
     }
   };
 
+  const handleButtonClick = () => {
+    navigate("/HomePage");
+  };
+
+
+  console.log(template);
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle form submission
@@ -87,6 +96,7 @@ function CreateTemplate() {
               <label
                 className="btn btn-circle swap swap-rotate"
                 style={{ position: "absolute", top: "30px", left: "20px" }}
+                onClick={handleButtonClick}
               >
                 {/* this hidden checkbox controls the state */}
                 <input type="checkbox" />
@@ -209,9 +219,9 @@ function CreateTemplate() {
                 <div style={{ flexGrow: "1" }}></div>
                 <div className="form-control mt-6">
                   <button
-                    style={{backgroundColor:'#070A40', color:'#E4E9F2'}}
+                   
                     type="submit"
-                    className="btn btn-md btn-primary  btn-primary"
+                    className="btn btn-sm btn-primary continue"
                   >
                     Continue
                   </button>
