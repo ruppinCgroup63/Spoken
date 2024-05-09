@@ -8,8 +8,9 @@ const ItemType = "DRAGGABLE_ITEM";
 
 const DraggableItem = ({ item, index, moveItem, updateItem }) => {
   const [showKeywordInput, setShowKeywordInput] = useState(false);
-  const [keyword, setKeyword] = useState(item.keyword || item.title); // Default to title if keyword is not set
+  const [keyword, setKeyword] = useState(item.keyword || item.title); // ערך ברירת מחדל
 
+  // Drag logic
   const [, drag] = useDrag(
     () => ({
       type: ItemType,
@@ -18,31 +19,33 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
     [index, item.id]
   );
 
+  // Drop logic
   const [, drop] = useDrop(
     () => ({
       accept: ItemType,
-      hover(item, monitor) {
-        if (item.index !== index) {
-          moveItem(item.index, index);
-          item.index = index;
+      hover(draggedItem, monitor) {
+        if (draggedItem.index !== index) {
+          moveItem(draggedItem.index, index);
+          draggedItem.index = index;
         }
       },
     }),
     [index]
   );
 
-  // Toggles keyword input visibility
+  // כאשר הכפתור נלחץ, עובר למצב עריכת תיבת הטקסט
   const handleKeywordToggle = () => {
     setShowKeywordInput(true);
   };
 
-  // Handles keyword value change and toggles back to button
+  // כאשר מילת המפתח משתנה, היא נשמרת במצב מקומי ובאובייקט הכללי
   const handleKeywordChange = (e) => {
-    setKeyword(e.target.value);
-    updateItem(index, "keyword", e.target.value);
+    const newKeyword = e.target.value;
+    setKeyword(newKeyword);
+    updateItem(index, "keyword", newKeyword);
   };
 
-  // When losing focus, toggle back to the button
+  // כאשר תיבת הטקסט מאבדת פוקוס, הכפתור חוזר לנראות המקורית
   const handleKeywordBlur = () => {
     setShowKeywordInput(false);
   };
@@ -55,7 +58,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
       maxConstraints={[350, 100]}
       resizeHandles={["e", "w"]}
       className="resizable"
-      style={{ margin: "auto" }} // Centering the boxes within the div
+      style={{ margin: "auto" }} // מרכז את התיבה בתוך ה-div
     >
       <div
         ref={(node) => drag(drop(node))}
@@ -111,12 +114,12 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: "transparent", // ללא צבע רקע
-              color: "#28a745", // או כל צבע שתבחרו למילת המפתח
-              padding: "0",
+              backgroundColor: "#28a745", // צבע ירוק רקע
+              color: "white",
+              padding: "0 8px",
+              borderRadius: "50%",
               border: "none",
               cursor: "pointer",
-              gap: "4px", // מרווח קטן בין האייקון לטקסט
             }}
           >
             <img
@@ -124,7 +127,6 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
               alt="button"
               style={{ width: "16px", height: "16px" }}
             />
-            {keyword}
           </button>
         )}
       </div>

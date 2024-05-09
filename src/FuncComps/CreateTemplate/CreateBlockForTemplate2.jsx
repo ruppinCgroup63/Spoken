@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-//import { useLocation, useNavigate } from "react-router-dom";
+import React from "react";
 import { useDrag, useDrop } from "react-dnd";
-//import { HTML5Backend } from "react-dnd-html5-backend";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 import "./style.css";
@@ -36,15 +34,58 @@ const DraggableItem_ForTemplate2 = ({
     [index]
   );
 
+  const renderContent = () => {
+    if (item.type === "file") {
+      // תיבת קובץ 
+      return (
+        <input
+          type="file"
+          style={{
+            width: "100%",
+            marginBottom: "5px",
+            border: "1px solid silver",
+          }}
+        />
+      );
+    } else {
+      // תיבת טקסט 
+      return (
+        <>
+          <input
+            type="text"
+            placeholder="Enter title"
+            value={item.title}
+            onChange={(e) => updateItem(index, "title", e.target.value)}
+            style={{
+              width: "100%",
+              marginBottom: "5px",
+              border: "1px solid silver",
+            }}
+          />
+          <textarea
+            placeholder="Enter text"
+            value={item.text}
+            onChange={(e) => updateItem(index, "text", e.target.value)}
+            style={{
+              width: "100%",
+              height: "45px",
+              border: "1px solid silver",
+            }}
+          />
+        </>
+      );
+    }
+  };
+
   return (
     <ResizableBox
       width={300}
-      height={100}
-      minConstraints={[100, 100]}
-      maxConstraints={[350, 100]}
+      height={item.type === "file" ? 60 : 100}
+      minConstraints={[100, 60]}
+      maxConstraints={[350, item.type === "file" ? 60 : 100]}
       resizeHandles={["e", "w"]}
       className="resizable"
-      style={{ margin: "auto" }} // Centering the boxes within the div
+      style={{ margin: "auto", marginTop: "2rem" }} // Centering the boxes within the div
     >
       <div
         ref={(node) => drag(drop(node))}
@@ -52,13 +93,24 @@ const DraggableItem_ForTemplate2 = ({
           padding: "5px",
           overflow: "hidden",
           position: "relative",
-          border: "1px solid  silver",
-          marginTop: "2rem",
+          border: "1px solid silver",
         }}
       >
-        
+        <button
+          onClick={() => removeItem(index)}
+          style={{
+            position: "absolute",
+            top: "5px",
+            right: "5px",
+            zIndex: 10,
+            backgroundColor: "#04D9B2",
+            color: "black",
+            width: "1.8rem",
+          }}
+          className="btn btn-xs"
+        >
           <img
-            src="/public/createTemplate/Trash1.png"
+            src="/public/createTemplate/Trash.png"
             alt="Delete"
             style={{ 
               height: "65px", // גובה התמונה
@@ -72,25 +124,8 @@ const DraggableItem_ForTemplate2 = ({
             className="object-contain"
             onClick={() => removeItem(index)}
           />
- 
-
-        <input
-          type="text"
-          placeholder=" Enter title"
-          value={item.title}
-          onChange={(e) => updateItem(index, "title", e.target.value)}
-          style={{
-            width: "100%",
-            marginBottom: "5px",
-            border: "1px solid  silver",
-          }}
-        />
-        <textarea
-          placeholder=" Enter text"
-          value={item.text}
-          onChange={(e) => updateItem(index, "text", e.target.value)}
-          style={{ width: "100%", height: "45px", border: "1px solid  silver" }}
-        />
+        </button>
+        {renderContent()}
       </div>
     </ResizableBox>
   );

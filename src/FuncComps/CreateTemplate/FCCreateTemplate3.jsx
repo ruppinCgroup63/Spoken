@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
-import "./style.css";
 import DraggableItem from "./CreateBlockForTemplate3";
 
 function CreateTemplate3() {
@@ -45,7 +44,7 @@ function CreateTemplate3() {
       state: { template, items, origin: "CreateTemplate3" },
     });
   };
-
+  console.log(items);
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
@@ -110,7 +109,8 @@ function CreateTemplate3() {
                     marginBottom: "2rem",
                   }}
                 ></div>
-                {/* חלק של מילת המפתח מתחת ל-Name */}
+
+                {/* חלק של מילת המפתח */}
                 <div
                   style={{
                     display: "flex",
@@ -161,17 +161,31 @@ function CreateTemplate3() {
                   }}
                 ></div>
 
-                {}
                 <div className="container">
-                  {items.map((item, index) => (
-                    <DraggableItem
-                      key={index}
-                      item={item}
-                      index={index}
-                      moveItem={moveItem}
-                      updateItem={updateItem}
-                    />
-                  ))}
+                  {items.map((item, index) => {
+                    if (item.type === "file") {
+                      return (
+                        <div key={index}>
+                          <label>Import File:</label>
+                          <input
+                            type="file"
+                            onChange={(e) => {
+                              // Handle file upload
+                            }}
+                          />
+                        </div>
+                      );
+                    }
+                    return (
+                      <DraggableItem
+                        key={index}
+                        item={item}
+                        index={index}
+                        moveItem={moveItem}
+                        updateItem={updateItem}
+                      />
+                    );
+                  })}
                 </div>
                 <label className="label cursor-pointer justify-start space-x-2">
                   <span className="label-text">Make template public?</span>
