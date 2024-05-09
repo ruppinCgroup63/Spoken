@@ -5,7 +5,6 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
 import DraggableItem_ForTemplate2 from "./CreateBlockForTemplate2";
 
-
 function CreateTemplate2() {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -173,7 +172,7 @@ function CreateTemplate2() {
                 </button>
                 <button
                   type="submit"
-                  className="btn btn-primary btn-sm"
+                  className="btn btn-primary"
                   style={{
                     backgroundColor: "#070A40",
                     color: "#E4E9F2",

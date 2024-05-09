@@ -13,6 +13,7 @@ const DraggableItem_ForTemplate2 = ({
   updateItem,
   removeItem,
 }) => {
+  // הגדרת פעולת הגרירה
   const [, drag] = useDrag(
     () => ({
       type: ItemType1,
@@ -21,6 +22,7 @@ const DraggableItem_ForTemplate2 = ({
     [index, item.id]
   );
 
+  // הגדרת פעולת ההורדה
   const [, drop] = useDrop(
     () => ({
       accept: ItemType1,
@@ -34,9 +36,10 @@ const DraggableItem_ForTemplate2 = ({
     [index]
   );
 
+  // הגדרת התוכן לפי סוג התיבה
   const renderContent = () => {
     if (item.type === "file") {
-      // תיבת קובץ 
+      // תיבת קובץ
       return (
         <input
           type="file"
@@ -48,7 +51,7 @@ const DraggableItem_ForTemplate2 = ({
         />
       );
     } else {
-      // תיבת טקסט 
+      // תיבת טקסט
       return (
         <>
           <input
@@ -80,12 +83,12 @@ const DraggableItem_ForTemplate2 = ({
   return (
     <ResizableBox
       width={300}
-      height={item.type === "file" ? 60 : 100}
-      minConstraints={[100, 60]}
-      maxConstraints={[350, item.type === "file" ? 60 : 100]}
+      height={100}
+      minConstraints={[100, 100]}
+      maxConstraints={[350, 100]}
       resizeHandles={["e", "w"]}
       className="resizable"
-      style={{ margin: "auto", marginTop: "2rem" }} // Centering the boxes within the div
+      style={{ margin: "auto" }} // Centering the boxes within the div
     >
       <div
         ref={(node) => drag(drop(node))}
@@ -94,37 +97,25 @@ const DraggableItem_ForTemplate2 = ({
           overflow: "hidden",
           position: "relative",
           border: "1px solid silver",
+          marginTop: "2rem",
         }}
       >
-        <button
-          onClick={() => removeItem(index)}
+        <img
+          src="/public/createTemplate/Trash1.png"
+          alt="Delete"
           style={{
+            height: "65px", // גובה התמונה
+            width: "65px", // רוחב התמונה
             position: "absolute",
-            top: "5px",
-            right: "5px",
+            top: "-14px",
+            right: "-10px",
+            cursor: "pointer",
             zIndex: 10,
-            backgroundColor: "#04D9B2",
-            color: "black",
-            width: "1.8rem",
-          }}
-          className="btn btn-xs"
-        >
-          <img
-            src="/public/createTemplate/Trash.png"
-            alt="Delete"
-            style={{ 
-              height: "65px", // גובה התמונה
-              width: "65px",  // רוחב התמונה
-              position: "absolute",
-              top: "-14px",      
-              right: "-10px", 
-              cursor: "pointer",
-            
-              zIndex: 10, }} // עיצוב מותאם לגודל התמונה
-            className="object-contain"
-            onClick={() => removeItem(index)}
-          />
-        </button>
+          }} // עיצוב מותאם לגודל התמונה
+          className="object-contain"
+          onClick={() => removeItem(index)}
+        />
+
         {renderContent()}
       </div>
     </ResizableBox>
