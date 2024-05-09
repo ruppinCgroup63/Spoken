@@ -11,6 +11,7 @@ function CreateTemplate2() {
   const [items, setItems] = useState(state.items || []);
   const [template, setTemplate] = useState(state.template || { name: "" });
 
+  // פונקציה להוספת פריט מסוג שונה בהתאם לפרמטר `type`
   const addItem = useCallback((type) => {
     const id = Math.random().toString(36).substring(2, 9);
     setItems((items) => [
@@ -24,6 +25,22 @@ function CreateTemplate2() {
       },
     ]);
   }, []);
+
+  // פונקציה להוספת חתימה כתמונה
+  const addSignature = useCallback(() => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setItems((items) => [
+      ...items,
+      {
+        id,
+        type: "signature",
+        title: "Signature",
+        text: "",
+        keyword: "",
+        image: template.Signature, // שימוש בחתימה מתוך אובייקט template
+      },
+    ]);
+  }, [template.Signature]);
 
   const removeItem = useCallback((index) => {
     setItems((items) => items.filter((_, i) => i !== index));
@@ -154,6 +171,25 @@ function CreateTemplate2() {
                   }}
                 >
                   Import File
+                </span>
+              </div>
+              {/* הוספת כפתור לחתימה */}
+              <div className="flex items-center justify-start mt-6 bg-white p-2 rounded-lg">
+                <img
+                  src="/public/createTemplate/add_box.png"
+                  alt="Error"
+                  onClick={addSignature}
+                  style={{ cursor: "pointer" }}
+                />
+                <span
+                  style={{
+                    marginLeft: "0.5rem",
+                    color: "#070A40",
+                    cursor: "pointer",
+                  }}
+                  onClick={addSignature}
+                >
+                  Signature
                 </span>
               </div>
 

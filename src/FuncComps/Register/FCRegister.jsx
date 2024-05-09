@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 
-const apiUrl = 'https://localhost:7224/api/Langs';
+const apiUrl = 'https://localhost:44326/api/Langs';
 
 function RegistrationPage() {
     const navigate = useNavigate();

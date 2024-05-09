@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function CreateTemplate() {
@@ -6,37 +6,63 @@ function CreateTemplate() {
   const { state } = useLocation();
   let templateObj = state;
 
+  // פונקציה לשליפת פריט JSON מ-sessionStorage
+  const getUserDataFromSessionStorage = () => {
+    const userDataJson = sessionStorage.getItem("user");
+    return userDataJson ? JSON.parse(userDataJson) : {};
+  };
 
-
+  // אתחול אובייקט ה-template
   const [template, setTemplate] = useState({
     id: Math.random().toString(36).substring(2, 9),
-    name: templateObj ? templateObj.template.name : "",
+    TemplateName: templateObj ? templateObj.template.TemplateName : "",
     Description: templateObj ? templateObj.template.Description : "",
+    CreatorEmail: "", // ערכים ייטענו ב-useEffect
+    LangName: "", // ערכים ייטענו ב-useEffect
+    DomainName: "", // ערכים ייטענו ב-useEffect
+    Signature: "", // ערכים ייטענו ב-useEffect
   });
 
-  //בדיקת שגיאות
+  // נעדכן את ה-template ברגע שהקומפוננטה נטענת
+  useEffect(() => {
+    // שליפת המידע מ-session storage
+    const userData = getUserDataFromSessionStorage();
+    console.log("User data:", userData);
+
+    // עדכון ערכים ב-template 
+    setTemplate((prevTemplate) => ({
+      ...prevTemplate,
+      CreatorEmail: userData.email || "",
+      LangName: userData.langName || "",
+      DomainName: userData.domainName || "",
+      Signature: userData.signature || "",
+    }));
+  }, []); // [] מוודא שה-useEffect ירוץ רק פעם אחת
+  console.log(template);
+
+  // פונקציה לעדכון שגיאות
   const [errors, setErrors] = useState({
-    name: "",
+    TemplateName: "",
     Description: "",
   });
 
-  const handleValidation = (name, isValid, errorMessage) => {
+  const handleValidation = (TemplateName, isValid, errorMessage) => {
     setErrors((prevErrors) => ({
       ...prevErrors,
-      [name]: isValid ? "" : errorMessage,
+      [TemplateName]: isValid ? "" : errorMessage,
     }));
   };
 
-  //ולידציה לשם משתמש
+  // ולידציה לשם משתמש
   const validaterName = (e) => {
     const text = e.target.value;
     const regexUserName = /^[a-zA-Z\s]{1,60}$/;
     const isValid = regexUserName.test(text);
-    handleValidation("name", isValid, "Invalid input! Only English letters");
+    handleValidation("TemplateName", isValid, "Invalid input! Only English letters");
     if (isValid) {
       setTemplate((prevUser) => ({
         ...prevUser,
-        name: text,
+        TemplateName: text,
       }));
     }
   };
@@ -63,25 +89,25 @@ function CreateTemplate() {
   };
 
 
-  console.log(template);
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission
-
+    // טיפול בשליחת הטופס
     let validations = Object.values(errors);
     let userFields = Object.values(template);
     if (validations.some((value) => value !== "")) {
       console.log("Entering an invalid value in one of the fields");
     } else if (userFields.some((value) => value === "")) {
-      console.log("You need to fill in all the fields ");
+      console.log("You need to fill in all the fields");
+      console.log(template);
+      console.log(userFields)
     } else {
       navigate("/CreateTemplate2", {
         state: { template, origin: "CreateTemplate" },
       });
-
-      // clearAllFileds();
     }
   };
+
+  
 
   return (
     <>
@@ -109,7 +135,7 @@ function CreateTemplate() {
                   height="32"
                   viewBox="0 0 512 512"
                 >
-                  <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+                  <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49" />
                 </svg>
               </label>
               <div
@@ -117,7 +143,6 @@ function CreateTemplate() {
                   overflow: "hidden",
                   whiteSpace: "nowrap",
                   textOverflow: "ellipsis",
-                 
                 }}
                 className="steps space-x-2 mb-4"
               >
@@ -142,9 +167,8 @@ function CreateTemplate() {
                   display: "block",
                   margin: "0 auto",
                   marginBottom: "0.5rem",
-                  color:'#070A40',
-                  fontWeight: 'bold'
-
+                  color: "#070A40",
+                  fontWeight: "bold",
                 }}
               >
                 Template name?
@@ -181,8 +205,8 @@ function CreateTemplate() {
                   display: "block",
                   margin: "0 auto",
                   marginBottom: "0.5rem",
-                  color:'#070A40',
-                  fontWeight: 'bold'
+                  color: "#070A40",
+                  fontWeight: "bold",
                 }}
               >
                 Description
@@ -214,12 +238,10 @@ function CreateTemplate() {
                   </p>
                 )}
               </div>
-
               <div className="button-container">
                 <div style={{ flexGrow: "1" }}></div>
                 <div className="form-control mt-6">
                   <button
-                   
                     type="submit"
                     className="btn btn-sm btn-primary continue"
                   >

@@ -50,6 +50,20 @@ const DraggableItem_ForTemplate2 = ({
           }}
         />
       );
+    } else if (item.type === "signature") {
+      // תיבת חתימה
+      return (
+        <img
+          src={item.image}
+          alt="Signature"
+          style={{
+            width: "100%", // מתאים את גודל התמונה לרוחב המלא של התיבה
+            maxHeight: "100px", // הגבלת הגובה המרבי של התמונה ל-100 פיקסלים
+            border: "1px solid silver",
+            padding: "5px",
+          }}
+        />
+      );
     } else {
       // תיבת טקסט
       return (
