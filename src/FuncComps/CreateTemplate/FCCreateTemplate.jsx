@@ -98,8 +98,6 @@ function CreateTemplate() {
       console.log("Entering an invalid value in one of the fields");
     } else if (userFields.some((value) => value === "")) {
       console.log("You need to fill in all the fields");
-      console.log(template);
-      console.log(userFields)
     } else {
       navigate("/CreateTemplate2", {
         state: { template, origin: "CreateTemplate" },

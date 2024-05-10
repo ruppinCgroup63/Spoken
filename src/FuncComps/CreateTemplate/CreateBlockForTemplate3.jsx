@@ -33,12 +33,12 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
     [index]
   );
 
-  // כאשר הכפתור נלחץ, עובר למצב עריכת תיבת הטקסט
+  // לחיצה על כפתור ה-`+` כדי להציג את תיבת העריכה
   const handleKeywordToggle = () => {
     setShowKeywordInput(true);
   };
 
-  // כאשר מילת המפתח משתנה, היא נשמרת במצב מקומי ובאובייקט הכללי
+  // כאשר מילת המפתח משתנה, נשמור את הערך החדש
   const handleKeywordChange = (e) => {
     const newKeyword = e.target.value;
     setKeyword(newKeyword);
@@ -48,6 +48,52 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
   // כאשר תיבת הטקסט מאבדת פוקוס, הכפתור חוזר לנראות המקורית
   const handleKeywordBlur = () => {
     setShowKeywordInput(false);
+  };
+
+  // הצגת התוכן המתאים לפי סוג התיבה
+  const renderContent = () => {
+    if (item.type === "signature") {
+      // תיבת חתימה
+      return (
+        <img
+          src={item.image}
+          alt="Signature"
+          style={{
+            width: "100%",
+            maxHeight: "100px", // הגבלת הגובה המרבי של התמונה ל-100 פיקסלים
+            border: "1px solid silver",
+            padding: "5px",
+          }}
+        />
+      );
+    } else {
+      // תיבת טקסט
+      return (
+        <>
+          <input
+            type="text"
+            placeholder="Enter title"
+            value={item.title}
+            onChange={(e) => updateItem(index, "title", e.target.value)}
+            style={{
+              width: "100%",
+              marginBottom: "5px",
+              border: "1px solid silver",
+            }}
+          />
+          <textarea
+            placeholder="Enter text"
+            value={item.text}
+            onChange={(e) => updateItem(index, "text", e.target.value)}
+            style={{
+              width: "100%",
+              height: "45px",
+              border: "1px solid silver",
+            }}
+          />
+        </>
+      );
+    }
   };
 
   return (
@@ -69,23 +115,8 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
           border: "1px solid silver",
         }}
       >
-        <input
-          type="text"
-          placeholder="Enter title"
-          value={item.title}
-          onChange={(e) => updateItem(index, "title", e.target.value)}
-          style={{
-            width: "100%",
-            marginBottom: "5px",
-            border: "1px solid silver",
-          }}
-        />
-        <textarea
-          placeholder="Enter text"
-          value={item.text}
-          onChange={(e) => updateItem(index, "text", e.target.value)}
-          style={{ width: "100%", height: "45px", border: "1px solid silver" }}
-        />
+        {renderContent()}
+
         {showKeywordInput ? (
           <input
             type="text"
@@ -123,8 +154,8 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
             }}
           >
             <img
-              src="/public/createTemplate/buttonAdd.png"
-              alt="button"
+              src="/public/createTemplate/buttonAdd.png" // יש לוודא שהתמונה אכן קיימת
+              alt="Add"
               style={{ width: "16px", height: "16px" }}
             />
           </button>

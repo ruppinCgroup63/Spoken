@@ -11,7 +11,6 @@ function CreateTemplate2() {
   const [items, setItems] = useState(state.items || []);
   const [template, setTemplate] = useState(state.template || { name: "" });
 
-  // פונקציה להוספת פריט מסוג שונה בהתאם לפרמטר `type`
   const addItem = useCallback((type) => {
     const id = Math.random().toString(36).substring(2, 9);
     setItems((items) => [
@@ -33,10 +32,7 @@ function CreateTemplate2() {
       ...items,
       {
         id,
-        type: "signature",
-        title: "Signature",
-        text: "",
-        keyword: "",
+        type: "signature",       
         image: template.Signature, // שימוש בחתימה מתוך אובייקט template
       },
     ]);
@@ -63,6 +59,8 @@ function CreateTemplate2() {
       )
     );
   }, []);
+
+  console.log(items);
 
   const handleSubmit = (e) => {
     e.preventDefault();
