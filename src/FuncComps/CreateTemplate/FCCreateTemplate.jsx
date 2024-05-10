@@ -14,13 +14,12 @@ function CreateTemplate() {
 
   // אתחול אובייקט ה-template
   const [template, setTemplate] = useState({
-    id: Math.random().toString(36).substring(2, 9),
+    TemplateNo: Math.random().toString(36).substring(2, 9),
     TemplateName: templateObj ? templateObj.template.TemplateName : "",
     Description: templateObj ? templateObj.template.Description : "",
-    CreatorEmail: "", // ערכים ייטענו ב-useEffect
-    LangName: "", // ערכים ייטענו ב-useEffect
-    DomainName: "", // ערכים ייטענו ב-useEffect
-    Signature: "", // ערכים ייטענו ב-useEffect
+    UserEmail: "", 
+    Signature: "",
+    IsPublic: "",
   });
 
   // נעדכן את ה-template ברגע שהקומפוננטה נטענת
@@ -32,10 +31,9 @@ function CreateTemplate() {
     // עדכון ערכים ב-template 
     setTemplate((prevTemplate) => ({
       ...prevTemplate,
-      CreatorEmail: userData.email || "",
-      LangName: userData.langName || "",
-      DomainName: userData.domainName || "",
+      UserEmail: userData.email || "",
       Signature: userData.signature || "",
+      IsPublic: false,
     }));
   }, []); // [] מוודא שה-useEffect ירוץ רק פעם אחת
   console.log(template);
@@ -174,25 +172,25 @@ function CreateTemplate() {
               <div className="form-control">
                 <label
                   className={`input input-bordered flex items-center gap-2 relative ${
-                    errors.name ? "input-error" : ""
+                    errors.TemplateName ? "input-error" : ""
                   }`}
                 >
                   <input
                     type="text"
-                    className={`grow ${errors.name ? "input-error" : ""}`}
+                    className={`grow ${errors.TemplateName ? "input-error" : ""}`}
                     placeholder="new client..."
                     onBlur={validaterName}
-                    aria-describedby={errors.name ? "name-error" : ""}
-                    value={template.name}
+                    aria-describedby={errors.TemplateName ? "name-error" : ""}
+                    value={template.TemplateName}
                     onChange={(e) =>
-                      setTemplate({ ...template, name: e.target.value })
+                      setTemplate({ ...template, TemplateName: e.target.value })
                     }
-                    style={{ borderColor: errors.name ? "#e53e3e" : "" }}
+                    style={{ borderColor: errors.TemplateName ? "#e53e3e" : "" }}
                   />
                 </label>
-                {errors.name && (
+                {errors.TemplateName && (
                   <p id="name-error" className="text-red-500 mt-2">
-                    {errors.name}
+                    {errors.TemplateName}
                   </p>
                 )}
               </div>

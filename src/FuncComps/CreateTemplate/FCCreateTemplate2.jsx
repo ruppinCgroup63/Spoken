@@ -9,7 +9,7 @@ function CreateTemplate2() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [items, setItems] = useState(state.items || []);
-  const [template, setTemplate] = useState(state.template || { name: "" });
+  const [template, setTemplate] = useState(state.template || { TemplateName: "" });
 
   const addItem = useCallback((type) => {
     const id = Math.random().toString(36).substring(2, 9);
@@ -114,7 +114,7 @@ function CreateTemplate2() {
                       color: "#070A40",
                     }}
                   >
-                    <b>Name:</b> {template.name}
+                    <b>Name:</b> {template.TemplateName}
                   </span>
                 </div>
                 <div

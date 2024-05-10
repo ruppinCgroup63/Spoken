@@ -5,18 +5,20 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
 import DraggableItem from "./CreateBlockForTemplate3";
 
+const apiUrl = 'https://localhost:44326/api/Templates';
+
 function CreateTemplate3() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { items } = state;
   const [template, setTemplate] = useState(
-    state.template || { name: "", description: "", isPublic: false }
+    state.template || { TemplateName: "", description: "", IsPublic: false }
   );
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleToggle = () => {
-    setIsOpen(!isOpen);
-  };
+  //const handleToggle = () => {
+   // setIsOpen(!isOpen);
+  //};
 
   const updateItem = useCallback(
     (index, field, value) => {
@@ -40,11 +42,38 @@ function CreateTemplate3() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/HomePage", {
-      state: { template, items, origin: "CreateTemplate3" },
-    });
+    fetch(apiUrl, {
+      method: 'POST',
+      body: JSON.stringify(template),
+      headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json; charset=UTF-8',
+      }
+  })
+      .then(res => {
+          console.log('res=', res);
+          return res.json()
+      })
+      .then(
+          (result) => {
+              console.log("fetch POST= ", 'Create Template successfully');
+              console.log(result.template);
+              navigate("/HomePage", {
+                state: { template, items, origin: "CreateTemplate3" },
+              });
+          
+          },
+          (error) => {
+              console.log("err post=", 'the template already exists');
+              console.log(error);
+          }
+      );
+
   };
   console.log(items);
+
+
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
@@ -99,7 +128,7 @@ function CreateTemplate3() {
                       top: "-3px",
                     }}
                   >
-                    <b>Name:</b> {template.name}
+                    <b>Name:</b> {template.TemplateName}
                   </span>
                 </div>
                 <div
@@ -143,7 +172,7 @@ function CreateTemplate3() {
                 </div>
                 {isOpen && (
                   <div>
-                    <p className="keyWordP">
+                    <p className="keyWordP" style={{textAlign: "left"}}>
                       In this page, you need to define a keyword for each block.
                       The keyword will assist you during the automated
                       transcription process. When you speak the keyword, the
@@ -166,7 +195,6 @@ function CreateTemplate3() {
                     if (item.type === "file") {
                       return (
                         <div key={index}>
-                          <label>Import File:</label>
                           <input
                             type="file"
                             onChange={(e) => {
@@ -192,16 +220,16 @@ function CreateTemplate3() {
                   <input
                     style={{
                       borderColor: "#070A40",
-                      backgroundColor: template.isPublic
+                      backgroundColor: template.IsPublic
                         ? "#070A40"
                         : "#E4E9F2",
                     }}
                     type="checkbox"
-                    checked={template.isPublic}
+                    checked={template.IsPublic}
                     onChange={(e) =>
                       setTemplate({
                         ...template,
-                        isPublic: e.target.checked,
+                        IsPublic: e.target.checked,
                       })
                     }
                     className="checkbox checkbox-primary"
