@@ -98,7 +98,7 @@ function CreateTemplate3() {
   
   
   console.log(items);
-
+console.log(template);
 
 
   return (

@@ -17,9 +17,9 @@ function CreateTemplate() {
     TemplateNo: Math.random().toString(36).substring(2, 9),
     TemplateName: templateObj ? templateObj.template.TemplateName : "",
     Description: templateObj ? templateObj.template.Description : "",
-    UserEmail: "", 
+    Email: "", 
     Signature: "",
-    IsPublic: "",
+    IsPublic: false,
   });
 
   // נעדכן את ה-template ברגע שהקומפוננטה נטענת
@@ -31,7 +31,7 @@ function CreateTemplate() {
     // עדכון ערכים ב-template 
     setTemplate((prevTemplate) => ({
       ...prevTemplate,
-      UserEmail: userData.email || "",
+      Email: userData.email || "",
       Signature: userData.signature || "",
       IsPublic: false,
     }));
