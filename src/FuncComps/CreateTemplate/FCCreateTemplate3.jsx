@@ -5,7 +5,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
 import DraggableItem from "./CreateBlockForTemplate3";
 
-const apiUrl = 'https://localhost:44326/api/Templates';
+const apiUrlTemplate = 'https://localhost:44326/api/Templates';
+const apiUrlBlock = 'https://localhost:44326/api/BlocksInTemplates';
 
 function CreateTemplate3() {
   const navigate = useNavigate();
@@ -40,36 +41,62 @@ function CreateTemplate3() {
 
   console.log(items,template);
 
+  //שליחה לשרת את התבנית והבלוקים
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch(apiUrl, {
+  
+    // Fetch to template
+    fetch(apiUrlTemplate, {
       method: 'POST',
       body: JSON.stringify(template),
       headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json; charset=UTF-8',
+        'Content-type': 'application/json; charset=UTF-8',
+        'Accept': 'application/json; charset=UTF-8',
       }
-  })
-      .then(res => {
-          console.log('res=', res);
-          return res.json()
-      })
-      .then(
-          (result) => {
-              console.log("fetch POST= ", 'Create Template successfully');
-              console.log(result.template);
-              navigate("/HomePage", {
-                state: { template, items, origin: "CreateTemplate3" },
-              });
-          
-          },
-          (error) => {
-              console.log("err post=", 'the template already exists');
-              console.log(error);
+    })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error('Failed to create template');
+      }
+      return res.json();
+    })
+    .then((result) => {
+      console.log("fetch POST= ", 'Create Template successfully');
+      console.log(result.template);
+      
+      // Create an array of promises for the blocks fetch requests
+      const blockPromises = items.map(block => {
+        return fetch(apiUrlBlock, {
+          method: 'POST',
+          body: JSON.stringify(block),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+            'Accept': 'application/json; charset=UTF-8',
           }
-      );
-
+        })
+        .then(res => {
+          if (!res.ok) {
+            throw new Error('Failed to insert block');
+          }
+          return res.json();
+        });
+      });
+  
+      // Wait for all block fetch requests to complete
+      return Promise.all(blockPromises);
+    })
+    .then(blockResults => {
+      console.log("All blocks inserted successfully:", blockResults);
+      navigate("/HomePage", {
+        state: { template, items, origin: "CreateTemplate3" },
+      });
+    })
+    .catch((error) => {
+      console.error("Error during operation:", error.message);
+    });
   };
+  
+  
   console.log(items);
 
 

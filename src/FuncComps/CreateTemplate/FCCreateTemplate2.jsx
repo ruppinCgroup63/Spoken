@@ -11,29 +11,38 @@ function CreateTemplate2() {
   const [items, setItems] = useState(state.items || []);
   const [template, setTemplate] = useState(state.template || { TemplateName: "" });
 
-  const addItem = useCallback((type) => {
-    const id = Math.random().toString(36).substring(2, 9);
+  const addItem = useCallback((Type) => {
+    const BlockNo = Math.random().toString(36).substring(2, 9);
     setItems((items) => [
       ...items,
       {
-        id,
-        type,
-        title: "",
-        text: "",
-        keyword: "",
+        TemplateNo: template.TemplateNo,
+        BlockNo,
+        Type,
+        Title: "",
+        Text: "",
+        KeyWord: "",
+        IsActive:false,
+        IsMandatory:false,
       },
     ]);
   }, []);
 
   // פונקציה להוספת חתימה כתמונה
   const addSignature = useCallback(() => {
-    const id = Math.random().toString(36).substring(2, 9);
+    const BlockNo = Math.random().toString(36).substring(2, 9);
     setItems((items) => [
       ...items,
       {
-        id,
-        type: "signature",       
-        image: template.Signature, // שימוש בחתימה מתוך אובייקט template
+        TemplateNo: template.TemplateNo,
+        BlockNo,
+        Type: "signature",  
+        Title: "",
+        Text: "",
+        KeyWord: "",
+        IsActive:false,
+        IsMandatory:false,     
+        //image: template.Signature, // שימוש בחתימה מתוך אובייקט template
       },
     ]);
   }, [template.Signature]);
@@ -126,7 +135,7 @@ function CreateTemplate2() {
                 ></div>
                 {items.map((item, index) => (
                   <DraggableItem_ForTemplate2
-                    key={item.id}
+                    key={item.BlockNo}
                     item={item}
                     index={index}
                     moveItem={moveItem}

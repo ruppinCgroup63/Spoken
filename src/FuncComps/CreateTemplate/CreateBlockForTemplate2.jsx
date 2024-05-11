@@ -17,9 +17,9 @@ const DraggableItem_ForTemplate2 = ({
   const [, drag] = useDrag(
     () => ({
       type: ItemType1,
-      item: { id: item.id, index },
+      item: { BlockNo: item.BlockNo, index },
     }),
-    [index, item.id]
+    [index, item.BlockNo]
   );
 
   // הגדרת פעולת ההורדה
@@ -38,7 +38,7 @@ const DraggableItem_ForTemplate2 = ({
 
   // הגדרת התוכן לפי סוג התיבה
   const renderContent = () => {
-    if (item.type === "file") {
+    if (item.Type === "file") {
       // תיבת קובץ
       return (
         <input
@@ -50,7 +50,7 @@ const DraggableItem_ForTemplate2 = ({
           }}
         />
       );
-    } else if (item.type === "signature") {
+    } else if (item.Type === "signature") {
       // תיבת חתימה
       return (
         <img
@@ -71,8 +71,8 @@ const DraggableItem_ForTemplate2 = ({
           <input
             type="text"
             placeholder="Enter title"
-            value={item.title}
-            onChange={(e) => updateItem(index, "title", e.target.value)}
+            value={item.Title}
+            onChange={(e) => updateItem(index, "Title", e.target.value)}
             style={{
               width: "100%",
               marginBottom: "5px",
@@ -81,8 +81,8 @@ const DraggableItem_ForTemplate2 = ({
           />
           <textarea
             placeholder="Enter text"
-            value={item.text}
-            onChange={(e) => updateItem(index, "text", e.target.value)}
+            value={item.Text}
+            onChange={(e) => updateItem(index, "Text", e.target.value)}
             style={{
               width: "100%",
               height: "45px",

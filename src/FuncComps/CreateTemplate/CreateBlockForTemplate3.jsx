@@ -8,15 +8,15 @@ const ItemType = "DRAGGABLE_ITEM";
 
 const DraggableItem = ({ item, index, moveItem, updateItem }) => {
   const [showKeywordInput, setShowKeywordInput] = useState(false);
-  const [keyword, setKeyword] = useState(item.keyword || item.title); // ערך ברירת מחדל
+  const [keyword, setKeyword] = useState(item.KeyWord || item.Title); // ערך ברירת מחדל
 
   // Drag logic
   const [, drag] = useDrag(
     () => ({
       type: ItemType,
-      item: { id: item.id, index },
+      item: { BlockNo: item.BlockNo, index },
     }),
-    [index, item.id]
+    [index, item.BlockNo]
   );
 
   // Drop logic
@@ -42,7 +42,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
   const handleKeywordChange = (e) => {
     const newKeyword = e.target.value;
     setKeyword(newKeyword);
-    updateItem(index, "keyword", newKeyword);
+    updateItem(index, "KeyWord", newKeyword);
   };
 
   // כאשר תיבת הטקסט מאבדת פוקוס, הכפתור חוזר לנראות המקורית
@@ -52,7 +52,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
 
 // הגדרת התוכן לפי סוג התיבה
 const renderContent = () => {
-  if (item.type === "file") {
+  if (item.Type === "file") {
     // תיבת קובץ
     return (
       <input
@@ -64,7 +64,7 @@ const renderContent = () => {
         }}
       />
     );
-  } else if (item.type === "signature") {
+  } else if (item.Type === "signature") {
     // תיבת חתימה
     return (
       <img
@@ -85,8 +85,8 @@ const renderContent = () => {
         <input
           type="text"
           placeholder="Enter title"
-          value={item.title}
-          onChange={(e) => updateItem(index, "title", e.target.value)}
+          value={item.Title}
+          onChange={(e) => updateItem(index, "Title", e.target.value)}
           style={{
             width: "100%",
             marginBottom: "5px",
@@ -95,8 +95,8 @@ const renderContent = () => {
         />
         <textarea
           placeholder="Enter text"
-          value={item.text}
-          onChange={(e) => updateItem(index, "text", e.target.value)}
+          value={item.Text}
+          onChange={(e) => updateItem(index, "Text", e.target.value)}
           style={{
             width: "100%",
             height: "45px",
@@ -166,7 +166,7 @@ const renderContent = () => {
             }}
           >
             <img
-              src="/public/createTemplate/buttonAdd.png" // יש לוודא שהתמונה אכן קיימת
+              src="/public/createTemplate/buttonAdd.png" 
               alt="Add"
               style={{ width: "16px", height: "16px" }}
             />
