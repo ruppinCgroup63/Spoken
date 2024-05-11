@@ -11,23 +11,26 @@ const apiUrlBlock = 'https://localhost:44326/api/BlocksInTemplates';
 function CreateTemplate3() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { items } = state;
   const [template, setTemplate] = useState(
     state.template || { TemplateName: "", description: "", IsPublic: false }
   );
   const [isOpen, setIsOpen] = useState(false);
+  const [items, setItems] = useState(state.items || []);
 
   //const handleToggle = () => {
    // setIsOpen(!isOpen);
   //};
 
-  const updateItem = useCallback(
-    (index, field, value) => {
-      const newItems = [...items];
-      newItems[index] = { ...newItems[index], [field]: value };
-    },
-    [items]
-  );
+const updateItem = useCallback(
+  (index, field, value) => {
+    const newItems = items.map((item, idx) => 
+      idx === index ? { ...item, [field]: value } : item
+    );
+    setItems(newItems);  // עדכון המערך 
+  },
+  [items]
+);
+
 
   const moveItem = useCallback(
     (dragIndex, hoverIndex) => {
@@ -45,60 +48,57 @@ function CreateTemplate3() {
   const handleSubmit = (e) => {
     e.preventDefault();
   
-    // Fetch to template
     fetch(apiUrlTemplate, {
       method: 'POST',
       body: JSON.stringify(template),
       headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-        'Accept': 'application/json; charset=UTF-8',
+          'Content-type': 'application/json; charset=UTF-8',
+          'Accept': 'application/json; charset=UTF-8',
       }
     })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error('Failed to create template');
-      }
-      return res.json();
-    })
+    .then(res => res.json())
     .then((result) => {
-      console.log("fetch POST= ", 'Create Template successfully');
-      console.log(result.template);
-      
-      // Create an array of promises for the blocks fetch requests
-      const blockPromises = items.map(block => {
-        return fetch(apiUrlBlock, {
-          method: 'POST',
-          body: JSON.stringify(block),
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-            'Accept': 'application/json; charset=UTF-8',
-          }
-        })
-        .then(res => {
-          if (!res.ok) {
-            throw new Error('Failed to insert block');
-          }
-          return res.json();
-        });
-      });
+      console.log("Create Template successfully", result.template);
   
-      // Wait for all block fetch requests to complete
-      return Promise.all(blockPromises);
-    })
-    .then(blockResults => {
-      console.log("All blocks inserted successfully:", blockResults);
-      navigate("/HomePage", {
-        state: { template, items, origin: "CreateTemplate3" },
-      });
+      // Process each block sequentially
+      const processBlock = (index) => {
+        if (index < items.length) {
+          const block = items[index];
+          fetch(apiUrlBlock, {
+            method: 'POST',
+            body: JSON.stringify(block),
+            headers: {
+              'Content-type': 'application/json; charset=UTF-8',
+              'Accept': 'application/json; charset=UTF-8',
+            }
+          })
+          .then(res => res.json())
+          .then(result => {
+            console.log("Block inserted successfully:", result);
+            processBlock(index + 1); // Recursive call to process next block
+          })
+          .catch(error => {
+            console.error("Error posting block:", error);
+          });
+        } else {
+          // All blocks processed, navigate away
+          navigate("/HomePage", {
+            state: { template, items, origin: "CreateTemplate3" },
+          });
+        }
+      };
+  
+      // Start processing blocks
+      processBlock(0);
     })
     .catch((error) => {
-      console.error("Error during operation:", error.message);
+      console.error("Error posting template:", error);
     });
   };
   
   
   console.log(items);
-console.log(template);
+
 
 
   return (

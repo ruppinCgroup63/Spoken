@@ -8,7 +8,7 @@ const ItemType = "DRAGGABLE_ITEM";
 
 const DraggableItem = ({ item, index, moveItem, updateItem }) => {
   const [showKeywordInput, setShowKeywordInput] = useState(false);
-  const [keyword, setKeyword] = useState(item.KeyWord || item.Title); // ערך ברירת מחדל
+  const [KeyWord, setKeyword] = useState(item.KeyWord || item.Title); // ערך ברירת מחדל מה-Title
 
   // Drag logic
   const [, drag] = useDrag(
@@ -33,80 +33,73 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
     [index]
   );
 
-  // לחיצה על כפתור ה-`+` כדי להציג את תיבת העריכה
   const handleKeywordToggle = () => {
     setShowKeywordInput(true);
   };
 
-  // כאשר מילת המפתח משתנה, נשמור את הערך החדש
   const handleKeywordChange = (e) => {
     const newKeyword = e.target.value;
     setKeyword(newKeyword);
-    updateItem(index, "KeyWord", newKeyword);
   };
 
-  // כאשר תיבת הטקסט מאבדת פוקוס, הכפתור חוזר לנראות המקורית
   const handleKeywordBlur = () => {
+    updateItem(index, "KeyWord", KeyWord);
     setShowKeywordInput(false);
   };
 
-// הגדרת התוכן לפי סוג התיבה
-const renderContent = () => {
-  if (item.Type === "file") {
-    // תיבת קובץ
-    return (
-      <input
-        type="file"
-        style={{
-          width: "100%",
-          marginBottom: "5px",
-          border: "1px solid silver",
-        }}
-      />
-    );
-  } else if (item.Type === "signature") {
-    // תיבת חתימה
-    return (
-      <img
-        src={item.image}
-        alt="Signature"
-        style={{
-          width: "100%", // מתאים את גודל התמונה לרוחב המלא של התיבה
-          maxHeight: "100px", // הגבלת הגובה המרבי של התמונה ל-100 פיקסלים
-          border: "1px solid silver",
-          padding: "5px",
-        }}
-      />
-    );
-  } else {
-    // תיבת טקסט
-    return (
-      <>
+  const renderContent = () => {
+    if (item.Type === "file") {
+      return (
         <input
-          type="text"
-          placeholder="Enter title"
-          value={item.Title}
-          onChange={(e) => updateItem(index, "Title", e.target.value)}
+          type="file"
           style={{
             width: "100%",
             marginBottom: "5px",
             border: "1px solid silver",
           }}
         />
-        <textarea
-          placeholder="Enter text"
-          value={item.Text}
-          onChange={(e) => updateItem(index, "Text", e.target.value)}
+      );
+    } else if (item.Type === "signature") {
+      return (
+        <img
+          src={item.image}
+          alt="Signature"
           style={{
             width: "100%",
-            height: "45px",
+            maxHeight: "100px",
             border: "1px solid silver",
+            padding: "5px",
           }}
         />
-      </>
-    );
-  }
-};
+      );
+    } else {
+      return (
+        <>
+          <input
+            type="text"
+            placeholder="Enter title"
+            value={item.Title}
+            onChange={(e) => updateItem(index, "Title", e.target.value)}
+            style={{
+              width: "100%",
+              marginBottom: "5px",
+              border: "1px solid silver",
+            }}
+          />
+          <textarea
+            placeholder="Enter text"
+            value={item.Text}
+            onChange={(e) => updateItem(index, "Text", e.target.value)}
+            style={{
+              width: "100%",
+              height: "45px",
+              border: "1px solid silver",
+            }}
+          />
+        </>
+      );
+    }
+  };
 
   return (
     <ResizableBox
@@ -116,7 +109,7 @@ const renderContent = () => {
       maxConstraints={[350, 100]}
       resizeHandles={["e", "w"]}
       className="resizable"
-      style={{ margin: "auto" }} // מרכז את התיבה בתוך ה-div
+      style={{ margin: "auto" }}
     >
       <div
         ref={(node) => drag(drop(node))}
@@ -133,7 +126,7 @@ const renderContent = () => {
           <input
             type="text"
             placeholder="Keyword"
-            value={keyword}
+            value={KeyWord}
             onChange={handleKeywordChange}
             onBlur={handleKeywordBlur}
             style={{
@@ -157,7 +150,7 @@ const renderContent = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: "#28a745", // צבע ירוק רקע
+              //backgroundColor: "#28a745",
               color: "white",
               padding: "0 8px",
               borderRadius: "50%",
@@ -166,9 +159,9 @@ const renderContent = () => {
             }}
           >
             <img
-              src="/public/createTemplate/buttonAdd.png" 
+              src="/public/createTemplate/keyword.jpg"
               alt="Add"
-              style={{ width: "16px", height: "16px" }}
+              //style={{ width: "16px", height: "16px" }}
             />
           </button>
         )}

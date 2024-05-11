@@ -11,7 +11,8 @@ function CreateTemplate2() {
   const [items, setItems] = useState(state.items || []);
   const [template, setTemplate] = useState(state.template || { TemplateName: "" });
 
-  const addItem = useCallback((Type) => {
+//הוספת שדה טקסט
+  const addTextBox = useCallback((Type) => {
     const BlockNo = Math.random().toString(36).substring(2, 9);
     setItems((items) => [
       ...items,
@@ -28,7 +29,7 @@ function CreateTemplate2() {
     ]);
   }, []);
 
-  // פונקציה להוספת חתימה כתמונה
+  // הוספת חתימה
   const addSignature = useCallback(() => {
     const BlockNo = Math.random().toString(36).substring(2, 9);
     setItems((items) => [
@@ -36,16 +37,34 @@ function CreateTemplate2() {
       {
         TemplateNo: template.TemplateNo,
         BlockNo,
-        Type: "signature",  
+        Type: "signature",     
         Title: "",
         Text: "",
         KeyWord: "",
         IsActive:false,
-        IsMandatory:false,     
-        //image: template.Signature, // שימוש בחתימה מתוך אובייקט template
+        IsMandatory:false,
+        image: template.Signature, // שימוש בחתימה מתוך אובייקט template
       },
     ]);
-  }, [template.Signature]);
+  }, []);
+
+//הוספת קובץ
+  const addFile = useCallback(() => {
+    const BlockNo = Math.random().toString(36).substring(2, 9);
+    setItems((items) => [
+      ...items,
+      {
+        TemplateNo: template.TemplateNo,
+        BlockNo,
+        Type: "file",  
+        Title: "",
+        Text: "",
+        KeyWord: "",
+        IsActive:false,
+        IsMandatory:false,  
+      },
+    ]);
+  }, []);
 
   const removeItem = useCallback((index) => {
     setItems((items) => items.filter((_, i) => i !== index));
@@ -149,7 +168,7 @@ function CreateTemplate2() {
                 <img
                   src="/public/createTemplate/add_box.png"
                   alt="Error"
-                  onClick={() => addItem("textarea")}
+                  onClick={() => addTextBox("textarea")}
                   style={{ cursor: "pointer" }}
                 />
                 <span
@@ -158,7 +177,7 @@ function CreateTemplate2() {
                     color: "#070A40",
                     cursor: "pointer",
                   }}
-                  onClick={() => addItem("textarea")}
+                  onClick={() => addTextBox("textarea")}
                 >
                   Text Box
                 </span>
@@ -167,7 +186,7 @@ function CreateTemplate2() {
                 <img
                   src="/public/createTemplate/add_box.png"
                   alt="Error"
-                  onClick={() => addItem("file")}
+                  onClick={addFile}
                   style={{ cursor: "pointer" }}
                 />
                 <span
