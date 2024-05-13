@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+
+const apiUrl = 'https://localhost:44326/api/Domains';
 
 function RegistrationPage2() {
     const navigate = useNavigate();
@@ -40,6 +42,42 @@ function RegistrationPage2() {
             Employee: isChecked
         }));
     };
+
+    //בחירת מקצוע domain name
+    const [domainName, setDomain] = useState([]);
+
+    useEffect(() => {
+        getAllDomain();
+    }, []); // רק כאשר הדף נטען , הפעלת getAllLang
+
+
+    const getAllDomain = () => {
+
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: new Headers({
+                'Content-Type': 'application/json; charset=UTF-8',
+            })
+        })
+            .then(res => {
+                if (!res.ok) { // Check if response status is not OK
+                    throw new Error('Network response was not ok');
+                }
+                return res.json();
+            })
+            .then(data => {
+                console.log(data);
+                setDomain(data); // שמירת  מהשרת בסטייט
+
+            })
+            .catch(error => {
+                console.log("Domain error:", error);
+            });
+
+    }
+
+
+
     // ניהול הולידציות
     const handleValidation = (name, isValid, errorMessage) => {
         setErrors(prevErrors => ({
@@ -121,24 +159,29 @@ function RegistrationPage2() {
                                 <div style={{ marginRight: '1rem' }} className="step  step-primary">More<br></br>details</div>
                                 <div style={{ marginRight: '1rem' }} className="step" >Signature</div>
                             </div>
-                            <br /><br />
+                            <br /><br />     
                             <div className="form-control">
-                                <label className={`input input-bordered flex items-center gap-2 relative ${errors.DomainName ? 'input-error' : ''}`} >
-                                    <input
-                                        type="text"
-                                        className={`grow ${errors.DomainName ? 'input-error' : ''}`}
-                                        placeholder="Parctice Area"
-                                        onBlur={validateDomainName}
-                                        aria-describedby={errors.DomainName ? 'DomainName-error' : ''}
-                                        value={user.DomainName}
-                                        onChange={(e) => setUsers({ ...user, DomainName: e.target.value })}
-                                        style={{ borderColor: errors.DomainName ? '#e53e3e' : '' }}
-                                    />
+                                <label className="label" htmlFor="DomainName">
                                 </label>
+                                <select className={`select select-bordered w-full ${errors.DomainName ? 'input-error' : ''}`}
+                                    onChange={validateDomainName}
+                                    value={user.DomainName}
+                                    aria-describedby={errors.DomainName ? 'DomainName-error' : ''}
+                                >
+                                    <option disabled value="">Choose Domain</option>
+                                    {domainName.map((Domain, index) => (
+                                        <option key={index} value={Domain.domainName}>{Domain.domainName}</option>
+                                    ))}
+                                </select>
                                 {errors.DomainName && (
                                     <p id="DomainName-error" className="text-red-500 mt-2">{errors.DomainName}</p>
                                 )}
                             </div>
+
+
+
+
+
                             <br />
                             <div className="form-control">
                                 <label className={`input input-bordered flex items-center gap-2 relative ${errors.Job ? 'input-error' : ''}`} >
