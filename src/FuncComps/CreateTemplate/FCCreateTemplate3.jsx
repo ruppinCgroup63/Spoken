@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DndProvider } from "react-dnd";
@@ -43,57 +44,54 @@ const updateItem = useCallback(
   );
 
   //שליחה לשרת את התבנית והבלוקים
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
   
-    // Fetch to template
-    fetch(apiUrlTemplate, {
-      method: 'POST',
-      body: JSON.stringify(template),
-      headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json; charset=UTF-8',
-      }
-    })
-    .then(res => {
-      console.log('res=', res);
-      return res.json();
-    })
-    .then((result) => {
-      console.log("fetch POST= ", 'Create Template successfully');
-      console.log(result.template);
-      
-      // after successful template creation,continue with POST block
-      items.forEach(block => {
-        fetch(apiUrlBlock, {
-          method: 'POST',
-          body: JSON.stringify(block),
-          headers: {
-            'Content-type': 'application/json; charset=UTF-8',
-            'Accept': 'application/json; charset=UTF-8',
-          }
-        })
-        .then(res => {
-          console.log('res=', res);
-          return res.json();
-        })
-        .then(result => {
-          console.log("Block inserted successfully:", result);
-        })
-        .catch(error => {
-          console.error("Error posting block:", error);
-        });
+    // שליחת הטמפלייט לשרת
+    try {
+      const templateResponse = await fetch(apiUrlTemplate, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(template)
       });
   
-      // Navigate after successful
+      if (!templateResponse.ok) {
+        throw new Error(`HTTP error! Status: ${templateResponse.status}`);
+      }
+  
+      const templateResult = await templateResponse.json();
+      console.log("Create Template successfully", templateResult);
+  
+      // שליחת הבלוקים לאחר שהטמפלייט נוצר בהצלחה
+      for (const block of items) {
+        const blockResponse = await fetch(apiUrlBlock, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify(block)
+        });
+  
+        if (!blockResponse.ok) {
+          throw new Error(`HTTP error! Status: ${blockResponse.status}`);
+        }
+  
+        const blockResult = await blockResponse.json();
+        console.log("Block inserted successfully:", blockResult);
+      }
+  
+      // ניווט לדף הבית לאחר שכל הבלוקים נשלחו בהצלחה
       navigate("/HomePage", {
-        state: { template, items, origin: "CreateTemplate3" },
+        state: { template: templateResult, items, origin: "CreateTemplate3" },
       });
-    })
-    .catch((error) => {
-      console.log("err post=", 'the template already exists');
-      console.log(error);
-    });
+  
+    } catch (error) {
+      console.error("Error during the POST process:", error.message);
+    }
   };
   
   
