@@ -159,7 +159,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
             }}
           >
             <img
-              src="/public/createTemplate/keyword.jpg"
+              src="/public/createTemplate/keyword.png"
               alt="Add"
               //style={{ width: "16px", height: "16px" }}
             />

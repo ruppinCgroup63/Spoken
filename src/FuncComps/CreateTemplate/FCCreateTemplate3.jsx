@@ -59,7 +59,6 @@ const updateItem = useCallback(
     .then(res => res.json())
     .then((result) => {
       console.log("Create Template successfully", result.template);
-  
       // Process each block sequentially
       const processBlock = (index) => {
         if (index < items.length) {
