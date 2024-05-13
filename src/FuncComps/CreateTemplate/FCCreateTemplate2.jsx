@@ -195,6 +195,7 @@ function CreateTemplate2() {
                     color: "#070A40",
                     cursor: "pointer",
                   }}
+                  onClick={addFile}
                 >
                   Import File
                 </span>

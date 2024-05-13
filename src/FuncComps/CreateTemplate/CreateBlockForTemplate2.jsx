@@ -45,7 +45,7 @@ const DraggableItem_ForTemplate2 = ({
           type="file"
           style={{
             width: "100%",
-            marginBottom: "5px",
+            marginBottom: "2px",
             border: "1px solid silver",
           }}
         />
@@ -60,7 +60,7 @@ const DraggableItem_ForTemplate2 = ({
             width: "100%", // מתאים את גודל התמונה לרוחב המלא של התיבה
             maxHeight: "100px", // הגבלת הגובה המרבי של התמונה ל-100 פיקסלים
             border: "1px solid silver",
-            padding: "5px",
+            padding: "2px",
           }}
         />
       );
@@ -75,7 +75,7 @@ const DraggableItem_ForTemplate2 = ({
             onChange={(e) => updateItem(index, "Title", e.target.value)}
             style={{
               width: "100%",
-              marginBottom: "5px",
+              marginBottom: "2px",
               border: "1px solid silver",
             }}
           />
@@ -111,7 +111,7 @@ const DraggableItem_ForTemplate2 = ({
           overflow: "hidden",
           position: "relative",
           border: "1px solid silver",
-          marginTop: "2rem",
+          marginTop: "1rem",
         }}
       >
         <img
@@ -121,7 +121,7 @@ const DraggableItem_ForTemplate2 = ({
             height: "65px", // גובה התמונה
             width: "65px", // רוחב התמונה
             position: "absolute",
-            top: "-14px",
+            top: "-14.5px",
             right: "-10px",
             cursor: "pointer",
             zIndex: 10,

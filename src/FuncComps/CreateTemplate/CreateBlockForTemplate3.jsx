@@ -158,11 +158,19 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
               cursor: "pointer",
             }}
           >
-            <img
-              src="/public/createTemplate/keyword.png"
-              alt="Add"
-              //style={{ width: "16px", height: "16px" }}
-            />
+             {item.Type !== "file" && item.Type !== "signature" && (
+          <img
+            src="/public/createTemplate/keyword.png"
+            alt="Keyword"
+            style={{
+            position:"relative",
+            top: "-16px",
+            right: "-17px",
+            marginLeft:"2rem"
+   
+            }}
+          />
+        )}
           </button>
         )}
       </div>
