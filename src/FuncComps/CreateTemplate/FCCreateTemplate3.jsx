@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DndProvider } from "react-dnd";
@@ -42,57 +43,55 @@ const updateItem = useCallback(
     [items]
   );
 
-  console.log(items,template);
-
   //שליחה לשרת את התבנית והבלוקים
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
   
-    fetch(apiUrlTemplate, {
-      method: 'POST',
-      body: JSON.stringify(template),
-      headers: {
-          'Content-type': 'application/json; charset=UTF-8',
-          'Accept': 'application/json; charset=UTF-8',
-      }
-    })
-    .then(res => res.json())
-    .then((result) => {
-      console.log("Create Template successfully", result.template);
-      // Process each block sequentially
-      const processBlock = (index) => {
-        if (index < items.length) {
-          const block = items[index];
-          fetch(apiUrlBlock, {
-            method: 'POST',
-            body: JSON.stringify(block),
-            headers: {
-              'Content-type': 'application/json; charset=UTF-8',
-              'Accept': 'application/json; charset=UTF-8',
-            }
-          })
-          .then(res => res.json())
-          .then(result => {
-            console.log("Block inserted successfully:", result);
-            processBlock(index + 1); // Recursive call to process next block
-          })
-          .catch(error => {
-            console.error("Error posting block:", error);
-          });
-        } else {
-          // All blocks processed, navigate away
-          navigate("/HomePage", {
-            state: { template, items, origin: "CreateTemplate3" },
-          });
-        }
-      };
+    // שליחת הטמפלייט לשרת
+    try {
+      const templateResponse = await fetch(apiUrlTemplate, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(template)
+      });
   
-      // Start processing blocks
-      processBlock(0);
-    })
-    .catch((error) => {
-      console.error("Error posting template:", error);
-    });
+      if (!templateResponse.ok) {
+        throw new Error(`HTTP error! Status: ${templateResponse.status}`);
+      }
+  
+      const templateResult = await templateResponse.json();
+      console.log("Create Template successfully", templateResult);
+  
+      // שליחת הבלוקים לאחר שהטמפלייט נוצר בהצלחה
+      for (const block of items) {
+        const blockResponse = await fetch(apiUrlBlock, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify(block)
+        });
+  
+        if (!blockResponse.ok) {
+          throw new Error(`HTTP error! Status: ${blockResponse.status}`);
+        }
+  
+        const blockResult = await blockResponse.json();
+        console.log("Block inserted successfully:", blockResult);
+      }
+  
+      // ניווט לדף הבית לאחר שכל הבלוקים נשלחו בהצלחה
+      navigate("/HomePage", {
+        state: { template: templateResult, items, origin: "CreateTemplate3" },
+      });
+  
+    } catch (error) {
+      console.error("Error during the POST process:", error.message);
+    }
   };
   
   
