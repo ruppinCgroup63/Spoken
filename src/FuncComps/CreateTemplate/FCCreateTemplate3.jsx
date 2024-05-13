@@ -42,12 +42,11 @@ const updateItem = useCallback(
     [items]
   );
 
-  console.log(items,template);
-
   //שליחה לשרת את התבנית והבלוקים
   const handleSubmit = (e) => {
     e.preventDefault();
   
+    // Fetch to template
     fetch(apiUrlTemplate, {
       method: 'POST',
       body: JSON.stringify(template),
@@ -56,43 +55,44 @@ const updateItem = useCallback(
           'Accept': 'application/json; charset=UTF-8',
       }
     })
-    .then(res => res.json())
+    .then(res => {
+      console.log('res=', res);
+      return res.json();
+    })
     .then((result) => {
-      console.log("Create Template successfully", result.template);
+      console.log("fetch POST= ", 'Create Template successfully');
+      console.log(result.template);
+      
+      // after successful template creation,continue with POST block
+      items.forEach(block => {
+        fetch(apiUrlBlock, {
+          method: 'POST',
+          body: JSON.stringify(block),
+          headers: {
+            'Content-type': 'application/json; charset=UTF-8',
+            'Accept': 'application/json; charset=UTF-8',
+          }
+        })
+        .then(res => {
+          console.log('res=', res);
+          return res.json();
+        })
+        .then(result => {
+          console.log("Block inserted successfully:", result);
+        })
+        .catch(error => {
+          console.error("Error posting block:", error);
+        });
+      });
   
-      // Process each block sequentially
-      const processBlock = (index) => {
-        if (index < items.length) {
-          const block = items[index];
-          fetch(apiUrlBlock, {
-            method: 'POST',
-            body: JSON.stringify(block),
-            headers: {
-              'Content-type': 'application/json; charset=UTF-8',
-              'Accept': 'application/json; charset=UTF-8',
-            }
-          })
-          .then(res => res.json())
-          .then(result => {
-            console.log("Block inserted successfully:", result);
-            processBlock(index + 1); // Recursive call to process next block
-          })
-          .catch(error => {
-            console.error("Error posting block:", error);
-          });
-        } else {
-          // All blocks processed, navigate away
-          navigate("/HomePage", {
-            state: { template, items, origin: "CreateTemplate3" },
-          });
-        }
-      };
-  
-      // Start processing blocks
-      processBlock(0);
+      // Navigate after successful
+      navigate("/HomePage", {
+        state: { template, items, origin: "CreateTemplate3" },
+      });
     })
     .catch((error) => {
-      console.error("Error posting template:", error);
+      console.log("err post=", 'the template already exists');
+      console.log(error);
     });
   };
   
