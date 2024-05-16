@@ -13,7 +13,6 @@ import "./FuncComps/CreateTemplate/createTemplat3.css";
 //import Main from "./FuncComps/SpeechRecognition/Main";
 import "regenerator-runtime/runtime";
 import ChooseTemplate from "./FuncComps/HOME/ChooseTemplate";
-
 function App() {
   const [usersList, setUsersList] = useState([]);
 
