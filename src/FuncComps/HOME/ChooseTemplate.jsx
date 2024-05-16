@@ -7,7 +7,7 @@ function ChooseTemplate() {
   const [error, setError] = useState(null);
 
   const apiUrlTemplate = "https://localhost:44326/api/Templates";
-  const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates";
+  const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 
   useEffect(() => {
     fetch(apiUrlTemplate)
@@ -28,24 +28,33 @@ function ChooseTemplate() {
 
   const handleTemplateClick = (selectedTemplate) => {
     setSelectedTemplate(selectedTemplate);
+    console.log(selectedTemplate);
+    console.log(templates);
 
-    fetch(
-      `${apiUrlBlocks}/getBlocksByTemplateNo/${selectedTemplate.templateNo}`
-    )
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setSelectedTemplateBlocks(data);
-      })
-      .catch((error) => {
-        console.error("Error fetching blocks data:", error);
-        setError("Failed to fetch blocks data. Please try again.");
-      });
-  };
+
+
+  fetch(apiUrlBlocks, {
+    method: 'POST', 
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(selectedTemplate) 
+  })
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
+    }
+    return response.json();
+  })
+  .then((data) => {
+    setSelectedTemplateBlocks(data);
+  })
+  .catch((error) => {
+    console.error("Error fetching blocks data:", error);
+    setError("Failed to fetch blocks data. Please try again.");
+  });
+}
+
 
   return (
     <div>
