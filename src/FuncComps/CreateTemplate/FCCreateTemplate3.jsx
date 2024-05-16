@@ -1,37 +1,34 @@
-
 import React, { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
 import DraggableItem from "./CreateBlockForTemplate3";
+import "regenerator-runtime/runtime";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
-const apiUrlTemplate = 'https://localhost:44326/api/Templates';
-const apiUrlBlock = 'https://localhost:44326/api/BlocksInTemplates';
+const apiUrlTemplate = "https://localhost:44326/api/Templates";
+const apiUrlBlock = "https://localhost:44326/api/BlocksInTemplates";
 
-function CreateTemplate3() {
+function CreateTemplate3({ items, setItems }) {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [template, setTemplate] = useState(
     state.template || { TemplateName: "", description: "", IsPublic: false }
   );
   const [isOpen, setIsOpen] = useState(false);
-  const [items, setItems] = useState(state.items || []);
 
-  //const handleToggle = () => {
-   // setIsOpen(!isOpen);
-  //};
-
-const updateItem = useCallback(
-  (index, field, value) => {
-    const newItems = items.map((item, idx) => 
-      idx === index ? { ...item, [field]: value } : item
-    );
-    setItems(newItems);  // עדכון המערך 
-  },
-  [items]
-);
-
+  const updateItem = useCallback(
+    (index, field, value) => {
+      const newItems = items.map((item, idx) =>
+        idx === index ? { ...item, [field]: value } : item
+      );
+      setItems(newItems); // Updating the items array
+    },
+    [items, setItems]
+  );
 
   const moveItem = useCallback(
     (dragIndex, hoverIndex) => {
@@ -39,65 +36,58 @@ const updateItem = useCallback(
       const dragItem = newItems[dragIndex];
       newItems.splice(dragIndex, 1);
       newItems.splice(hoverIndex, 0, dragItem);
+      setItems(newItems);
     },
-    [items]
+    [items, setItems]
   );
 
-  //שליחה לשרת את התבנית והבלוקים
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // שליחת הטמפלייט לשרת
+
     try {
       const templateResponse = await fetch(apiUrlTemplate, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify(template)
+        body: JSON.stringify(template),
       });
-  
+
       if (!templateResponse.ok) {
         throw new Error(`HTTP error! Status: ${templateResponse.status}`);
       }
-  
+
       const templateResult = await templateResponse.json();
       console.log("Create Template successfully", templateResult);
-  
-      // שליחת הבלוקים לאחר שהטמפלייט נוצר בהצלחה
+
       for (const block of items) {
         const blockResponse = await fetch(apiUrlBlock, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
-          body: JSON.stringify(block)
+          body: JSON.stringify(block),
         });
-  
+
         if (!blockResponse.ok) {
           throw new Error(`HTTP error! Status: ${blockResponse.status}`);
         }
-  
+
         const blockResult = await blockResponse.json();
         console.log("Block inserted successfully:", blockResult);
       }
-  
-      // ניווט לדף הבית לאחר שכל הבלוקים נשלחו בהצלחה
+
       navigate("/HomePage", {
         state: { template: templateResult, items, origin: "CreateTemplate3" },
       });
-  
     } catch (error) {
       console.error("Error during the POST process:", error.message);
     }
   };
-  
-  
+
   console.log(items);
-
-
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -164,7 +154,6 @@ const updateItem = useCallback(
                   }}
                 ></div>
 
-                {/* חלק של מילת המפתח */}
                 <div
                   style={{
                     display: "flex",
@@ -197,7 +186,7 @@ const updateItem = useCallback(
                 </div>
                 {isOpen && (
                   <div>
-                    <p className="keyWordP" style={{textAlign: "left"}}>
+                    <p className="keyWordP" style={{ textAlign: "left" }}>
                       In this page, you need to define a keyword for each block.
                       The keyword will assist you during the automated
                       transcription process. When you speak the keyword, the
@@ -264,7 +253,6 @@ const updateItem = useCallback(
               <div className="flex justify-between mt-6">
                 <button
                   type="button"
-               
                   onClick={() =>
                     navigate("/CreateTemplate2", {
                       state: {
@@ -281,7 +269,6 @@ const updateItem = useCallback(
                 <button
                   type="submit"
                   className="btn btn-primary btn-sm continue"
-                 
                 >
                   Save template
                 </button>
