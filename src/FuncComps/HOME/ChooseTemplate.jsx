@@ -28,12 +28,16 @@ function ChooseTemplate() {
       });
   }, []);
 
+
+  
+
+
   const handleTemplateClick = (selectedTemplate) => {
     setSelectedTemplate(selectedTemplate);
     console.log(selectedTemplate);
     console.log(templates);
 
-
+    
 
     fetch(apiUrlBlocks, {
       method: 'POST', 
@@ -49,7 +53,10 @@ function ChooseTemplate() {
       return response.json();
     })
     .then((data) => {
+      
       setSelectedTemplateBlocks(data);
+      console.log(data);
+     
     })
     .catch((error) => {
       console.error("Error fetching blocks data:", error);

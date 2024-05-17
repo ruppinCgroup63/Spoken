@@ -91,6 +91,9 @@ function HomePage() {
             <span
               style={{ color: "#2D4BA6", cursor: "pointer", fontSize: "12px" }}
               className="mr-2"
+              onClick={() => {
+                navigate("/ChooseTemplate");
+              }}
             >
               All templates
             </span>

@@ -13,6 +13,7 @@ import "./FuncComps/CreateTemplate/createTemplat3.css";
 //import Main from "./FuncComps/SpeechRecognition/Main";
 import "regenerator-runtime/runtime";
 import ChooseTemplate from "./FuncComps/HOME/ChooseTemplate";
+import Template from "./FuncComps/HOME/Template";
 function App() {
   const [usersList, setUsersList] = useState([]);
 
@@ -31,15 +32,13 @@ function App() {
             <Route path="/" element={<Login userList={usersList} />} />
             <Route path="/Register" element={<RegistrationPage />} />
             <Route path="/Register2" element={<RegistrationPage2 />} />
-            <Route
-              path="/Register3"
-              element={<RegistrationPage3 sendtoParent={getUserFromChild} />}
-            />
+            <Route path="/Register3" element={<RegistrationPage3 sendtoParent={getUserFromChild} />}  />
             <Route path="/HomePage" element={<HomePage />} />
             <Route path="/CreateTemplate" element={<CreateTemplate />} />
             <Route path="/CreateTemplate2" element={<CreateTemplate2 />} />
             <Route path="/CreateTemplate3" element={<CreateTemplate3 />} />
             <Route path="/ChooseTemplate" element={<ChooseTemplate />} />
+            <Route path="/Template" element={<Template/>} />
           </Routes>
         </BrowserRouter>
       </div>
