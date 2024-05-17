@@ -97,7 +97,7 @@ function Login(props) {
           // Store user data in session storage and navigate to home page
           sessionStorage.setItem('user', JSON.stringify(loggedInUser));
           clearFields();
-          navigate('/HomePage' );
+          navigate('/HomePage');
         } 
         else {
           console.log('Invalid email or password!'); // Notify user of invalid credentials

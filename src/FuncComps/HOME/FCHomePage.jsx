@@ -5,12 +5,24 @@ import { useNavigate } from "react-router-dom";
 function HomePage() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
-
+  const [user, setUser] = useState();
   useEffect(() => {
     const userFromStorage = JSON.parse(sessionStorage.getItem("user"));
     console.log(userFromStorage);
     if (userFromStorage) {
       setUserName(userFromStorage.userName);
+      setUser({
+        UserName: userFromStorage.userName,
+        Email: userFromStorage.email,
+        Password: userFromStorage.password,
+        ConfirmPassword: userFromStorage.confirmPassword,
+        Phone: userFromStorage.phone,
+        LangName: userFromStorage.langName,
+        DomainName: userFromStorage.domainName,
+        Job: userFromStorage.job,
+        Employee: userFromStorage.employee,
+        Signature: userFromStorage.signature,
+      });
     }
   }, []);
 
@@ -27,7 +39,7 @@ function HomePage() {
               style={{ color: "#070A40", cursor: "pointer" }}
             >
               {" "}
-              <b>{userName}Rotem</b>
+              <b>{userName}</b>
             </h3>
             <label
               className="btn btn-circle swap swap-rotate self-start"
@@ -92,7 +104,7 @@ function HomePage() {
               style={{ color: "#2D4BA6", cursor: "pointer", fontSize: "12px" }}
               className="mr-2"
               onClick={() => {
-                navigate("/ChooseTemplate");
+                navigate("/ChooseTemplate" , {state:{user}});
               }}
             >
               All templates

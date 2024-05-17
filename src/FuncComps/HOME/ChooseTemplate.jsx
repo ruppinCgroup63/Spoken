@@ -1,33 +1,75 @@
+import { useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { ResizableBox } from 'react-resizable';
 import "react-resizable/css/styles.css";
 
+
+
+const apiUrlTemplate = "https://localhost:44326/api/Templates/getByUserEmail";
+const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+
+
 function ChooseTemplate() {
+  const { state } = useLocation();
+  const user = state.user;
+  console.log(user.Email);
+  console.log(JSON.stringify(user));
+
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [error, setError] = useState(null);
-
-  const apiUrlTemplate = "https://localhost:44326/api/Templates";
-  const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+  
 
   useEffect(() => {
-    fetch(apiUrlTemplate)
+    
+      fetch(apiUrlTemplate, {
+        method: 'POST',
+        headers: {     
+             
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body:JSON.stringify(user.Email),     
+      })
+      
       .then((response) => {
+        
         if (!response.ok) {
+          console.log(response);
           throw new Error("Failed to fetch data");
+
         }
         return response.json();
       })
       .then((data) => {
-        setTemplates(data);
         console.log(data);
+        setTemplates(data);
+        console.log('Received templates:', data);
       })
       .catch((error) => {
-        console.error("Error fetching template data:", error);
-        setError("Failed to fetch template data. Please try again.");
+        
+        console.error("Error fetching blocks data:", error);
+        setError("Failed to fetch blocks data. Please try again.");
       });
+
   }, []);
+
+  // fetch(apiUrlTemplate)
+  // .then((response) => {
+  //    if (!response.ok) {
+  //      throw new Error("Failed to fetch data");
+  //      }
+  //     return response.json();
+  //    })
+  //    .then((data) => {
+  //      setTemplates(data);
+  //console.log(data);
+  //    })
+  //  .catch((error) => {
+  //      console.error("Error fetching template data:", error);
+  //     setError("Failed to fetch template data. Please try again.");
+  //   });
+  // 
 
 
 
@@ -37,31 +79,31 @@ function ChooseTemplate() {
     console.log(selectedTemplate);
     console.log(templates);
 
-    
+
 
     fetch(apiUrlBlocks, {
-      method: 'POST', 
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(selectedTemplate) 
+      body: JSON.stringify(selectedTemplate)
     })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      
-      setSelectedTemplateBlocks(data);
-      console.log(data);
-     
-    })
-    .catch((error) => {
-      console.error("Error fetching blocks data:", error);
-      setError("Failed to fetch blocks data. Please try again.");
-    });
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        return response.json();
+      })
+      .then((data) => {
+
+        setSelectedTemplateBlocks(data);
+        console.log(data);
+
+      })
+      .catch((error) => {
+        console.error("Error fetching blocks data:", error);
+        setError("Failed to fetch blocks data. Please try again.");
+      });
   };
 
 
@@ -71,13 +113,13 @@ function ChooseTemplate() {
       newBlocks[idx] = { ...newBlocks[idx], [key]: value };
       setSelectedTemplateBlocks(newBlocks);
     };
-  
+
     const removeItem = (idx) => {
       const newBlocks = [...selectedTemplateBlocks].filter((_, i) => i !== idx);
       setSelectedTemplateBlocks(newBlocks);
     };
-  
-    
+
+
 
     switch (block.type) {
       case "file":
@@ -132,7 +174,7 @@ function ChooseTemplate() {
         );
     }
   }
-  
+
 
 
   return (
