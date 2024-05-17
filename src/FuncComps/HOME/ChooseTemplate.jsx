@@ -21,6 +21,7 @@ function ChooseTemplate() {
       })
       .then((data) => {
         setTemplates(data);
+        console.log(data);
       })
       .catch((error) => {
         console.error("Error fetching template data:", error);
@@ -29,7 +30,6 @@ function ChooseTemplate() {
   }, []);
 
 
-  
 
 
   const handleTemplateClick = (selectedTemplate) => {
@@ -77,6 +77,8 @@ function ChooseTemplate() {
       setSelectedTemplateBlocks(newBlocks);
     };
   
+    
+
     switch (block.type) {
       case "file":
         return (
@@ -150,10 +152,10 @@ function ChooseTemplate() {
               cursor: "pointer",
             }}
           >
-            <h3>{template.templateName}</h3>
-            <p>{template.description}</p>
-            <p>By: {template.creatorEmail}</p>
-            <p>Is Public: {template.isPublic ? "Yes" : "No"}</p>
+            <h3><b>Template Name:</b> {template.templateName}</h3>
+            <p> <b>Description:</b> {template.description}</p>
+            <p><b>By:</b> {template.email}</p>
+            <p><b>Is Public:</b> {template.isPublic ? "Yes" : "No"}</p>
           </li>
         ))}
       </ul>
@@ -176,7 +178,7 @@ function ChooseTemplate() {
               <strong>PreTemplate:</strong> {selectedTemplate.preTemplate}
             </p>
             <p>
-              <strong>Creator Email:</strong> {selectedTemplate.creatorEmail}
+              <strong>Creator Email:</strong> {selectedTemplate.email}
             </p>
             <p>
               <strong>Domain Name:</strong> {selectedTemplate.domainName}
