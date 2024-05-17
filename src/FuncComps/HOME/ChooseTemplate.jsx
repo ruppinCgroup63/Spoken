@@ -1,15 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import { ResizableBox } from 'react-resizable';
+import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 
-
-
 const apiUrlTemplate = "https://localhost:44326/api/Templates/getByUserEmail";
-const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
-
+const apiUrlBlocks =
+  "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 
 function ChooseTemplate() {
+  const navigate = useNavigate();
   const { state } = useLocation();
   const user = state.user;
   console.log(user.Email);
@@ -19,74 +18,74 @@ function ChooseTemplate() {
   const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [error, setError] = useState(null);
-  
 
   useEffect(() => {
-    
-      fetch(apiUrlTemplate, {
-        method: 'POST',
-        headers: {     
-             
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body:JSON.stringify(user.Email),     
-      })
-      
+    fetch(apiUrlTemplate, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+      },
+      body: JSON.stringify(user.Email),
+    })
       .then((response) => {
-        
         if (!response.ok) {
           console.log(response);
           throw new Error("Failed to fetch data");
-
         }
         return response.json();
       })
       .then((data) => {
         console.log(data);
         setTemplates(data);
-        console.log('Received templates:', data);
+        console.log("Received templates:", data);
       })
       .catch((error) => {
-        
         console.error("Error fetching blocks data:", error);
         setError("Failed to fetch blocks data. Please try again.");
       });
-
   }, []);
 
-  // fetch(apiUrlTemplate)
-  // .then((response) => {
-  //    if (!response.ok) {
-  //      throw new Error("Failed to fetch data");
-  //      }
-  //     return response.json();
-  //    })
-  //    .then((data) => {
-  //      setTemplates(data);
-  //console.log(data);
-  //    })
-  //  .catch((error) => {
-  //      console.error("Error fetching template data:", error);
-  //     setError("Failed to fetch template data. Please try again.");
-  //   });
-  // 
+  // const handleTemplateClick = (selectedTemplate) => {
+  //   setSelectedTemplate(selectedTemplate);
+  //   console.log(selectedTemplate);
+  //   console.log(templates);
 
-
-
-
+  //   fetch(apiUrlBlocks, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(selectedTemplate),
+  //   })
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error("Failed to fetch data");
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       setSelectedTemplateBlocks(data);
+  //       console.log(data);
+  //       // Navigate to TemplateToDictate component with selected template and blocks as props
+  //       navigate("/TemplateToDictate", {
+  //         state: { selectedTemplate, Data: data, user },
+  //       });
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching blocks data:", error);
+  //       setError("Failed to fetch blocks data. Please try again.");
+  //     });
+  // };
   const handleTemplateClick = (selectedTemplate) => {
     setSelectedTemplate(selectedTemplate);
-    console.log(selectedTemplate);
-    console.log(templates);
 
-
-
+    // Fetch blocks linked to the selected template
     fetch(apiUrlBlocks, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(selectedTemplate)
+      body: JSON.stringify(selectedTemplate),
     })
       .then((response) => {
         if (!response.ok) {
@@ -95,17 +94,18 @@ function ChooseTemplate() {
         return response.json();
       })
       .then((data) => {
-
         setSelectedTemplateBlocks(data);
         console.log(data);
-
+        // Navigate to TemplateToDictate component with selected template and blocks as props
+        navigate("/TemplateToDictate", {
+          state: { selectedTemplate, Data: data, user },
+        });
       })
       .catch((error) => {
         console.error("Error fetching blocks data:", error);
         setError("Failed to fetch blocks data. Please try again.");
       });
   };
-
 
   function renderContent(block, index) {
     const updateItem = (idx, key, value) => {
@@ -118,8 +118,6 @@ function ChooseTemplate() {
       const newBlocks = [...selectedTemplateBlocks].filter((_, i) => i !== idx);
       setSelectedTemplateBlocks(newBlocks);
     };
-
-
 
     switch (block.type) {
       case "file":
@@ -152,8 +150,8 @@ function ChooseTemplate() {
             <input
               type="text"
               placeholder="Enter title"
-              value={block.title || ''}
-              onChange={(e) => updateItem(index, 'title', e.target.value)}
+              value={block.title || ""}
+              onChange={(e) => updateItem(index, "title", e.target.value)}
               style={{
                 width: "100%",
                 marginBottom: "2px",
@@ -162,8 +160,8 @@ function ChooseTemplate() {
             />
             <textarea
               placeholder="Enter text"
-              value={block.text || ''}
-              onChange={(e) => updateItem(index, 'text', e.target.value)}
+              value={block.text || ""}
+              onChange={(e) => updateItem(index, "text", e.target.value)}
               style={{
                 width: "100%",
                 height: "45px",
@@ -174,8 +172,6 @@ function ChooseTemplate() {
         );
     }
   }
-
-
 
   return (
     <div>
@@ -194,10 +190,19 @@ function ChooseTemplate() {
               cursor: "pointer",
             }}
           >
-            <h3><b>Template Name:</b> {template.templateName}</h3>
-            <p> <b>Description:</b> {template.description}</p>
-            <p><b>By:</b> {template.email}</p>
-            <p><b>Is Public:</b> {template.isPublic ? "Yes" : "No"}</p>
+            <h3>
+              <b>Template Name:</b> {template.templateName}
+            </h3>
+            <p>
+              {" "}
+              <b>Description:</b> {template.description}
+            </p>
+            <p>
+              <b>By:</b> {template.email}
+            </p>
+            <p>
+              <b>Is Public:</b> {template.isPublic ? "Yes" : "No"}
+            </p>
           </li>
         ))}
       </ul>
@@ -242,28 +247,32 @@ function ChooseTemplate() {
                   height={100}
                   minConstraints={[100, 100]}
                   maxConstraints={[350, 100]}
-                  resizeHandles={['e', 'w']}
+                  resizeHandles={["e", "w"]}
                   className="resizable"
-                  style={{ margin: 'auto', border: '1px solid silver', marginTop: '1rem' }}
+                  style={{
+                    margin: "auto",
+                    border: "1px solid silver",
+                    marginTop: "1rem",
+                  }}
                 >
                   <div
                     style={{
-                      padding: '5px',
-                      overflow: 'hidden',
-                      position: 'relative',
-                      border: '1px solid silver',
+                      padding: "5px",
+                      overflow: "hidden",
+                      position: "relative",
+                      border: "1px solid silver",
                     }}
                   >
                     <img
                       src="/public/createTemplate/Trash1.png"
                       alt="Delete"
                       style={{
-                        height: '65px',
-                        width: '65px',
-                        position: 'absolute',
-                        top: '-14.5px',
-                        right: '-10px',
-                        cursor: 'pointer',
+                        height: "65px",
+                        width: "65px",
+                        position: "absolute",
+                        top: "-14.5px",
+                        right: "-10px",
+                        cursor: "pointer",
                         zIndex: 10,
                       }}
                       onClick={() => removeItem(index)}
