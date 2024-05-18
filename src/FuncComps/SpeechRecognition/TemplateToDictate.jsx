@@ -23,13 +23,12 @@ function TemplateToDictate() {
   const [isDictating, setIsDictating] = useState(false); // מצב כדי לעקוב אחר הכתבה ולנהל את ההכתבה לבלוקים
   const [items, setItems] = useState(Data || []); // הבלוקים אליהם נתמלל
 
-  // Add a listener to resize the text area dynamically
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
         const { target } = entry;
         target.style.height = "auto";
-        target.style.height = target.scrollHeight + "px";
+        target.style.height = `${target.scrollHeight}px`;
       }
     });
 
@@ -72,9 +71,10 @@ function TemplateToDictate() {
   //שליחה לשרת את התבנית והבלוקים
   // Save the blocks sequentially
   const handleSave = async () => {
-    try {
-      for (let i = 0; i < items.length; i++) {
-        let block = items[i];
+    for (let block of items) {
+      console.log("Sending block to server:", block); // Debugging statement
+
+      try {
         const blockResponse = await fetch(apiUrlBlockCorrector, {
           method: "POST",
           headers: {
@@ -93,19 +93,22 @@ function TemplateToDictate() {
 
         // Update the state with the corrected block
         setItems((prevItems) =>
-          prevItems.map((item, index) => (index === i ? blockResult : item))
+          prevItems.map((item) =>
+            item.keyWord.toLowerCase() === blockResult.keyWord.toLowerCase()
+              ? blockResult
+              : item
+          )
         );
+      } catch (error) {
+        console.error("Error during the POST process:", error.message);
       }
-
-      console.log("All blocks corrected successfully");
-
-      // Optionally navigate to another page or show a success message
-      navigate("/HomePage", {
-        state: { items, origin: "CreateTemplate3" },
-      });
-    } catch (error) {
-      console.error("Error during the POST process:", error.message);
     }
+
+    // Optionally navigate to another page or show a success message
+    console.log("All blocks corrected successfully");
+    navigate("/HomePage", {
+      state: { items, origin: "ChooseTemplate" },
+    });
   };
 
   console.log(items);
@@ -194,7 +197,6 @@ function TemplateToDictate() {
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
   }
-
   return (
     <div
       style={{
@@ -285,16 +287,14 @@ function TemplateToDictate() {
                       {block.type == "signature" && block.image && (
                         <img src={block.image} alt="Signature" />
                       )}
-                      {block.type == "title" && (
+                      {block.type == "textarea" && (
                         <textarea
                           value={block.text}
-                          onChange={(e) => autoGrow(e)}
+                          readOnly
                           style={{
                             width: "100%",
-                            minHeight: "60px",
+                            height: "100px",
                             border: "1px solid silver",
-                            overflowY: "hidden",
-                            resize: "none",
                           }}
                         />
                       )}
