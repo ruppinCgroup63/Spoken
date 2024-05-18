@@ -3,7 +3,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import SignatureCanvas from "react-signature-canvas";
 import ErrorMessage from "../FCErrorMessage";
 
-const apiUrl = "https://localhost:44326/api/Users";
+
+
+const apiUrl = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Users';
+"https://localhost:44326/api/Users";
 
 function RegistrationPage3(props) {
   const navigate = useNavigate();

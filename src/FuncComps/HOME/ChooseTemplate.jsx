@@ -3,9 +3,10 @@ import React, { useState, useEffect } from "react";
 import { ResizableBox } from "react-resizable";
 import "react-resizable/css/styles.css";
 
-const apiUrlTemplate = "https://localhost:44326/api/Templates/getByUserEmail";
-const apiUrlBlocks =
-  "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlTemplate = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Templates/getByUserEmail';
+"https://localhost:44326/api/Templates/getByUserEmail";
+const apiUrlBlocks = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/BlocksInTemplates/getBlocksByTemplateNo';
+"https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 
 function ChooseTemplate() {
   const navigate = useNavigate();
