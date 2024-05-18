@@ -3,11 +3,15 @@ import React, { useEffect, useState } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function TemplateToDictate() {
+  //URL for the spelling - הכתובת לשרת לפרוצדורה של תיקון התמלול
+  const apiUrlBlockCorrector = "https://localhost:44326/api/TextCorrector";
+  //const apiUrlTemplate = "https://localhost:44326/api/Templates";
   const location = useLocation();
-  const { selectedTemplate, Data, user } = location.state || {};
+  const navigate = useNavigate();
+  const { selectedTemplate, Data } = location.state || {};
   const {
     transcript,
     listening,
@@ -65,39 +69,80 @@ function TemplateToDictate() {
     setIsDictating(false);
   };
 
-  const handleSave = () => {
-    if (!listening) {
-      console.log("Saving changes to the server...");
+  // const handleSave = () => {
+  //   if (!listening) {
+  //     console.log("Saving changes to the server...");
 
-      const updatedData = {
-        email: user.email, // Assuming you have the user's email available
-        updatedBlocks: items, // Pass the updated block data
-      };
+  //     const updatedData = {
+  //       email: user.email, // Assuming you have the user's email available
+  //       updatedBlocks: items, // Pass the updated block data
+  //     };
 
-      fetch("https://localhost:44326/api/BlockInTemplate", {
-        // Update the endpoint to correct URL
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedData),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Failed to save data");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Data saved successfully:", data);
-          // Handle success message or further actions
-        })
-        .catch((error) => {
-          console.error("Error while saving data:", error);
-          // Handle error message or further actions
+  //     fetch("https://localhost:44326/api/BlockInTemplate", {
+  //       // Update the endpoint to correct URL
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(updatedData),
+  //     })
+  //       .then((response) => {
+  //         if (!response.ok) {
+  //           throw new Error("Failed to save data");
+  //         }
+  //         return response.json();
+  //       })
+  //       .then((data) => {
+  //         console.log("Data saved successfully:", data);
+  //         // Handle success message or further actions
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error while saving data:", error);
+  //         // Handle error message or further actions
+  //       });
+  //   }
+  // };
+
+  //שליחה לשרת את התבנית והבלוקים
+  // Save the blocks sequentially
+  const handleSave = async () => {
+    try {
+      for (let i = 0; i < items.length; i++) {
+        let block = items[i];
+        const blockResponse = await fetch(apiUrlBlockCorrector, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(block),
         });
+
+        if (!blockResponse.ok) {
+          throw new Error(`HTTP error! Status: ${blockResponse.status}`);
+        }
+
+        const blockResult = await blockResponse.json();
+        console.log("Block corrected successfully:", blockResult);
+
+        // Update the state with the corrected block
+        setItems((prevItems) =>
+          prevItems.map((item, index) => (index === i ? blockResult : item))
+        );
+      }
+
+      console.log("All blocks corrected successfully");
+
+      // Optionally navigate to another page or show a success message
+      navigate("/HomePage", {
+        state: { items, origin: "CreateTemplate3" },
+      });
+    } catch (error) {
+      console.error("Error during the POST process:", error.message);
     }
   };
+
+  console.log(items);
 
   //ניהול האזנה והתמלול
   useEffect(() => {
@@ -115,7 +160,7 @@ function TemplateToDictate() {
   const handleStopDictating = () => {
     console.log("Stop dictating - last KeyWord was ", activeKeyword);
     setIsDictating(false);
-    console.log("is dictating now turn to : ", isDictating);
+    console.log("is dictating now turn from on to : ", isDictating);
     setActiveKeyword(null);
     resetTranscript();
   };
@@ -128,7 +173,7 @@ function TemplateToDictate() {
       return;
     }
 
-    console.log("Items are : ", items);
+    console.log("Items of the template are : ", items);
     //חיפוש/זיהוי מילת מפתח מתוך מילות המפתח של הבלוקים
     let foundKeyword = items.find((item) =>
       transcript.toLowerCase().endsWith(item.keyWord.toLowerCase())
