@@ -69,40 +69,6 @@ function TemplateToDictate() {
     setIsDictating(false);
   };
 
-  // const handleSave = () => {
-  //   if (!listening) {
-  //     console.log("Saving changes to the server...");
-
-  //     const updatedData = {
-  //       email: user.email, // Assuming you have the user's email available
-  //       updatedBlocks: items, // Pass the updated block data
-  //     };
-
-  //     fetch("https://localhost:44326/api/BlockInTemplate", {
-  //       // Update the endpoint to correct URL
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify(updatedData),
-  //     })
-  //       .then((response) => {
-  //         if (!response.ok) {
-  //           throw new Error("Failed to save data");
-  //         }
-  //         return response.json();
-  //       })
-  //       .then((data) => {
-  //         console.log("Data saved successfully:", data);
-  //         // Handle success message or further actions
-  //       })
-  //       .catch((error) => {
-  //         console.error("Error while saving data:", error);
-  //         // Handle error message or further actions
-  //       });
-  //   }
-  // };
-
   //שליחה לשרת את התבנית והבלוקים
   // Save the blocks sequentially
   const handleSave = async () => {

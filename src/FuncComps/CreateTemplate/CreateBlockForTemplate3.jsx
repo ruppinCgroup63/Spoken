@@ -79,7 +79,9 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
             type="text"
             placeholder="Enter title"
             value={item.Title}
-            onChange={(e) => updateItem(index, "Title", e.target.value)}
+            onChange={(e) => {
+              updateItem(index, "Title", e.target.value);
+            }}
             style={{
               width: "100%",
               marginBottom: "5px",

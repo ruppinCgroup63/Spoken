@@ -72,7 +72,10 @@ const DraggableItem_ForTemplate2 = ({
             type="text"
             placeholder="Enter title"
             value={item.Title}
-            onChange={(e) => updateItem(index, "Title", e.target.value)}
+            onChange={(e) => {
+              updateItem(index, "Title", e.target.value);
+              updateItem(index, "KeyWord", e.target.value); // העתק את הערך של title גם ל-keyword
+            }}
             style={{
               width: "100%",
               marginBottom: "2px",
@@ -91,9 +94,7 @@ const DraggableItem_ForTemplate2 = ({
           />
         </>
       );
-    }
-  };
-
+}}      
   return (
     <ResizableBox
       width={300}
