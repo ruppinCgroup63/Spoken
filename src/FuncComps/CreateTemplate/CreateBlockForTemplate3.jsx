@@ -7,19 +7,19 @@ import "./style.css";
 const ItemType = "DRAGGABLE_ITEM";
 
 const DraggableItem = ({ item, index, moveItem, updateItem }) => {
-  const [showKeywordInput, setShowKeywordInput] = useState(false);
+  const [showKeywordInput, setShowKeywordInput] = useState(false); // ניהול התיבה של מילת המפתח
   const [KeyWord, setKeyword] = useState(item.KeyWord || item.Title); // ערך ברירת מחדל מה-Title
 
-  // Drag logic
+  // Drag logic - גרירה
   const [, drag] = useDrag(
     () => ({
       type: ItemType,
       item: { BlockNo: item.BlockNo, index },
     }),
-    [index, item.BlockNo]
+    [index, item.BlockNo] // כל שינוי באחד מהערכים האלה יגרום להפעלה מחדש של הפונקציה 
   );
 
-  // Drop logic
+  // Drop logic -- שחרור הפריט
   const [, drop] = useDrop(
     () => ({
       accept: ItemType,
@@ -33,20 +33,24 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
     [index]
   );
 
+  //לחיצה על הכפתור תציג את המלל בתיבה ותאפשר לכתוב
   const handleKeywordToggle = () => {
     setShowKeywordInput(true);
   };
 
+  //אם משנים את הטקסט נרצה לעדכן את המילת מפתח
   const handleKeywordChange = (e) => {
     const newKeyword = e.target.value;
     setKeyword(newKeyword);
   };
 
+  //עדכון המילת מפתח בבלוק והסתרת תיבת הטקסט של המפתח
   const handleKeywordBlur = () => {
     updateItem(index, "KeyWord", KeyWord);
     setShowKeywordInput(false);
   };
 
+  //מחזירים את התוכן שמותאם לפריט
   const renderContent = () => {
     if (item.Type === "file") {
       return (

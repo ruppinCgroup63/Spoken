@@ -6,10 +6,10 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
 import DraggableItem from "./CreateBlockForTemplate3";
 
-const apiUrlTemplate = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Templates';
-//'https://localhost:44326/api/Templates';
-const apiUrlBlock = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/BlocksInTemplates';
-//'https://localhost:44326/api/BlocksInTemplates';
+//const apiUrlTemplate = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Templates';
+const apiUrlTemplate ='https://localhost:44326/api/Templates';
+//const apiUrlBlock = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/BlocksInTemplates';
+const apiUrlBlock ='https://localhost:44326/api/BlocksInTemplates';
 
 function CreateTemplate3() {
   const navigate = useNavigate();
@@ -17,13 +17,15 @@ function CreateTemplate3() {
   const [template, setTemplate] = useState(
     state.template || { TemplateName: "", description: "", IsPublic: false }
   );
-  const [isOpen, setIsOpen] = useState(false);
-  const [items, setItems] = useState(state.items || []);
+  const [isOpen, setIsOpen] = useState(false); // בודק האם החלונית של המידע הנוסף פתוחה או סגורה 
+  const [items, setItems] = useState(state.items || []);//אייטמס זה הבלוקים שלנו
 
   //const handleToggle = () => {
    // setIsOpen(!isOpen);
   //};
 
+
+  // פונקציה שמעדכנת את הבלוקים בכל שינוי שיש באייטמס הפונקציה תופעל
 const updateItem = useCallback(
   (index, field, value) => {
     const newItems = items.map((item, idx) => 
@@ -34,15 +36,15 @@ const updateItem = useCallback(
   [items]
 );
 
-
+//הפונקציה מאפשרת הזזת פריטים ממיקום אחד למיקום אחר על ידי יצירת עותק חדש של הרשימה ועדכון המצב עם הרשימה המעודכנת
   const moveItem = useCallback(
     (dragIndex, hoverIndex) => {
       const newItems = [...items];
       const dragItem = newItems[dragIndex];
-      newItems.splice(dragIndex, 1);
-      newItems.splice(hoverIndex, 0, dragItem);
+      newItems.splice(dragIndex, 1); //מסירים את הפריט מהמיקום המקורי שלו ברשימה
+      newItems.splice(hoverIndex, 0, dragItem); // מוסיפים אותו למיקום החדש
     },
-    [items]
+    [items] // הפונקציה תיווצר מחדש רק כאשר יהיה שינוי באייטמס
   );
 
   //שליחה לשרת את התבנית והבלוקים

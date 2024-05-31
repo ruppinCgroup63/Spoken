@@ -1,4 +1,4 @@
-import "regenerator-runtime/runtime";
+import "regenerator-runtime/runtime"; // גורם לתמיכה של פונקציות אסינכרוניות ובגינרטורס
 import React, { useEffect, useState } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -6,24 +6,27 @@ import SpeechRecognition, {
 import { useLocation, useNavigate } from "react-router-dom";
 
 function TemplateToDictate() {
-  //URL for the spelling - הכתובת לשרת לפרוצדורה של תיקון התמלול
-  const apiUrlBlockCorrector ='https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/TextCorrector';
-  // "https://localhost:44326/api/TextCorrector";
+ 
+  //const apiUrlBlockCorrector ='https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/TextCorrector';
+   const apiUrlBlockCorrector ="https://localhost:44326/api/TextCorrector";
+   
   //const apiUrlTemplate = "https://localhost:44326/api/Templates";
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedTemplate, Data } = location.state || {};
-  const {
-    transcript,
-    listening,
-    resetTranscript,
-    browserSupportsSpeechRecognition,
+  const { selectedTemplate, Data } = location.state || {}; // חילוץ מהסטייס של הדאטה והסלקט טמפלייט
+  const { // שימוש ביוז ספיץ רקוגנישן כדי לקבל גישה לכל מה שבין המסולסליים
+    transcript, // תמלול עצמו
+    listening, // מצב ההאזנה
+    resetTranscript, //פונקציה שמאפסת את התמלול
+    browserSupportsSpeechRecognition, // בדיקה שהדפדפן תומך בתמלול
   } = useSpeechRecognition();
 
-  const [activeKeyword, setActiveKeyword] = useState(null); // מצב עבור מילת מפתח
+  const [activeKeyword, setActiveKeyword] = useState(null); // מצב עבור מילת מפתח פעילה
   const [isDictating, setIsDictating] = useState(false); // מצב כדי לעקוב אחר הכתבה ולנהל את ההכתבה לבלוקים
   const [items, setItems] = useState(Data || []); // הבלוקים אליהם נתמלל
 
+
+  //שינוי הגודל של תיבת הטקסט של התמלול באופן דינאמי
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
@@ -52,7 +55,8 @@ function TemplateToDictate() {
     }
   }, [selectedTemplate, Data]);
 
-  //התחלה הזאנה בלבד - ללא הכתבה
+
+  //התחלה האזנה בלבד רציפה - ללא הכתבה
   const handleStartListening = () => {
     if (!listening) {
       SpeechRecognition.startListening({ continuous: true, language: "en-US" });
@@ -61,12 +65,12 @@ function TemplateToDictate() {
   };
 
   //עצירת האזנה
-  //פונקציה שמטפלת בעצירת האזנה - עוצר תמלול והאזנה - מיקרופון מכובה
+  //פונקציה שמטפלת בעצירת ההאזנה - עוצר תמלול והאזנה - מיקרופון מכובה
   const handleStopListening = () => {
     SpeechRecognition.stopListening();
     console.log("Stop listening...");
-    setActiveKeyword(null);
-    setIsDictating(false);
+    setActiveKeyword(null); // איפוס מילות המפתח
+    setIsDictating(false);//איפוס מצב ההכתבה
   };
 
   //שליחה לשרת את התבנית והבלוקים
@@ -117,14 +121,14 @@ function TemplateToDictate() {
   //ניהול האזנה והתמלול
   useEffect(() => {
     console.log(transcript);
-    if (!isDictating) {
-      handleTranscriptKeywords();
-    } else if (transcript.toLowerCase().trim().endsWith("stop")) {
-      handleStopDictating();
-    } else {
-      appendTranscriptToActiveBlock();
+    if (!isDictating) { //אם מצב ההכתבה לא פעיל אבל ההאזנה פעילה
+      handleTranscriptKeywords(); // אנחנו בודקים את מילות המפתח בתמלול 
+    } else if (transcript.toLowerCase().trim().endsWith("stop")) { //אם במצב הכתבה התמלול מסתיים בסטופ
+      handleStopDictating(); //עוצרים את ההכתבה לא את ההאזנה
+    } else { //לא נאמר סטופ ואתה מכתיב 
+      appendTranscriptToActiveBlock(); // אחרת התמלול מתווסף לבלוק שפעיל 
     }
-  }, [transcript]);
+  }, [transcript]); // כל שינוי בטרנקריפט זה קורה
 
   //עצירת התמלול בלבד - איפוס מילת מפתח איפוס מצב הכתבה
   const handleStopDictating = () => {
@@ -150,11 +154,11 @@ function TemplateToDictate() {
     );
     console.log("Founded keyword is : ", foundKeyword);
 
-    //במקרה ובו זוההתה מילת מפתח - ומצב הכתבה לא פועל - נפעיל אותו כדי להכתוב לבלוק המתאים
+    //במקרה ובו זוההתה מילת מפתח - ומצב הכתבה לא פועל - נפעיל אותו כדי לכתוב לבלוק המתאים
     if (foundKeyword && !isDictating) {
-      setIsDictating(true);
-      setActiveKeyword(foundKeyword.keyWord);
-      resetTranscript();
+      setIsDictating(true); //מפעילה את מצב ההכתבה
+      setActiveKeyword(foundKeyword.keyWord); // מעדכנת את מילת המפתח
+      resetTranscript(); // איפוס התמלול כדי שלא יכתוב לתוך הבלוק מה ששמע עד כה
     }
   };
 
@@ -182,6 +186,7 @@ function TemplateToDictate() {
     }
   };
 
+  //נאפס את התמלול כשמצב ההכתבה כבוי
   useEffect(() => {
     if (!isDictating) {
       resetTranscript();
@@ -195,7 +200,7 @@ function TemplateToDictate() {
     e.target.style.height = e.target.scrollHeight + "px";
   };
 
-  if (!browserSupportsSpeechRecognition) {
+  if (!browserSupportsSpeechRecognition) { //בדיקה האם הדפדפן לא תומך בספיץ רגונישן
     return <span>Browser doesn't support speech recognition.</span>;
   }
   return (

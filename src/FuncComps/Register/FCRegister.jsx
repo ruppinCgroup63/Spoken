@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const apiUrl ='https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Langs';
- 'https://localhost:44326/api/Langs';
+//const apiUrl ='https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Langs';
+const apiUrl ='https://localhost:44326/api/Langs';
 
 function RegistrationPage() {
     const navigate = useNavigate();
     const { state } = useLocation();
     let userObj = state;
+    
 
     console.log(userObj);
     console.log('check:' + userObj);
@@ -173,7 +174,7 @@ function RegistrationPage() {
             console.log('You need to fill in all the fields ');
         } else {
 
-            clearAllFileds();
+        //    clearAllFileds();
             navigate('/register2', {
                 state: {
                     user: {
