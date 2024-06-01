@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 
 
-const apiUrl = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Domains';
-'https://localhost:44326/api/Domains';
+//const apiUrl = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Domains';
+const apiUrl = 'https://localhost:44326/api/Domains';
 
 function RegistrationPage2() {
     const navigate = useNavigate();

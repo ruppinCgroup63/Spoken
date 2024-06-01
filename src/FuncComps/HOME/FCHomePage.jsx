@@ -6,6 +6,8 @@ function HomePage() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
   const [user, setUser] = useState();
+
+  
   useEffect(() => {
     const userFromStorage = JSON.parse(sessionStorage.getItem("user"));
     console.log(userFromStorage);

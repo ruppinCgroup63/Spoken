@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import SignatureCanvas from "react-signature-canvas";
-import ErrorMessage from "../FCErrorMessage";
+import SignatureCanvas from "react-signature-canvas"; //מספק לי אפשרות לצייר חתימה
+import ErrorMessage from "../FCErrorMessage"; //קומפננטה שמציגת הודעת שגיאה 
 
 
 
-const apiUrl = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Users';
-"https://localhost:44326/api/Users";
+//const apiUrl = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Users';
+const apiUrl = "https://localhost:44326/api/Users";
 
 function RegistrationPage3(props) {
   const navigate = useNavigate();
@@ -28,11 +28,13 @@ function RegistrationPage3(props) {
   });
   const [emailExists, setEmailExists] = useState(false); // סטייט למעקב אם האימייל כבר קיים
 
+
+  //פונקציה שנקראת כאשר המשתמש סיים לצייר את החתימה, היא שומרת את החתימה בסטייס של המשתמש
   const handleEnd = () => {
     if (sigCanvas.current) {
       setUsers((prevUser) => ({
         ...prevUser,
-        Signature: sigCanvas.current.toDataURL(),
+        Signature: sigCanvas.current.toDataURL(), // המרה לדאטה יוארל כדי להציג את התמונה אחכ ללא צורך בקובץ נפרד
       }));
     }
   };
@@ -63,9 +65,9 @@ function RegistrationPage3(props) {
           console.log("err post=", "the email already exists");
           console.log(error);
           setEmailExists(true); // עדכון הסטייט לאמת אם האימייל כבר קיים
-          setTimeout(() => {
+          setTimeout(() => { // אם המייל קיים כבר מעבירים אותו חזרה לדף הראשון לשנות אותו
             navigate("/Register", { state: { user } });
-          }, 5000); // עיכוב במילי שניות (כאן 3000 מייצג 3 שניות)
+          }, 5000); // עיכוב במילי שניות (כאן 5000 מייצג 5 שניות)
         }
       );
   };

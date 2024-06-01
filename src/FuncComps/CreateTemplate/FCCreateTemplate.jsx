@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 function CreateTemplate() {
   const navigate = useNavigate();
-  const { state } = useLocation();
+  const { state } = useLocation();//קבלת המידע שהועבר מהעמוד הקודם
   let templateObj = state;
 
   // פונקציה לשליפת פריט JSON מ-sessionStorage
@@ -22,12 +22,12 @@ function CreateTemplate() {
     IsPublic: false,
   });
 
-  // נעדכן את ה-template ברגע שהקומפוננטה נטענת
+  // נעדכן את ה-template  ברגע שהקומפוננטה נטענת לראשונה
   useEffect(() => {
     // שליפת המידע מ-session storage
     const userData = getUserDataFromSessionStorage();
     console.log("User data:", userData);
-
+    //העדכון מתבצע ע"י הערכים ששלפנו מהסיישן סטורג'
     // עדכון ערכים ב-template 
     setTemplate((prevTemplate) => ({
       ...prevTemplate,
@@ -44,6 +44,7 @@ function CreateTemplate() {
     Description: "",
   });
 
+  //ניהול הולידציות
   const handleValidation = (TemplateName, isValid, errorMessage) => {
     setErrors((prevErrors) => ({
       ...prevErrors,
@@ -51,7 +52,7 @@ function CreateTemplate() {
     }));
   };
 
-  // ולידציה לשם משתמש
+  // ולידציה לשם של התבנית
   const validaterName = (e) => {
     const text = e.target.value;
     const regexUserName = /^[a-zA-Z\s]{1,60}$/;
@@ -65,6 +66,7 @@ function CreateTemplate() {
     }
   };
 
+  //ולידציה לתיאור
   const validaterDescription = (e) => {
     const text = e.target.value;
     const regexUserName = /^[a-zA-Z\s]{1,60}$/;
@@ -75,13 +77,14 @@ function CreateTemplate() {
       "Invalid input! Only English letters"
     );
     if (isValid) {
-      setTemplate((prevUser) => ({
+      setTemplate((prevUser) => ({//אם השם תקין מעדכנים את הסטייס
         ...prevUser,
         Description: text,
       }));
     }
   };
 
+//חזרה לדף הבית
   const handleButtonClick = () => {
     navigate("/HomePage");
   };
@@ -118,7 +121,7 @@ function CreateTemplate() {
               <label
                 className="btn btn-circle swap swap-rotate"
                 style={{ position: "absolute", top: "30px", left: "20px" }}
-                onClick={handleButtonClick}
+                onClick={handleButtonClick} //חזרה למסך הבית
               >
                 {/* this hidden checkbox controls the state */}
                 <input type="checkbox" />
