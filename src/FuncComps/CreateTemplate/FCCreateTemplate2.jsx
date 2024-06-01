@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { DndProvider } from "react-dnd";
+import { DndProvider } from "react-dnd"; // ייבוא של הספרייה שמאפשרת גרירה והורדה
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
 import DraggableItem_ForTemplate2 from "./CreateBlockForTemplate2";
@@ -70,20 +70,23 @@ function CreateTemplate2() {
     ]);
   }, [nextBlockNumber, template.TemplateNo]);
 
+  //פונקציה שמסירה פריט מאייטמס (מהבלוקים) לפי אינדקס
   const removeItem = useCallback((index) => {
     setItems((items) => items.filter((_, i) => i !== index));
   }, []);
 
+  // פונקציה שמזיזה פריט (בלוק) בתוך אייטמס לפי האינדקסים דראג זה הפריט שנגרר והובר זה הפריט שמעליו הוא מונח
   const moveItem = useCallback((dragIndex, hoverIndex) => {
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
-      const dragItem = updatedItems[dragIndex];
-      updatedItems.splice(dragIndex, 1);
-      updatedItems.splice(hoverIndex, 0, dragItem);
+      const dragItem = updatedItems[dragIndex]; // שמירת הפריט הנגרר
+      updatedItems.splice(dragIndex, 1); //מסירה פריט אחד בלבד מהמערך באינדקס המצויין
+      updatedItems.splice(hoverIndex, 0, dragItem); // מוסיפים את האייטם באינדקס של הובר והמס' אפס אומר שאנחנו לא מסירים שום פריט
       return updatedItems;
     });
   }, []);
 
+  // מעדכנת בלוק מסויים באייטמס לפי אינדקס שדה וערך למשל עדכון הכותרת או המילת מפתח
   const updateItem = useCallback((index, field, value) => {
     setItems((currentItems) =>
       currentItems.map((item, i) =>
@@ -156,10 +159,10 @@ function CreateTemplate2() {
                     marginBottom: "2rem",
                   }}
                 ></div>
-                {items.map((item, index) => (
-                  <DraggableItem_ForTemplate2
-                    key={item.BlockNo}
-                    item={item}
+                {items.map((item, index) => ( // מפה על כל הבלוקים ומציג כל אחד מהם עם האופציה לגרור ולהוריד
+                  <DraggableItem_ForTemplate2 
+                    key={item.BlockNo} // העברת הפרופס דרך התווית באופן ישיר
+                    item={item}//מעבירה כל אחד מהאייטמים לקומפננטה של היצירת בלוקים 
                     index={index}
                     moveItem={moveItem}
                     updateItem={updateItem}
@@ -238,6 +241,7 @@ function CreateTemplate2() {
                 </button>
                 <button
                   type="submit"
+                  className="btn btn-primary btn-sm"
                   className="btn btn-primary btn-sm"
                   style={{
                     backgroundColor: "#070A40",

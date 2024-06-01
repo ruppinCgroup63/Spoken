@@ -43,6 +43,7 @@ function ChooseTemplate() {
         setTemplates(data);
         console.log("Received templates:", data);
         console.log("Templates array : ", templates);
+        console.log("Templates array : ", templates);
       })
       .catch((error) => {
         console.error("Error fetching blocks data:", error);

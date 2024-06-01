@@ -2,10 +2,15 @@ import React from "react";
 import { useDrag, useDrop } from "react-dnd"; //מאפשרים לנו לגרור ולהוריד את הרכיבים בדף
 import { ResizableBox } from "react-resizable";//מאפשר לשנות את גודל הרכיב באופן אינטראקטיבי
 import "react-resizable/css/styles.css"; // עיצוב של הספרייה שמעל
+import { useDrag, useDrop } from "react-dnd"; //מאפשרים לנו לגרור ולהוריד את הרכיבים בדף
+import { ResizableBox } from "react-resizable";//מאפשר לשנות את גודל הרכיב באופן אינטראקטיבי
+import "react-resizable/css/styles.css"; // עיצוב של הספרייה שמעל
 import "./style.css";
 
 const ItemType1 = "DRAGGABLE_ITEM"; // משתנה קבוע שנשתמש בו כדי להגדיר את סוג הפריטים שניתן לגרור ולהוריד
+const ItemType1 = "DRAGGABLE_ITEM"; // משתנה קבוע שנשתמש בו כדי להגדיר את סוג הפריטים שניתן לגרור ולהוריד
 
+const DraggableItem_ForTemplate2 = ({ // מקבלים אובייקט פרופס שמכיל את הפרמטרים הנ"ל
 const DraggableItem_ForTemplate2 = ({ // מקבלים אובייקט פרופס שמכיל את הפרמטרים הנ"ל
   item,
   index,
@@ -15,6 +20,7 @@ const DraggableItem_ForTemplate2 = ({ // מקבלים אובייקט פרופס 
 }) => {
   // הגדרת פעולת הגרירה
   const [, drag] = useDrag( 
+  const [, drag] = useDrag( 
     () => ({
       type: ItemType1,
       item: { BlockNo: item.BlockNo, index },
@@ -23,8 +29,13 @@ const DraggableItem_ForTemplate2 = ({ // מקבלים אובייקט פרופס 
   ); // מחזירים אובייקט שמקבל את ההתנהגות של הגרירה והוא מכיל את המאפיינים אייטם טייפ ואינדקס
 
   // הגדרת פעולת ההורדה כאשר פריט נגרר מעליה 
+  // הגדרת פעולת ההורדה כאשר פריט נגרר מעליה 
   const [, drop] = useDrop(
     () => ({
+      accept: ItemType1, //אילו פריטים יכולים להתמקם על הקופננטה הנוכחית, רק אלו שמסוג האייטם טייפ
+      hover(item, monitor) { // מופעלת כאשר פריט מוחזר מעל הקומפננטה
+        if (item.index !== index) { // בודקים אם האינדקס של הפריט שונה משל הקומפננטה
+          moveItem(item.index, index); //אם כן מחליפים בין המיקומים וכך מאפשר להחליף בין הפריטים במערך
       accept: ItemType1, //אילו פריטים יכולים להתמקם על הקופננטה הנוכחית, רק אלו שמסוג האייטם טייפ
       hover(item, monitor) { // מופעלת כאשר פריט מוחזר מעל הקומפננטה
         if (item.index !== index) { // בודקים אם האינדקס של הפריט שונה משל הקומפננטה
@@ -36,7 +47,7 @@ const DraggableItem_ForTemplate2 = ({ // מקבלים אובייקט פרופס 
     [index]
   );
 
-  // הגדרת התוכן לפי סוג התיבה
+  // הגדרת התוכן לפי סוג התיבה והחזרה של תוכן התיבה לפי סוג הפריט
   const renderContent = () => {
     if (item.Type === "file") {
       // תיבת קובץ
@@ -65,6 +76,7 @@ const DraggableItem_ForTemplate2 = ({ // מקבלים אובייקט פרופס 
         />
       );
     } else {
+      // תיבת טקסט פלוס כותרת יחד
       // תיבת טקסט פלוס כותרת יחד
       return (
         <>
@@ -97,6 +109,7 @@ const DraggableItem_ForTemplate2 = ({ // מקבלים אובייקט פרופס 
 }}      
   return (
     <ResizableBox // רכיב הניתן לשינוי גודל ונגרר
+    <ResizableBox // רכיב הניתן לשינוי גודל ונגרר
       width={300}
       height={100}
       minConstraints={[100, 100]}
@@ -106,6 +119,7 @@ const DraggableItem_ForTemplate2 = ({ // מקבלים אובייקט פרופס 
       style={{ margin: "auto" }} // Centering the boxes within the div
     >
       <div
+        ref={(node) => drag(drop(node))} // גישה ישירה לאלמנט הדום ושליחת האובייקט שנרצה לבצע עליו את הפעולת גרירה
         ref={(node) => drag(drop(node))} // גישה ישירה לאלמנט הדום ושליחת האובייקט שנרצה לבצע עליו את הפעולת גרירה
         style={{
           padding: "5px",
@@ -129,9 +143,12 @@ const DraggableItem_ForTemplate2 = ({ // מקבלים אובייקט פרופס 
           }} // עיצוב מותאם לגודל התמונה
           className="object-contain"
           onClick={() => removeItem(index)} // מסיר את התיבה אם לוחצים על הפח
+          onClick={() => removeItem(index)} // מסיר את התיבה אם לוחצים על הפח
         />
 
         {renderContent()}
+         
+      </div> 
          
       </div> 
     </ResizableBox>
