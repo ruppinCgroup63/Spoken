@@ -113,8 +113,8 @@ function HomePage() {
             </span>
           </div>
           <main className="grid grid-cols-2 gap-2">
-            <div>
-              <Card title="Invoice" favorite={true} />
+           {/* <div>
+             <Card title="Invoice" favorite={true} />
             </div>
             <div>
               <Card title="Invoice" favorite={true} />
@@ -124,7 +124,7 @@ function HomePage() {
             </div>
             <div>
               <Card title="Invoice" favorite={true} />
-            </div>
+            </div> */}
           </main>
         </div>
       </div>
