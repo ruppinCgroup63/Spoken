@@ -25,7 +25,6 @@ function TemplateToDictate() {
   } = useSpeechRecognition();
 
   const [activeKeyword, setActiveKeyword] = useState(null); // מצב עבור מילת מפתח פעילה
-  const [activeKeyword, setActiveKeyword] = useState(null); // מצב עבור מילת מפתח פעילה
   const [isDictating, setIsDictating] = useState(false); // מצב כדי לעקוב אחר הכתבה ולנהל את ההכתבה לבלוקים
   const [items, setItems] = useState(Data || []); 
 
@@ -137,7 +136,6 @@ function TemplateToDictate() {
     } else {
       appendTranscriptToActiveBlock(); // אחרת התמלול מתווסף לבלוק שפעיל 
     }
-  }, [transcript]); // כל שינוי בטרנקריפט זה קורה
   }, [transcript]); // כל שינוי בטרנקריפט זה קורה
 
   //עצירת התמלול בלבד - איפוס מילת מפתח איפוס מצב הכתבה
@@ -288,7 +286,7 @@ function TemplateToDictate() {
                 </div>
                 <div>
                   <h2>Blocks for Selected Template</h2>
-                  {items.map((block, index) => (
+                  {items.map((block) => (
                     <div
                       key={block.blockNo}
                       style={{
