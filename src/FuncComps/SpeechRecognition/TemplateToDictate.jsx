@@ -1,4 +1,5 @@
 import "regenerator-runtime/runtime"; // גורם לתמיכה של פונקציות אסינכרוניות ובגינרטורס
+import "regenerator-runtime/runtime"; // גורם לתמיכה של פונקציות אסינכרוניות ובגינרטורס
 import React, { useEffect, useState } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -6,27 +7,29 @@ import SpeechRecognition, {
 import { useLocation, useNavigate } from "react-router-dom";
 
 function TemplateToDictate() {
- 
+
+  //URL for the spelling - הכתובת לשרת לפרוצדורה של תיקון התמלול
   //const apiUrlBlockCorrector ='https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/TextCorrector';
    const apiUrlBlockCorrector ="https://localhost:44326/api/TextCorrector";
    
+
   //const apiUrlTemplate = "https://localhost:44326/api/Templates";
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedTemplate, Data } = location.state || {}; // חילוץ מהסטייס של הדאטה והסלקט טמפלייט
-  const { // שימוש ביוז ספיץ רקוגנישן כדי לקבל גישה לכל מה שבין המסולסליים
-    transcript, // תמלול עצמו
-    listening, // מצב ההאזנה
-    resetTranscript, //פונקציה שמאפסת את התמלול
+  const { selectedTemplate, Data } = location.state || {}; //data is the items array
+  const { 
+    transcript,
+    listening, 
+    resetTranscript, 
     browserSupportsSpeechRecognition, // בדיקה שהדפדפן תומך בתמלול
   } = useSpeechRecognition();
 
   const [activeKeyword, setActiveKeyword] = useState(null); // מצב עבור מילת מפתח פעילה
   const [isDictating, setIsDictating] = useState(false); // מצב כדי לעקוב אחר הכתבה ולנהל את ההכתבה לבלוקים
-  const [items, setItems] = useState(Data || []); // הבלוקים אליהם נתמלל
+  const [items, setItems] = useState(Data || []); 
 
 
-  //שינוי הגודל של תיבת הטקסט של התמלול באופן דינאמי
+  //לשנות את גודל תיבת הטקסט של התמלול
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {
@@ -57,6 +60,8 @@ function TemplateToDictate() {
 
 
   //התחלה האזנה בלבד רציפה - ללא הכתבה
+
+  //התחלה האזנה בלבד רציפה - ללא הכתבה
   const handleStartListening = () => {
     if (!listening) {
       SpeechRecognition.startListening({ continuous: true, language: "en-US" });
@@ -66,9 +71,12 @@ function TemplateToDictate() {
 
   //עצירת האזנה
   //פונקציה שמטפלת בעצירת ההאזנה - עוצר תמלול והאזנה - מיקרופון מכובה
+  //פונקציה שמטפלת בעצירת ההאזנה - עוצר תמלול והאזנה - מיקרופון מכובה
   const handleStopListening = () => {
     SpeechRecognition.stopListening();
     console.log("Stop listening...");
+    setActiveKeyword(null); // איפוס מילות המפתח
+    setIsDictating(false);//איפוס מצב ההכתבה
     setActiveKeyword(null); // איפוס מילות המפתח
     setIsDictating(false);//איפוס מצב ההכתבה
   };
@@ -121,11 +129,11 @@ function TemplateToDictate() {
   //ניהול האזנה והתמלול
   useEffect(() => {
     console.log(transcript);
-    if (!isDictating) { //אם מצב ההכתבה לא פעיל אבל ההאזנה פעילה
-      handleTranscriptKeywords(); // אנחנו בודקים את מילות המפתח בתמלול 
-    } else if (transcript.toLowerCase().trim().endsWith("stop")) { //אם במצב הכתבה התמלול מסתיים בסטופ
+    if (!isDictating) { //אם מצב ההכתבה לא פעיל
+      handleTranscriptKeywords(); // אנחנו בודקים את מילות המפתח בתמלול
+    } else if (transcript.toLowerCase().trim().endsWith("stop")) { //אם התמלול מסתיים בסטופ
       handleStopDictating(); //עוצרים את ההכתבה לא את ההאזנה
-    } else { //לא נאמר סטופ ואתה מכתיב 
+    } else {
       appendTranscriptToActiveBlock(); // אחרת התמלול מתווסף לבלוק שפעיל 
     }
   }, [transcript]); // כל שינוי בטרנקריפט זה קורה
@@ -186,6 +194,7 @@ function TemplateToDictate() {
     }
   };
 
+  //נאפס את התמלול כשמצב ההכתבה כבוי
   //נאפס את התמלול כשמצב ההכתבה כבוי
   useEffect(() => {
     if (!isDictating) {
@@ -277,7 +286,7 @@ function TemplateToDictate() {
                 </div>
                 <div>
                   <h2>Blocks for Selected Template</h2>
-                  {items.map((block, index) => (
+                  {items.map((block) => (
                     <div
                       key={block.blockNo}
                       style={{

@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DndProvider } from "react-dnd";
@@ -6,10 +5,8 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
 import DraggableItem from "./CreateBlockForTemplate3";
 
-//const apiUrlTemplate = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Templates';
-const apiUrlTemplate ='https://localhost:44326/api/Templates';
-//const apiUrlBlock = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/BlocksInTemplates';
-const apiUrlBlock ='https://localhost:44326/api/BlocksInTemplates';
+const apiUrlTemplate = 'https://localhost:44326/api/Templates';
+const apiUrlBlock = 'https://localhost:44326/api/BlocksInTemplates';
 
 function CreateTemplate3() {
   const navigate = useNavigate();
@@ -17,41 +14,52 @@ function CreateTemplate3() {
   const [template, setTemplate] = useState(
     state.template || { TemplateName: "", description: "", IsPublic: false }
   );
-  const [isOpen, setIsOpen] = useState(false); // בודק האם החלונית של המידע הנוסף פתוחה או סגורה 
-  const [items, setItems] = useState(state.items || []);//אייטמס זה הבלוקים שלנו
+  const [isOpen, setIsOpen] = useState(false); 
+  const [items, setItems] = useState(state.items || []);
+  const [nextBlockNumber, setNextBlockNumber] = useState(1);
 
-  //const handleToggle = () => {
-   // setIsOpen(!isOpen);
-  //};
+  const updateItem = useCallback(
+    (index, field, value) => {
+      const newItems = items.map((item, idx) => 
+        idx === index ? { ...item, [field]: value } : item
+      );
+      setItems(newItems);  
+    },
+    [items]
+  );
 
-
-  // פונקציה שמעדכנת את הבלוקים בכל שינוי שיש באייטמס הפונקציה תופעל
-const updateItem = useCallback(
-  (index, field, value) => {
-    const newItems = items.map((item, idx) => 
-      idx === index ? { ...item, [field]: value } : item
-    );
-    setItems(newItems);  // עדכון המערך 
-  },
-  [items]
-);
-
-//הפונקציה מאפשרת הזזת פריטים ממיקום אחד למיקום אחר על ידי יצירת עותק חדש של הרשימה ועדכון המצב עם הרשימה המעודכנת
   const moveItem = useCallback(
     (dragIndex, hoverIndex) => {
       const newItems = [...items];
       const dragItem = newItems[dragIndex];
-      newItems.splice(dragIndex, 1); //מסירים את הפריט מהמיקום המקורי שלו ברשימה
-      newItems.splice(hoverIndex, 0, dragItem); // מוסיפים אותו למיקום החדש
+      newItems.splice(dragIndex, 1);
+      newItems.splice(hoverIndex, 0, dragItem);
+      setItems(newItems);
     },
-    [items] // הפונקציה תיווצר מחדש רק כאשר יהיה שינוי באייטמס
+    [items]
   );
 
-  //שליחה לשרת את התבנית והבלוקים
+  const addBlock = useCallback((type) => {
+    const blockNo = nextBlockNumber.toString();
+    setNextBlockNumber(nextBlockNumber + 1);
+
+    const newItem = {
+      TemplateNo: template.TemplateNo,
+      BlockNo: blockNo,
+      Type: type,
+      Title: "",
+      Text: "",
+      KeyWord: "",
+      IsActive: false,
+      IsMandatory: false,
+    };
+
+    setItems((items) => [...items, newItem]);
+  }, [nextBlockNumber, template.TemplateNo]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // שליחת הטמפלייט לשרת
+
     try {
       const templateResponse = await fetch(apiUrlTemplate, {
         method: 'POST',
@@ -61,47 +69,48 @@ const updateItem = useCallback(
         },
         body: JSON.stringify(template)
       });
-  
+
       if (!templateResponse.ok) {
         throw new Error(`HTTP error! Status: ${templateResponse.status}`);
       }
-  
+
       const templateResult = await templateResponse.json();
       console.log("Create Template successfully", templateResult);
-  
-      // שליחת הבלוקים לאחר שהטמפלייט נוצר בהצלחה
+
       for (const block of items) {
+        // לוודא ש-BlockNo הוא מחרוזת
+        const blockToSend = {
+          ...block,
+          BlockNo: block.BlockNo.toString(),
+        };
+
         const blockResponse = await fetch(apiUrlBlock, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
-          body: JSON.stringify(block)
+          body: JSON.stringify(blockToSend)
         });
-  
+
         if (!blockResponse.ok) {
           throw new Error(`HTTP error! Status: ${blockResponse.status}`);
         }
-  
+
         const blockResult = await blockResponse.json();
         console.log("Block inserted successfully:", blockResult);
       }
-  
-      // ניווט לדף הבית לאחר שכל הבלוקים נשלחו בהצלחה
+
       navigate("/HomePage", {
         state: { template: templateResult, items, origin: "CreateTemplate3" },
       });
-  
+
     } catch (error) {
       console.error("Error during the POST process:", error.message);
     }
   };
-  
-  
+
   console.log(items);
-
-
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -201,7 +210,7 @@ const updateItem = useCallback(
                 </div>
                 {isOpen && (
                   <div>
-                    <p className="keyWordP" style={{textAlign: "left"}}>
+                    <p className="keyWordP" style={{ textAlign: "left" }}>
                       In this page, you need to define a keyword for each block.
                       The keyword will assist you during the automated
                       transcription process. When you speak the keyword, the
@@ -221,7 +230,7 @@ const updateItem = useCallback(
 
                 <div className="container">
                   {items.map((item, index) => {
-                    if (item.type === "file") {
+                    if (item.Type === "file") {
                       return (
                         <div key={index}>
                           <input
@@ -268,7 +277,6 @@ const updateItem = useCallback(
               <div className="flex justify-between mt-6">
                 <button
                   type="button"
-               
                   onClick={() =>
                     navigate("/CreateTemplate2", {
                       state: {
@@ -285,7 +293,6 @@ const updateItem = useCallback(
                 <button
                   type="submit"
                   className="btn btn-primary btn-sm continue"
-                 
                 >
                   Save template
                 </button>

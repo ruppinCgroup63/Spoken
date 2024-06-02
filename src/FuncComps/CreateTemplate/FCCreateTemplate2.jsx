@@ -8,12 +8,14 @@ import DraggableItem_ForTemplate2 from "./CreateBlockForTemplate2";
 function CreateTemplate2() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const [items, setItems] = useState(state.items || []); // מקבלים את הפריטים עם ערך התחלתי מהדף הקודם או ששמים מערך ריק
-  const [template, setTemplate] = useState(state.template || { TemplateName: "" }); // כנל פה
+  const [items, setItems] = useState(state.items || []);
+  const [template, setTemplate] = useState(state.template || { TemplateName: "" });
+  const [nextBlockNumber, setNextBlockNumber] = useState(1);
 
-//הוספת שדה טקסט
   const addTextBox = useCallback((Type) => {
-    const BlockNo = Math.random().toString(36).substring(2, 9);
+    const BlockNo = nextBlockNumber;
+    setNextBlockNumber(nextBlockNumber + 1);
+
     setItems((items) => [
       ...items,
       {
@@ -23,48 +25,50 @@ function CreateTemplate2() {
         Title: "",
         Text: "",
         KeyWord: "",
-        IsActive:false,
-        IsMandatory:false,
+        IsActive: false,
+        IsMandatory: false,
       },
     ]);
-  }, []);
+  }, [nextBlockNumber, template.TemplateNo]);
 
-  // הוספת חתימה
   const addSignature = useCallback(() => {
-    const BlockNo = Math.random().toString(36).substring(2, 9);
-    setItems((items) => [
-      ...items,
-      {
-        TemplateNo: template.TemplateNo,
-        BlockNo,
-        Type: "signature",     
-        Title: "",
-        Text: "",
-        KeyWord: "",
-        IsActive:false,
-        IsMandatory:false,
-        image: template.Signature, // שימוש בחתימה מתוך אובייקט template
-      },
-    ]);
-  }, []);
+    const BlockNo = nextBlockNumber;
+    setNextBlockNumber(nextBlockNumber + 1);
 
-//הוספת קובץ
-  const addFile = useCallback(() => {
-    const BlockNo = Math.random().toString(36).substring(2, 9);
     setItems((items) => [
       ...items,
       {
         TemplateNo: template.TemplateNo,
         BlockNo,
-        Type: "file",  
+        Type: "signature",
         Title: "",
         Text: "",
         KeyWord: "",
-        IsActive:false,
-        IsMandatory:false,  
+        IsActive: false,
+        IsMandatory: false,
+        image: template.Signature,
       },
     ]);
-  }, []);
+  }, [nextBlockNumber, template.TemplateNo]);
+
+  const addFile = useCallback(() => {
+    const BlockNo = nextBlockNumber;
+    setNextBlockNumber(nextBlockNumber + 1);
+
+    setItems((items) => [
+      ...items,
+      {
+        TemplateNo: template.TemplateNo,
+        BlockNo,
+        Type: "file",
+        Title: "",
+        Text: "",
+        KeyWord: "",
+        IsActive: false,
+        IsMandatory: false,
+      },
+    ]);
+  }, [nextBlockNumber, template.TemplateNo]);
 
   //פונקציה שמסירה פריט מאייטמס (מהבלוקים) לפי אינדקס
   const removeItem = useCallback((index) => {
@@ -203,7 +207,6 @@ function CreateTemplate2() {
                   Import File
                 </span>
               </div>
-              {/* הוספת כפתור לחתימה */}
               <div className="flex items-center justify-start mt-6 bg-white p-2 rounded-lg">
                 <img
                   src="/public/createTemplate/add_box.png"
@@ -238,6 +241,7 @@ function CreateTemplate2() {
                 </button>
                 <button
                   type="submit"
+                  className="btn btn-primary btn-sm"
                   className="btn btn-primary btn-sm"
                   style={{
                     backgroundColor: "#070A40",
