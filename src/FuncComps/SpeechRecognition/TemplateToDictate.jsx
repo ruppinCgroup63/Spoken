@@ -213,17 +213,7 @@ function TemplateToDictate() {
     return <span>Browser doesn't support speech recognition.</span>;
   }
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#E4E9F2",
-        padding: "20px",
-      }}
-    >
+    <div className="bg-light-blue-500 min-h-screen flex justify-center items-center" >
       <div style={{ width: "100%", maxWidth: "800px" }}>
         <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
           <div
