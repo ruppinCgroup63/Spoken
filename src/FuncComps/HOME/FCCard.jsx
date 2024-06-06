@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function Card({ title, favorite, description, tags, onFavoriteToggle, onCardClick }) {
+function Card({ title, favorite, description, tags, onFavoriteToggle, onCardClick , onAddClick}) {
   const [isFavorite, setIsFavorite] = useState(favorite);
 
   useEffect(() => {
