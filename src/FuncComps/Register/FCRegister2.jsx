@@ -14,15 +14,15 @@ function RegistrationPage2() {
 
 
     const [user, setUsers] = useState({
-        UserName: userObj.user.UserName ,
+        UserName: userObj.user.UserName,
         Email: userObj.user.Email,
         Password: userObj.user.Password,
         ConfirmPassword: userObj.user.ConfirmPassword,
         Phone: userObj.user.Phone,
-        LangName: userObj.user.LangName ,
+        LangName: userObj.user.LangName,
         DomainName: userObj ? userObj.user.DomainName : '',
-        Job:  userObj ? userObj.user.Job: '',
-        Employee:  userObj ? userObj.user.Employee: false,
+        Job: userObj ? userObj.user.Job : '',
+        Employee: userObj ? userObj.user.Employee : false,
     });
 
     //console.log(user);
@@ -124,10 +124,10 @@ function RegistrationPage2() {
             console.log('Entering an invalid value in one of the fields');
         } else if (userFields.some((value) => value === '')) {
             console.log('You need to fill in all the fields ');
-        } else {         
-                          
-            navigate('/register3',{state: {user}} );
-           // clearAllFileds();   
+        } else {
+
+            navigate('/register3', { state: { user } });
+            // clearAllFileds();   
         }
 
     };
@@ -135,7 +135,8 @@ function RegistrationPage2() {
         <>
 
             <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
-                <div className="card w-full max-w-md bg-base-100 shadow-xl p-5"  >
+                <div className="card w-full max-w-md bg-base-100 shadow-xl p-5"  
+                style={{ backgroundColor: "#E4E9F2" }}>
                     <div className="card-body flex items-center justify-center">
                         <h2 style={{ fontFamily: "" }} className="card-title text-center text-dark-blue-500">Register</h2>
                         <br />
@@ -161,7 +162,7 @@ function RegistrationPage2() {
                                 <div style={{ marginRight: '1rem' }} className="step  step-primary">More<br></br>details</div>
                                 <div style={{ marginRight: '1rem' }} className="step" >Signature</div>
                             </div>
-                            <br /><br />     
+                            <br /><br />
                             <div className="form-control">
                                 <label className="label" htmlFor="DomainName">
                                 </label>
@@ -211,16 +212,23 @@ function RegistrationPage2() {
                                         className="checkbox checkbox-primary"
                                         checked={user.Employee} // קישור ערך תיבת הסימון לstate של ה־user
                                         onChange={handleEmployeeChange} // הוספת הפונקציה המתעדכנת בערך של תיבת הסימון
-
+                                        style={{color: "#070A40",
+                                        backgroundColor: "rgba(255, 255, 255, 0)",
+                                        borderColor: "#070A40",
+                                        }}  
                                     />
                                 </label>
                             </div>
                             <br />
                             <div className="button-container" style={{ display: 'flex' }}>
                                 <div className="form-control mt-6">
-                                    <button style={{ marginLeft: 'auto' }} type="button" onClick={() => {
-                                       
-                                        navigate('/Register' , {state: {user}})
+                                    <button style={{
+                                        marginLeft: 'auto', color: "#070A40",
+                                        backgroundColor: "rgba(255, 255, 255, 0)",
+                                        borderColor: "#070A40"
+                                    }} type="button" onClick={() => {
+
+                                        navigate('/Register', { state: { user } })
                                     }
                                     }
                                         className="btn  btn-xs sm:btn-sm btn-outline btn-primary">Back</button>

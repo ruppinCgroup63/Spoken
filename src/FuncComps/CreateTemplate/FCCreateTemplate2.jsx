@@ -242,7 +242,6 @@ function CreateTemplate2() {
                 <button
                   type="submit"
                   className="btn btn-primary btn-sm"
-                  className="btn btn-primary btn-sm"
                   style={{
                     backgroundColor: "#070A40",
                     color: "#E4E9F2",

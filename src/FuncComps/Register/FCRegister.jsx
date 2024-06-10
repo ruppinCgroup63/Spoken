@@ -356,7 +356,10 @@ function RegistrationPage() {
                                 <div style={{ marginLeft: 'auto' }} className="form-control mt-6">
                                     <button
                                         onClick={() => navigate('/')} type="button"
-                                        className="btn  btn-xs sm:btn-sm btn-outline btn-primary" style={{ borderColor: '#070A40', color: '#070A40' }}>Back</button>
+                                        className="btn  btn-xs sm:btn-sm btn-outline btn-primary" 
+                                        style={{ color: "#070A40",
+                                        backgroundColor: "rgba(255, 255, 255, 0)",
+                                        borderColor: "#070A40"  }}>Back</button>
                                 </div>
                                 <div style={{ flexGrow: '1' }}></div>
                                 <div className="form-control mt-6">

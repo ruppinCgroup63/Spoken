@@ -4,10 +4,11 @@ import "../CreateTemplate/style.css";
 import Card from "./FCCard";
 
 const apiUrlTemplate = "https://localhost:44326/api/Templates/getByUserEmail";
-const apiUrlBlocks ="https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 const apiUrlUpdateFavorite = "https://localhost:44326/api/UserFavorites";
 const apiUrlFavorites = "https://localhost:44326/api/UserFavorites/getByUserEmail";
-const apiUrlDeleteFavorites= "https://localhost:44326/api/UserFavorites";
+const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
+const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
 
 function ChooseTemplate() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ function ChooseTemplate() {
           headers: {
             "Content-Type": "application/json; charset=UTF-8",
           },
-          body: JSON.stringify(user.Email),
+          body: JSON.stringify( user.Email ),
         });
 
         if (!responseTemplates.ok) {
@@ -42,23 +43,21 @@ function ChooseTemplate() {
         const templatesData = await responseTemplates.json();
         console.log("Templates data:", templatesData);
 
-        console.log("Fetching favorites for email:", user.Email);
         const responseFavorites = await fetch(apiUrlFavorites, {
           method: "POST",
           headers: {
             "Content-Type": "application/json; charset=UTF-8",
           },
-          body: JSON.stringify(user.Email),
+          body: JSON.stringify( user.Email ),
         });
 
-        if (!responseFavorites.ok) {
-          const errorText = await responseFavorites.text();
-          console.error("Error response from favorites API:", errorText);
-          throw new Error("Failed to fetch favorites");
+        let favoritesData = [];
+        if (responseFavorites.ok) {
+          favoritesData = await responseFavorites.json();
+          console.log("Favorites data:", favoritesData);
+        } else {
+          console.warn("No favorites found or error fetching favorites");
         }
-
-        const favoritesData = await responseFavorites.json();
-        console.log("Favorites data:", favoritesData);
 
         const templatesWithFavorites = templatesData.map(template => ({
           ...template,
@@ -84,7 +83,7 @@ function ChooseTemplate() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(selectedTemplate),
+      body: JSON.stringify( selectedTemplate),
     })
       .then((response) => {
         if (!response.ok) {
@@ -101,6 +100,29 @@ function ChooseTemplate() {
       .catch((error) => {
         console.error("Error fetching blocks data:", error);
         setError("Failed to fetch blocks data. Please try again.");
+      });
+
+    // Update recent templates
+    const recentTemplate = { Email: user.Email, TemplateNo: selectedTemplate.templateNo };
+    fetch(apiUrlUpdateRecent, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(recentTemplate),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then(text => { throw new Error(text); });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Recent template updated:", data);
+      })
+      .catch((error) => {
+        console.error("Error updating recent template:", error);
+        setError("Failed to update recent template. Please try again.");
       });
   };
 
@@ -242,10 +264,15 @@ function ChooseTemplate() {
                   description={template.description}
                   tags={template.tags || []}
                   onFavoriteToggle={() => handleFavoriteToggle(template.templateNo)}
-                  onCardClick={() => handleTemplateClick(template)} // הוספת אירוע הלחיצה על הכרטיסייה
+                  onCardClick={() => handleTemplateClick(template)}
                 />
               </div>
             ))}
+            {templates.length === 0 && (
+              <div className="w-full text-center">
+                <p>No templates found.</p>
+              </div>
+            )}
           </main>
         </div>
       </div>

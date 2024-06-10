@@ -168,7 +168,13 @@ function RegistrationPage3(props) {
               <div className="button-container" style={{ display: "flex" }}>
                 <div className="form-control mt-6">
                   <button
-                    style={{ marginLeft: "auto" }}
+                  
+                    style={{
+                      marginLeft: "auto",
+                      color: "#070A40",
+                      backgroundColor: "rgba(255, 255, 255, 0)",
+                      borderColor: "#070A40",
+                    }}
                     type="button"
                     onClick={() => {
                       navigate("/Register2", { state: { user } });
@@ -182,7 +188,14 @@ function RegistrationPage3(props) {
                 <div style={{ flexGrow: "1" }}></div>
                 <div className="form-control mt-6">
                   <button
-                    style={{ padding: "0.25rem 1rem", marginRight: "auto" }}
+                  style={{
+                    padding: "0.25rem 1rem",
+                     marginRight: "auto",
+                    backgroundColor: "#070A40",
+                    color: "#E4E9F2",
+                    borderColor: "#070A40",
+                  }}
+                  
                     type="submit"
                     className="btn btn-xs sm:btn-sm  btn-primary"
                   >
