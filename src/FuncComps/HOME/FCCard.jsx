@@ -1,16 +1,91 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function Card({ title, favorite, description, tags, onFavoriteToggle, onCardClick , onAddClick}) {
+const apiUrlSummary = "https://localhost:7224/api/Summary/getByUserEmail";
+const apiUrlBlocks = "https://localhost:7224/api/BlockInSummary/getBlocksBySummaryNo";
+const apiUrlCreateSummary = "https://localhost:7224/api/Summary"; // Update with your actual create summary endpoint
+
+function Card({ title, favorite, description, tags, onFavoriteToggle, onCardClick, onAddClick }) {
   const [isFavorite, setIsFavorite] = useState(favorite);
+  const navigate = useNavigate();
+  const userFromStorage = JSON.parse(sessionStorage.getItem("user"));
+
+  useEffect(() => { 
+    const fetchTemplates = async () => {
+      try {
+        console.log("Fetching templates for email:", userFromStorage.Email);
+
+        const responseTemplates = await fetch(apiUrlSummary, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json; charset=UTF-8",
+          },
+          body: JSON.stringify( userFromStorage.Email ),
+        });
+
+        if (!responseTemplates.ok) {
+          const errorText = await responseTemplates.text();
+          console.error("Error response from templates API:", errorText);
+          throw new Error("Failed to fetch templates");
+        }
+
+        const templatesData = await responseTemplates.json();
+        console.log("Templates data:", templatesData);
+
+      } catch (error) {
+        console.error("Failed to fetch templates or favorites. Please try again.", error);
+      }
+    };
+
+    fetchTemplates();
+  }, [userFromStorage.Email]);
 
   useEffect(() => {
     setIsFavorite(favorite);
   }, [favorite]);
 
   const toggleFavorite = (e) => {
-    e.stopPropagation(); // מונע את אירוע הלחיצה הכללי
+    e.stopPropagation(); 
     setIsFavorite(!isFavorite);
     onFavoriteToggle();
+  };
+
+  const handleCreateSummaryClick = async (e) => {
+    e.stopPropagation(); 
+
+    const summary = {
+      SummaryName: title, // Assuming title is the name of the summary
+      Description: description,
+      startDatetime: new Date().toISOString(), // Assuming current date-time for start
+      endDatetime: new Date().toISOString(), // Assuming current date-time for end
+      comments: "",
+      CreatorEmail: userFromStorage.Email,
+    };
+
+    try {
+      const summaryResponse = await fetch(apiUrlCreateSummary, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(summary)
+      });
+
+      if (!summaryResponse.ok) {
+        throw new Error(`HTTP error! Status: ${summaryResponse.status}`);
+      }
+
+      const summaryResult = await summaryResponse.json();
+      console.log("Summary created successfully", summaryResult);
+
+      navigate("/CreateSummary", {
+        state: { summary: summaryResult },
+      });
+
+    } catch (error) {
+      console.error("Error during the POST process:", error.message);
+    }
   };
 
   return (
@@ -35,6 +110,12 @@ function Card({ title, favorite, description, tags, onFavoriteToggle, onCardClic
               <div key={index} className="badge badge-outline">{tag}</div>
             ))}
           </div>
+          <button
+            className="btn btn-primary mt-4"
+            onClick={handleCreateSummaryClick}
+          >
+            Create Summary
+          </button>
         </div>
       </div>
     </div>

@@ -3,12 +3,12 @@ import React, { useState, useEffect } from "react";
 import "../CreateTemplate/style.css";
 import Card from "./FCCard";
 
-const apiUrlTemplate = "https://localhost:44326/api/Templates/getByUserEmail";
-const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
-const apiUrlUpdateFavorite = "https://localhost:44326/api/UserFavorites";
-const apiUrlFavorites = "https://localhost:44326/api/UserFavorites/getByUserEmail";
-const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
-const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
+const apiUrlTemplate = "https://localhost:7224/api/Templates/getByUserEmail";
+const apiUrlBlocks = "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlUpdateFavorite = "https://localhost:7224/api/UserFavorites";
+const apiUrlFavorites = "https://localhost:7224/api/UserFavorites/getByUserEmail";
+const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
+const apiUrlUpdateRecent = "https://localhost:7224/api/RecentTemplates";
 
 function ChooseTemplate() {
   const navigate = useNavigate();
