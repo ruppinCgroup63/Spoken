@@ -14,6 +14,7 @@ import "./FuncComps/CreateTemplate/createTemplat3.css";
 import ChooseTemplate from "./FuncComps/HOME/ChooseTemplate";
 import TemplateToDictate from "./FuncComps/SpeechRecognition/TemplateToDictate";
 import FavoriteTemplates from "./FuncComps/HOME/FavoriteTemplates";
+import TemplateCreatedSuccessfully from "./FuncComps/CreateTemplate/TemplateCreatedSuccessfully";
 
 function App() {
   const [usersList, setUsersList] = useState([]);
@@ -44,6 +45,7 @@ function App() {
             <Route path="/ChooseTemplate" element={<ChooseTemplate />} />
             <Route path="/TemplateToDictate" element={<TemplateToDictate />} />
             <Route path="/FavoriteTemplates" element={<FavoriteTemplates/>}/>
+            <Route path="/TemplateCreatedSuccessfully" element={<TemplateCreatedSuccessfully/>}/>
           </Routes>
         </BrowserRouter>
       </div>
