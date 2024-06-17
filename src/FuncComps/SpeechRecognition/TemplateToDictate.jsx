@@ -60,8 +60,6 @@ function TemplateToDictate() {
 
 
   //התחלה האזנה בלבד רציפה - ללא הכתבה
-
-  //התחלה האזנה בלבד רציפה - ללא הכתבה
   const handleStartListening = () => {
     if (!listening) {
       SpeechRecognition.startListening({ continuous: true, language: "en-US" });
@@ -71,14 +69,12 @@ function TemplateToDictate() {
 
   //עצירת האזנה
   //פונקציה שמטפלת בעצירת ההאזנה - עוצר תמלול והאזנה - מיקרופון מכובה
-  //פונקציה שמטפלת בעצירת ההאזנה - עוצר תמלול והאזנה - מיקרופון מכובה
   const handleStopListening = () => {
     SpeechRecognition.stopListening();
     console.log("Stop listening...");
     setActiveKeyword(null); // איפוס מילות המפתח
     setIsDictating(false);//איפוס מצב ההכתבה
-    setActiveKeyword(null); // איפוס מילות המפתח
-    setIsDictating(false);//איפוס מצב ההכתבה
+
   };
 
   //שליחה לשרת את התבנית והבלוקים
