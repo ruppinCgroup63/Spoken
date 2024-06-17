@@ -3,12 +3,16 @@ import React, { useState, useEffect } from "react";
 import "../CreateTemplate/style.css";
 import Card from "./FCCard";
 
-const apiUrlTemplate = "https://localhost:7224/api/Templates/getByUserEmail";
-const apiUrlBlocks = "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
-const apiUrlUpdateFavorite = "https://localhost:7224/api/UserFavorites";
-const apiUrlFavorites = "https://localhost:7224/api/UserFavorites/getByUserEmail";
-const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
-const apiUrlUpdateRecent = "https://localhost:7224/api/RecentTemplates";
+const apiUrlTemplate = "https://localhost:44326/api/Templates/getByUserEmail";
+const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlUpdateFavorite = "https://localhost:44326/api/UserFavorites";
+const apiUrlFavorites = "https://localhost:44326/api/UserFavorites/getByUserEmail";
+const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
+const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
+const apiUrlSummary = "https://localhost:44326/api/Summary/getByUserEmail";
+const apiUrlBlocksInSummary = "https://localhost:44326/api/BlockInSummary/getBlocksBySummaryNo";
+const apiUrlCreateBlocksInSummary = "https://localhost:44326/api/BlockInSummary";
+const apiUrlCreateSummary = "https://localhost:44326/api/Summary"; 
 
 function ChooseTemplate() {
   const navigate = useNavigate();
@@ -18,9 +22,10 @@ function ChooseTemplate() {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
+  
   const [error, setError] = useState(null);
   const [showFavorites, setShowFavorites] = useState(false);
-
+  
   useEffect(() => {
     const fetchTemplatesAndFavorites = async () => {
       try {
@@ -31,7 +36,7 @@ function ChooseTemplate() {
           headers: {
             "Content-Type": "application/json; charset=UTF-8",
           },
-          body: JSON.stringify( user.Email ),
+          body: JSON.stringify(user.Email),
         });
 
         if (!responseTemplates.ok) {
@@ -48,7 +53,7 @@ function ChooseTemplate() {
           headers: {
             "Content-Type": "application/json; charset=UTF-8",
           },
-          body: JSON.stringify( user.Email ),
+          body: JSON.stringify(user.Email),
         });
 
         let favoritesData = [];
@@ -83,7 +88,7 @@ function ChooseTemplate() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify( selectedTemplate),
+      body: JSON.stringify(selectedTemplate),
     })
       .then((response) => {
         if (!response.ok) {
@@ -177,46 +182,86 @@ function ChooseTemplate() {
     }
   };
 
+
+
+  const handleCreateSummaryClick = async (template) => {
+    setSelectedTemplate(template); 
+
+    const summary = {
+      SummaryNo:Math.random().toString(36).substring(2, 9),
+      SummaryName: template.templateName, 
+      Description: template.description,
+      comments: "", 
+      CreatorEmail: user.Email,
+    };
+    console.log(summary);
+    try {
+      const summaryResponse = await fetch(apiUrlCreateSummary, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify(summary)
+      });
+
+      if (!summaryResponse.ok) {
+        throw new Error(`HTTP error! Status: ${summaryResponse.status}`);
+      }
+
+      const summaryResult = await summaryResponse.json();
+      console.log("Summary created successfully", summaryResult);
+
+      for (const block of selectedTemplateBlocks) {
+        const summaryBlock = {
+          SummaryNo: summaryResult.SummaryNo,
+          blockNo: block.blockNo,
+          templateNo: block.templateNo,
+          text: "",
+          isApproved: false,
+        };
+
+        const blockResponse = await fetch(apiUrlCreateBlocksInSummary, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify(summaryBlock)
+        });
+
+        if (!blockResponse.ok) {
+          throw new Error(`HTTP error! Status: ${blockResponse.status}`);
+        }
+
+        const blockResult = await blockResponse.json();
+        console.log("Block inserted successfully:", blockResult);
+      }
+
+      navigate("/CreateSummary", {
+        state: { template: selectedTemplate, blocks: selectedTemplateBlocks, summary: summaryResult },
+      });
+
+    } catch (error) {
+      console.error("Error during the POST process:", error.message);
+      setError("Failed to create summary. Please try again.");
+    }
+  };
+
   return (
     <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
-      <div
-        className="card w-full max-w-md bg-base-100 shadow-xl p-5"
-        style={{ backgroundColor: "#E4E9F2" }}
-      >
+      <div className="card w-full max-w-md bg-base-100 shadow-xl p-5" style={{ backgroundColor: "#E4E9F2" }}>
         <div className="card-body flex flex-col items-start justify-center">
           <header className="flex justify-between items-start w-full align-self-start mb-4">
-            <h3
-              className="text-sm self-start mb-2"
-              style={{ color: "#070A40", cursor: "pointer" }}
-            >
+            <h3 className="text-sm self-start mb-2" style={{ color: "#070A40", cursor: "pointer" }}>
               <b>{user.UserName}</b>
             </h3>
-            <label
-              className="btn btn-circle swap swap-rotate self-start"
-              style={{
-                backgroundColor: "#E4E9F2",
-                alignSelf: "start",
-                borderColor: "#E4E9F2",
-                marginTop: "-18px",
-              }}
-            >
+            <label className="btn btn-circle swap swap-rotate self-start" style={{ backgroundColor: "#E4E9F2", alignSelf: "start", borderColor: "#E4E9F2", marginTop: "-18px" }}>
               <input type="checkbox" />
-              <svg
-                className="swap-off fill-current"
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 512 512"
-              >
+              <svg className="swap-off fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512">
                 <path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" />
               </svg>
-              <svg
-                className="swap-on fill-current"
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 512 512"
-              >
+              <svg className="swap-on fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512">
                 <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
               </svg>
             </label>
@@ -227,9 +272,7 @@ function ChooseTemplate() {
           <div className="flex items-center" style={{ marginBottom: "4rem", margin: "0 auto", marginTop: "2rem" }}>
             <button
               className={`btn ${showFavorites ? "btn-active" : ""} btn-sm`}
-              onClick={() =>{ setShowFavorites(true);
-                navigate("/FavoriteTemplates", { state: { templates , user} });
-              }}
+              onClick={() => { setShowFavorites(true); navigate("/FavoriteTemplates", { state: { templates, user } }); }}
               style={{
                 backgroundColor: showFavorites ? "#070A40" : "#E1E1E1",
                 borderColor: showFavorites ? "#070A40" : "#E1E1E1",
@@ -255,7 +298,6 @@ function ChooseTemplate() {
             {templates.map((template) => (
               <div
                 key={template.templateNo}
-                onClick={() => handleTemplateClick(template)}
                 className="cursor-pointer"
               >
                 <Card
@@ -265,6 +307,7 @@ function ChooseTemplate() {
                   tags={template.tags || []}
                   onFavoriteToggle={() => handleFavoriteToggle(template.templateNo)}
                   onCardClick={() => handleTemplateClick(template)}
+                  onCreateSummaryClick={() => handleCreateSummaryClick(template)}
                 />
               </div>
             ))}
