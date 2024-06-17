@@ -101,10 +101,12 @@ function CreateTemplate3() {
         console.log("Block inserted successfully:", blockResult);
       }
 
-      navigate("/HomePage", {
-        state: { template: templateResult, items, origin: "CreateTemplate3" },
+      //navigate("/HomePage", {
+       // state: { template: templateResult, items, origin: "CreateTemplate3" },
+     // });
+      navigate("/TemplateCreatedSuccessfully", {
+        state: { template: template, items, origin: "CreateTemplate3" },
       });
-
     } catch (error) {
       console.error("Error during the POST process:", error.message);
     }
