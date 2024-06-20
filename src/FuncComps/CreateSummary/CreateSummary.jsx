@@ -9,9 +9,7 @@ function CreateSummary() {
   const { summary, selectedTemplateBlocks } = location.state || {}; // ודא שקבלת הנתונים בוצעה כראוי
 
   const [summaryData, setSummaryData] = useState(summary || {});
-  const [blocksData, setBlocksData] = useState(blocks || []);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [blocksData, setBlocksData] = useState(selectedTemplateBlocks || []);
 
   useEffect(() => {
     const fetchSummaryData = async () => {
@@ -54,11 +52,10 @@ function CreateSummary() {
         const blocksResult = await responseBlocks.json();
         setBlocksData(blocksResult);
 
-        setLoading(false);
+       
       } catch (error) {
         console.error("Error fetching data:", error);
-        setError("Failed to fetch data. Please try again.");
-        setLoading(false);
+
       }
     };
 

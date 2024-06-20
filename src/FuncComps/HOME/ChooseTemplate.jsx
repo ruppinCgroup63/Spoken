@@ -185,7 +185,7 @@ function ChooseTemplate() {
   };
 
 
-//create summary in server
+//create summary and summary blocks in server
 const handleCreateSummaryClick = async (template) => {
   setSelectedTemplate(template);
 
