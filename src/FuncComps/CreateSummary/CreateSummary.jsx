@@ -4,7 +4,7 @@ import './SummaryPage.css';
 
 const CreateSummary = () => {
   const { state } = useLocation();
-  const { summary, selectedTemplateBlocks, user } = state;
+  const { summary, selectedTemplateBlocks } = state;
   const [blocks, setBlocks] = useState(selectedTemplateBlocks);
 
   useEffect(() => {
@@ -27,25 +27,31 @@ const CreateSummary = () => {
     console.log('AI button clicked');
   };
 
+  // Extract the username from the email
+  const extractUserName = (email) => {
+    return email.split('@')[0];
+  };
+
+  const userName = extractUserName(summary.CreatorEmail);
+
   return (
     <div className="container">
       <div className="header">
         <img src="path/to/user/image.png" alt="User" />
         <h1>New patient admission</h1>
-        <span>{summary.CreatorEmail}</span>
+        <span>{userName}</span>
       </div>
 
       <button className="restart-button">Restart</button>
 
       <div className="form-card">
         <h2>{summary.SummaryName}</h2>
-        <textarea
-          className="name-input"
-          placeholder="name..."
-        />
+        <p>{summary.Description}</p>
+
         {blocks.map((block, index) => (
-          <div key={index}>
-            <h3>{block.keyword || 'N/A'}</h3>
+          <div key={index} className="block">
+            <h3 className="block-title">{block.title}</h3>
+            <p className="block-subtitle">keyword: {block.keyword || ''}</p>
             <textarea
               className="block-textarea"
               placeholder="free text area..."
@@ -54,6 +60,7 @@ const CreateSummary = () => {
             />
           </div>
         ))}
+
         <div className="signed-date">
           <label>Signed: ________________</label>
           <label>Date: ________________</label>
