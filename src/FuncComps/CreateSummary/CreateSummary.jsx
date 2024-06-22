@@ -29,30 +29,48 @@ const CreateSummary = () => {
 
   return (
     <div className="container">
-      <div className="summary-content">
-        <div className="header">
-          <h1>{summary.SummaryName}</h1>
-          <p>{summary.Description}</p>
-          <span className="user-name">{summary.CreatorEmail}</span>
-        </div>
+      <div className="header">
+        <img src="path/to/user/image.png" alt="User" />
+        <h1>New patient admission</h1>
+        <span>{summary.CreatorEmail}</span>
+      </div>
 
+      <button className="restart-button">Restart</button>
+
+      <div className="form-card">
+        <h2>{summary.SummaryName}</h2>
+        <textarea
+          className="name-input"
+          placeholder="name..."
+        />
         {blocks.map((block, index) => (
-          <div key={index} className="block">
-            <h5 className="block-title">Block {index + 1}</h5>
-            <p className="block-subtitle">Keyword: {block.keyword || 'N/A'}</p>
+          <div key={index}>
+            <h3>{block.keyword || 'N/A'}</h3>
             <textarea
               className="block-textarea"
+              placeholder="free text area..."
               value={block.text}
               onChange={(e) => handleTextChange(index, e.target.value)}
             />
           </div>
         ))}
-
-        <div className="button-group">
-          <button onClick={handleAIClick}>AI</button>
-          <button onClick={handleSaveClick}>Save</button>
+        <div className="signed-date">
+          <label>Signed: ________________</label>
+          <label>Date: ________________</label>
         </div>
       </div>
+
+      <button className="ai-button" onClick={handleAIClick}>
+        <img src="path/to/ai-icon.png" alt="AI" />
+        AI-assisted drafting
+      </button>
+
+      <div className="button-group">
+        <button onClick={handleSaveClick}>Preview</button>
+        <button onClick={handleSaveClick}>Save as PDF</button>
+      </div>
+
+      <button className="document-production-button">Document production</button>
     </div>
   );
 };

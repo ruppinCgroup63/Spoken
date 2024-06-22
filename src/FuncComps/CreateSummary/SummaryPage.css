@@ -7,150 +7,175 @@
   min-height: 100vh;
 }
 
-.summary-content {
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
   width: 100%;
-  max-width: 600px;
+  max-width: 400px;
+}
+
+.header img {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  color: #070A40;
+  margin: 0;
+  padding: 0;
+}
+
+.header span {
+  font-size: 1rem;
+  color: #070A40;
+  margin-top: 5px;
+  display: block;
+}
+
+.restart-button {
+  background-color: #FFFFFF;
+  border: 1px solid #070A40;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 1rem;
+  color: #070A40;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 10px;
+}
+
+.restart-button:hover {
+  background-color: #f0f0f0;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 400px;
   background-color: #ffffff;
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.header {
-  margin-bottom: 20px;
-  position: relative;
-}
-
-.header h1 {
-  font-size: 1.25rem;
-  margin: 0;
-  color: #070A40;
-}
-
-.header p {
-  font-size: 1rem;
-  color: #333;
-  margin-top: 5px;
-}
-
-.user-name {
-  position: absolute;
-  top: 0;
-  right: 0;
-  font-size: 1rem;
-  color: #070A40;
-}
-
-.block {
   margin-bottom: 20px;
 }
 
-.block-title {
+.form-card h2 {
   font-size: 1.25rem;
   color: #070A40;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
-.block-subtitle {
+.form-card h3 {
   font-size: 1rem;
   color: #333;
   margin-bottom: 10px;
 }
 
-.block-textarea {
+.form-card textarea {
   width: 100%;
-  min-height: 80px;
   padding: 10px;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 5px;
   resize: vertical;
+  margin-bottom: 20px;
 }
 
-.input-group {
-  margin-bottom: 10px;
-}
-
-.input-group label {
-  display: block;
-  font-size: 1rem;
-  color: #070A40;
-  margin-bottom: 5px;
-}
-
-.input-group textarea {
-  width: 100%;
-  min-height: 50px;
-  padding: 10px;
-  font-size: 1rem;
+.form-card .name-input {
   border: 1px solid #ccc;
   border-radius: 5px;
-  resize: vertical;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
 }
 
-.button-group {
+.form-card .name-input::placeholder {
+  color: #ccc;
+  font-style: italic;
+}
+
+.form-card .signed-date {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 }
 
+.form-card .signed-date label {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.ai-button {
+  background-color: #E4E9F2;
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  color: #070A40;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.ai-button:hover {
+  background-color: #D4D7E1;
+}
+
+.ai-button img {
+  margin-right: 5px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 20px;
+}
+
 .button-group button {
   padding: 10px 20px;
   font-size: 1rem;
-  color: #ffffff;
-  background-color: #070A40;
-  border: none;
+  color: #070A40;
+  background-color: #ffffff;
+  border: 1px solid #070A40;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-bottom: 10px;
 }
 
 .button-group button:hover {
+  background-color: #f0f0f0;
+}
+
+.document-production-button {
+  background-color: #070A40;
+  color: #ffffff;
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 100%;
+  max-width: 400px;
+}
+
+.document-production-button:hover {
   background-color: #333;
 }
 
 /* Media Queries */
-@media (max-width: 768px) {
-  .summary-content {
-    padding: 15px;
-  }
-
-  .header h1 {
-    font-size: 1.25rem;
-  }
-
-  .block-title, .input-group label {
-    font-size: 1.1rem;
-  }
-
-  .block-subtitle, .user-name {
-    font-size: 0.9rem;
-  }
-
-  .button-group button {
-    padding: 8px 16px;
-    font-size: 0.9rem;
-  }
-}
-
 @media (max-width: 480px) {
-  .summary-content {
-    padding: 10px;
-  }
-
-  .header h1 {
-    font-size: 1rem;
-  }
-
-  .block-title, .input-group label {
-    font-size: 1rem;
-  }
-
-  .block-subtitle, .user-name {
-    font-size: 0.8rem;
-  }
-
   .button-group {
     flex-direction: column;
   }
