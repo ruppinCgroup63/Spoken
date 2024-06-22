@@ -217,27 +217,26 @@ const handleCreateSummaryClick = async (template) => {
     console.log("Summary created successfully", summaryResult);
 
     // Fetch blocksInTemplate
-    fetch(apiUrlBlocks, {
+    const blocksResponse = await fetch(apiUrlBlocks, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(selectedTemplate),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-        return response.json();
-      })
-      .then((selectedTemplateBlocks) => {
-        setSelectedTemplateBlocks(selectedTemplateBlocks);  
-        console.log(selectedTemplateBlocks);   
+    });
 
-        // Create blockInSummary in server
+    if (!blocksResponse.ok) {
+      throw new Error("Failed to fetch data");
+    }
 
-         const createdBlocks = [];
-      for (const block of selectedTemplateBlocks) {
+    const selectedTemplateBlocks = await blocksResponse.json();
+    setSelectedTemplateBlocks(selectedTemplateBlocks);
+    console.log(selectedTemplateBlocks);
+
+    // Create blockInSummary in server
+    const createdBlocks = [];
+
+    for (const block of selectedTemplateBlocks) {
       const summaryBlock = {
         SummaryNo: summaryResult.SummaryNo,
         blockNo: block.blockNo,
@@ -246,7 +245,7 @@ const handleCreateSummaryClick = async (template) => {
         isApproved: false,
       };
 
-      const blockResponse =  fetch(apiUrlCreateBlocksInSummary, {
+      const blockResponse = await fetch(apiUrlCreateBlocksInSummary, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -258,22 +257,20 @@ const handleCreateSummaryClick = async (template) => {
       if (!blockResponse.ok) {
         throw new Error(`HTTP error! Status: ${blockResponse.status}`);
       }
-      const blockResult =  blockResponse.json();
+
+      const blockResult = await blockResponse.json();
       console.log("Block inserted successfully:", blockResult);
       createdBlocks.push(blockResult);
     }
-      })
 
     navigate("/CreateSummary", {
-      state: { summary: summary , selectedTemplateBlocks: selectedTemplateBlocks},
+      state: { summary: summary, selectedTemplateBlocks: selectedTemplateBlocks },
     });
   } catch (error) {
     console.error("Error during the POST process:", error.message);
     setError("Failed to create summary. Please try again.");
   }
 };
-
-    
 
   return (
     <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
