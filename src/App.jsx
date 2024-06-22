@@ -16,6 +16,10 @@ import TemplateToDictate from "./FuncComps/SpeechRecognition/TemplateToDictate";
 import FavoriteTemplates from "./FuncComps/HOME/FavoriteTemplates";
 import CreateSummary from "./FuncComps/CreateSummary/CreateSummary";
 import TemplateCreatedSuccessfully from "./FuncComps/CreateTemplate/TemplateCreatedSuccessfully";
+import Admins from "./FuncComps/Admin/Admins";
+import EditUser from "./FuncComps/Admin/EditUsers";
+
+
 
 function App() {
   const [usersList, setUsersList] = useState([]);
@@ -35,10 +39,7 @@ function App() {
             <Route path="/" element={<Login userList={usersList} />} />
             <Route path="/Register" element={<RegistrationPage />} />
             <Route path="/Register2" element={<RegistrationPage2 />} />
-            <Route
-              path="/Register3"
-              element={<RegistrationPage3 sendtoParent={getUserFromChild} />}
-            />
+            <Route path="/Register3"element={<RegistrationPage3 sendtoParent={getUserFromChild} />}/>
             <Route path="/HomePage" element={<HomePage />} />
             <Route path="/CreateTemplate" element={<CreateTemplate />} />
             <Route path="/CreateTemplate2" element={<CreateTemplate2 />} />
@@ -48,6 +49,8 @@ function App() {
             <Route path="/FavoriteTemplates" element={<FavoriteTemplates/>}/>
             <Route path="CreateSummary" element={<CreateSummary/>}/>
             <Route path="/TemplateCreatedSuccessfully" element={<TemplateCreatedSuccessfully/>}/>
+            <Route path="/Admin" element={<Admins/>}/>
+            <Route path="/EditUsers" element={<EditUser/>}/>
           </Routes>
         </BrowserRouter>
       </div>
