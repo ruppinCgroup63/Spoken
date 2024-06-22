@@ -1,6 +1,7 @@
-import Card from "./FCCard";
-import { useLocation, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import Card from "./FCCard";
+import CreateSummary from "../CreateSummary/CreateSummary";
 
 const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
 const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
@@ -12,6 +13,8 @@ export default function FavoriteTemplates() {
 
   const [updatedTemplates, setUpdatedTemplates] = useState(templates);
   const [showFavorites, setShowFavorites] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
 
   const handleFavoriteToggle = async (templateNo) => {
     const updatedFavorites = { Email: user.Email, TemplateNo: templateNo };
@@ -153,6 +156,14 @@ export default function FavoriteTemplates() {
                   description={template.description}
                   tags={template.tags || []}
                   onFavoriteToggle={() => handleFavoriteToggle(template.templateNo)}
+                  onCreateSummaryClick={() => (
+                    <CreateSummary
+                      template={template}
+                      user={user}
+                      setError={setError}
+                      setSelectedTemplateBlocks={setSelectedTemplateBlocks}
+                    />
+                  )}
                 />
               </div>
             ))}

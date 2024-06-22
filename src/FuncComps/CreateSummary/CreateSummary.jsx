@@ -1,91 +1,114 @@
-import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const apiUrlSummaryBySummaryNo = "https://localhost:44326/api/Summary/getBySummaryNo";
-const apiUrlBlocksInSummary = "https://localhost:44326/api/BlockInSummary/getBlocksBySummaryNo";
+const apiUrlCreateSummary = "https://localhost:44326/api/Summary";
+const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlCreateBlocksInSummary = "https://localhost:44326/api/BlockInSummary";
 
-function CreateSummary() {
-  const location = useLocation();
-  const { summary, selectedTemplateBlocks } = location.state || {}; // ודא שקבלת הנתונים בוצעה כראוי
+const CreateSummary = ({ template, user, setError, setSelectedTemplateBlocks }) => {
+  const navigate = useNavigate();
+  const [selectedTemplate, setSelectedTemplate] = useState(template);
 
-  const [summaryData, setSummaryData] = useState(summary || {});
-  const [blocksData, setBlocksData] = useState(selectedTemplateBlocks || []);
+  const handleCreateSummaryClick = async () => {
+    debugger;
+    console.log("handleCreateSummaryClick called with template:", template);
+    const summary = {
+      SummaryNo: Math.random().toString(36).substring(2, 9),
+      SummaryName: template.templateName,
+      Description: template.description,
+      comments: "",
+      CreatorEmail: user.Email,
+    };
+    console.log(summary);
 
-  useEffect(() => {
-    const fetchSummaryData = async () => {
-      try {
-        console.log("Fetching summary for summary number:", summary.SummaryNo);
-        console.log("Fetching summary :", summary);
-        console.log("Fetching block:", selectedTemplateBlocks);
+    try {
+      // Create summary in server
+      const summaryResponse = await fetch(apiUrlCreateSummary, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(summary),
+      });
 
-        // Fetch summary data if not passed in location state
-        if (!summary) {
-          const responseSummary = await fetch(apiUrlSummaryBySummaryNo, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json; charset=UTF-8",
-            },
-            body: JSON.stringify(summary.SummaryNo),
-            
-          });
-          if (!responseSummary.ok) {
-            throw new Error("Failed to fetch summary data");
-          }
+      if (!summaryResponse.ok) {
+        throw new Error(`HTTP error! Status: ${summaryResponse.status}`);
+      }
 
-          const summaryResult = await responseSummary.json();
-          setSummaryData(summaryResult);
-        }
+      const summaryResult = await summaryResponse.json();
+      console.log("Summary created successfully", summaryResult);
 
-        // Fetch blocks data
-        const responseBlocks = await fetch(apiUrlBlocksInSummary, {
+      // Fetch blocksInTemplate
+      const blocksResponse = await fetch(apiUrlBlocks, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedTemplate),
+      });
+
+      if (!blocksResponse.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const selectedTemplateBlocks = await blocksResponse.json();
+      setSelectedTemplateBlocks(selectedTemplateBlocks);
+      console.log(selectedTemplateBlocks);
+
+      // Create blockInSummary in server
+      const createdBlocks = [];
+
+      for (const block of selectedTemplateBlocks) {
+        const summaryBlock = {
+          SummaryNo: summaryResult.SummaryNo,
+          blockNo: block.blockNo,
+          templateNo: block.templateNo,
+          text: block.text || "",
+          isApproved: false,
+        };
+        console.log(selectedTemplateBlocks);
+
+        const blockResponse = await fetch(apiUrlCreateBlocksInSummary, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json; charset=UTF-8",
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
-          body: JSON.stringify({ summaryNo: summary.SummaryNo }),
+          body: JSON.stringify(summaryBlock),
         });
 
-        if (!responseBlocks.ok) {
-          throw new Error("Failed to fetch blocks data");
+        if (!blockResponse.ok) {
+          throw new Error(`HTTP error! Status: ${blockResponse.status}`);
         }
 
-        const blocksResult = await responseBlocks.json();
-        setBlocksData(blocksResult);
-
-       
-      } catch (error) {
-        console.error("Error fetching data:", error);
-
+        const blockResult = await blockResponse.json();
+        console.log("Block inserted successfully:", blockResult);
+        createdBlocks.push(blockResult);
+        console.log(blockResult);
       }
-    };
+      
 
-    if (summary) {
-      fetchSummaryData();
-    } else {
-      setLoading(false);
-      setError("No summary data available.");
+      navigate("/SummaryPage", {
+        state: {user: user, summary: summary, blocks: selectedTemplateBlocks },
+      });
+    } catch (error) {
+      console.error("Error during the POST process:", error.message);
+      setError("Failed to create summary. Please try again.");
     }
-  }, [summary]);
-
+  };
 
   return (
-    <div className="container">
-      <h1>Summary: {summaryData.SummaryName}</h1>
-      <p>Description: {summaryData.Description}</p>
-      <p>Comments: {summaryData.comments}</p>
-
-      <h2>Blocks</h2>
-      <ul>
-        {blocksData.map((block) => (
-          <li key={block.blockNo}>
-            <p>Block No: {block.blockNo}</p>
-            <p>Text: {block.text}</p>
-            <p>Approved: {block.isApproved ? "Yes" : "No"}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <button
+      className="btn btn-primary mt-4"
+      onClick={(e) => {
+        e.stopPropagation();
+        handleCreateSummaryClick();
+      }}
+    >
+      Create Summary
+    </button>
   );
-}
+};
 
 export default CreateSummary;

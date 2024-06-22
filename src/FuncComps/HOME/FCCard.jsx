@@ -30,6 +30,7 @@ function Card({ title, favorite, description, tags, onFavoriteToggle, onCardClic
             className="btn btn-primary mt-4"
             onClick={(e) => {
               e.stopPropagation();
+              console.log("Create Summary button clicked"); // Add this line
               onCreateSummaryClick();
             }}
           >

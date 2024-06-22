@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import "../CreateTemplate/style.css";
 import Card from "./FCCard";
-import { data } from "autoprefixer";
 
 const apiUrlTemplate = "https://localhost:44326/api/Templates/getByUserEmail";
 const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
@@ -10,10 +9,8 @@ const apiUrlUpdateFavorite = "https://localhost:44326/api/UserFavorites";
 const apiUrlFavorites = "https://localhost:44326/api/UserFavorites/getByUserEmail";
 const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
 const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
-const apiUrlSummary = "https://localhost:44326/api/Summary/getByUserEmail";
-const apiUrlBlocksInSummary = "https://localhost:44326/api/BlockInSummary/getBlocksBySummaryNo";
+const apiUrlCreateSummary = "https://localhost:44326/api/Summary";
 const apiUrlCreateBlocksInSummary = "https://localhost:44326/api/BlockInSummary";
-const apiUrlCreateSummary = "https://localhost:44326/api/Summary"; 
 
 function ChooseTemplate() {
   const navigate = useNavigate();
@@ -184,93 +181,92 @@ function ChooseTemplate() {
     }
   };
 
+  const handleCreateSummaryClick = async (template) => {
+    console.log("handleCreateSummaryClick called with template:", template); // Add this line
+    const summary = {
+      SummaryNo: Math.random().toString(36).substring(2, 9),
+      SummaryName: template.templateName,
+      Description: template.description,
+      comments: "",
+      CreatorEmail: user.Email,
+    };
+    console.log(summary);
 
-//create summary and summary blocks in server
-const handleCreateSummaryClick = async (template) => {
-  setSelectedTemplate(template);
-
-  const summary = {
-    SummaryNo: Math.random().toString(36).substring(2, 9),
-    SummaryName: template.templateName,
-    Description: template.description,
-    comments: "",
-    CreatorEmail: user.Email,
-  };
-  console.log(summary);
-
-  try {
-    // Create summary in server
-    const summaryResponse = await fetch(apiUrlCreateSummary, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(summary),
-    });
-
-    if (!summaryResponse.ok) {
-      throw new Error(`HTTP error! Status: ${summaryResponse.status}`);
-    }
-
-    const summaryResult = await summaryResponse.json();
-    console.log("Summary created successfully", summaryResult);
-
-    // Fetch blocksInTemplate
-    const blocksResponse = await fetch(apiUrlBlocks, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(selectedTemplate),
-    });
-
-    if (!blocksResponse.ok) {
-      throw new Error("Failed to fetch data");
-    }
-
-    const selectedTemplateBlocks = await blocksResponse.json();
-    setSelectedTemplateBlocks(selectedTemplateBlocks);
-    console.log(selectedTemplateBlocks);
-
-    // Create blockInSummary in server
-    const createdBlocks = [];
-
-    for (const block of selectedTemplateBlocks) {
-      const summaryBlock = {
-        SummaryNo: summaryResult.SummaryNo,
-        blockNo: block.blockNo,
-        templateNo: block.templateNo,
-        text: block.text || "",
-        isApproved: false,
-      };
-
-      const blockResponse = await fetch(apiUrlCreateBlocksInSummary, {
+    try {
+      // Create summary in server
+      const summaryResponse = await fetch(apiUrlCreateSummary, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify(summaryBlock),
+        body: JSON.stringify(summary),
       });
 
-      if (!blockResponse.ok) {
-        throw new Error(`HTTP error! Status: ${blockResponse.status}`);
+      if (!summaryResponse.ok) {
+        throw new Error(`HTTP error! Status: ${summaryResponse.status}`);
       }
 
-      const blockResult = await blockResponse.json();
-      console.log("Block inserted successfully:", blockResult);
-      createdBlocks.push(blockResult);
-    }
+      const summaryResult = await summaryResponse.json();
+      console.log("Summary created successfully", summaryResult);
 
-    navigate("/CreateSummary", {
-      state: { summary: summary, selectedTemplateBlocks: selectedTemplateBlocks },
-    });
-  } catch (error) {
-    console.error("Error during the POST process:", error.message);
-    setError("Failed to create summary. Please try again.");
-  }
-};
+      // Fetch blocksInTemplate
+      const blocksResponse = await fetch(apiUrlBlocks, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(template),
+      });
+
+      if (!blocksResponse.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const selectedTemplateBlocks = await blocksResponse.json();
+      setSelectedTemplateBlocks(selectedTemplateBlocks);
+      console.log(selectedTemplateBlocks);
+
+      // Create blockInSummary in server
+      const createdBlocks = [{}];
+
+      for (const block of selectedTemplateBlocks) {
+        const summaryBlock = {
+          SummaryNo: summary.SummaryNo,
+          BlockNo: block.blockNo,
+          TemplateNo: block.templateNo,
+          Text: block.text || "",
+          IsApproved: false,
+        };
+        
+        console.log(summaryBlock);
+        
+        const blockResponse = await fetch(apiUrlCreateBlocksInSummary, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(summaryBlock),
+        });
+
+        if (!blockResponse.ok) {
+          throw new Error(`HTTP error! Status: ${blockResponse.status}`);
+        }
+
+        const blockResult = await blockResponse.json();
+        console.log("Block inserted successfully:", blockResult);
+        createdBlocks.push(blockResult);
+      }
+
+      navigate("/CreateSummary", {
+        state: { summary: summary, selectedTemplateBlocks: selectedTemplateBlocks },
+      });
+    } catch (error) {
+      console.error("Error during the POST process:", error.message);
+      setError("Failed to create summary. Please try again.");
+    }
+  };
 
   return (
     <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
