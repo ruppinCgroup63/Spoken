@@ -96,7 +96,7 @@ function ChooseTemplate() {
       })
       .then((data) => {
         setSelectedTemplateBlocks(data);
-        navigate("/TemplateToDictate", {
+        navigate("/CreateSummary", {
           state: { selectedTemplate, Data: data, user },
         });
       
@@ -228,7 +228,7 @@ function ChooseTemplate() {
       console.log(selectedTemplateBlocks);
 
       // Create blockInSummary in server
-      const createdBlocks = [{}];
+      const createdBlocks = [];
 
       for (const block of selectedTemplateBlocks) {
         const summaryBlock = {

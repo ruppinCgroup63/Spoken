@@ -1,113 +1,59 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import './SummaryPage.css';
 
-const apiUrlCreateSummary = "https://localhost:44326/api/Summary";
-const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
-const apiUrlCreateBlocksInSummary = "https://localhost:44326/api/BlockInSummary";
+const CreateSummary = () => {
+  const { state } = useLocation();
+  const { summary, selectedTemplateBlocks, user } = state;
+  const [blocks, setBlocks] = useState(selectedTemplateBlocks);
 
-const CreateSummary = ({ template, user, setError, setSelectedTemplateBlocks }) => {
-  const navigate = useNavigate();
-  const [selectedTemplate, setSelectedTemplate] = useState(template);
+  useEffect(() => {
+    setBlocks(selectedTemplateBlocks);
+  }, [selectedTemplateBlocks]);
 
-  const handleCreateSummaryClick = async () => {
-    debugger;
-    console.log("handleCreateSummaryClick called with template:", template);
-    const summary = {
-      SummaryNo: Math.random().toString(36).substring(2, 9),
-      SummaryName: template.templateName,
-      Description: template.description,
-      comments: "",
-      CreatorEmail: user.Email,
-    };
-    console.log(summary);
+  const handleTextChange = (index, newText) => {
+    const updatedBlocks = [...blocks];
+    updatedBlocks[index].text = newText;
+    setBlocks(updatedBlocks);
+  };
 
-    try {
-      // Create summary in server
-      const summaryResponse = await fetch(apiUrlCreateSummary, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(summary),
-      });
+  const handleSaveClick = () => {
+    // Implement save functionality here
+    console.log('Save button clicked');
+  };
 
-      if (!summaryResponse.ok) {
-        throw new Error(`HTTP error! Status: ${summaryResponse.status}`);
-      }
-
-      const summaryResult = await summaryResponse.json();
-      console.log("Summary created successfully", summaryResult);
-
-      // Fetch blocksInTemplate
-      const blocksResponse = await fetch(apiUrlBlocks, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(selectedTemplate),
-      });
-
-      if (!blocksResponse.ok) {
-        throw new Error("Failed to fetch data");
-      }
-
-      const selectedTemplateBlocks = await blocksResponse.json();
-      setSelectedTemplateBlocks(selectedTemplateBlocks);
-      console.log(selectedTemplateBlocks);
-
-      // Create blockInSummary in server
-      const createdBlocks = [];
-
-      for (const block of selectedTemplateBlocks) {
-        const summaryBlock = {
-          SummaryNo: summaryResult.SummaryNo,
-          blockNo: block.blockNo,
-          templateNo: block.templateNo,
-          text: block.text || "",
-          isApproved: false,
-        };
-        console.log(selectedTemplateBlocks);
-
-        const blockResponse = await fetch(apiUrlCreateBlocksInSummary, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(summaryBlock),
-        });
-
-        if (!blockResponse.ok) {
-          throw new Error(`HTTP error! Status: ${blockResponse.status}`);
-        }
-
-        const blockResult = await blockResponse.json();
-        console.log("Block inserted successfully:", blockResult);
-        createdBlocks.push(blockResult);
-        console.log(blockResult);
-      }
-      
-
-      navigate("/SummaryPage", {
-        state: {user: user, summary: summary, blocks: selectedTemplateBlocks },
-      });
-    } catch (error) {
-      console.error("Error during the POST process:", error.message);
-      setError("Failed to create summary. Please try again.");
-    }
+  const handleAIClick = () => {
+    // Implement AI functionality here
+    console.log('AI button clicked');
   };
 
   return (
-    <button
-      className="btn btn-primary mt-4"
-      onClick={(e) => {
-        e.stopPropagation();
-        handleCreateSummaryClick();
-      }}
-    >
-      Create Summary
-    </button>
+    <div className="container">
+      <div className="summary-content">
+        <div className="header">
+          <h1>{summary.SummaryName}</h1>
+          <p>{summary.Description}</p>
+          <span className="user-name">{summary.CreatorEmail}</span>
+        </div>
+
+        {blocks.map((block, index) => (
+          <div key={index} className="block">
+            <h5 className="block-title">Block {index + 1}</h5>
+            <p className="block-subtitle">Keyword: {block.keyword || 'N/A'}</p>
+            <textarea
+              className="block-textarea"
+              value={block.text}
+              onChange={(e) => handleTextChange(index, e.target.value)}
+            />
+          </div>
+        ))}
+
+        <div className="button-group">
+          <button onClick={handleAIClick}>AI</button>
+          <button onClick={handleSaveClick}>Save</button>
+        </div>
+      </div>
+    </div>
   );
 };
 
