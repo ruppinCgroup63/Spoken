@@ -20,7 +20,7 @@ function Login(props) {
     Phone: '',
     LangName: '',
     DomainName: '',
-    Job:'',
+    Job: '',
     Employee: true,
     Signature: '',
 
@@ -44,19 +44,19 @@ function Login(props) {
   };
 
 
- //ולידציה למייל
- const validateEmail = (e) => {
-  const text = e.target.value;
-  const regexEmail = /^[^\s@]+@[^\s@]+\.(?:com)$/;
-  const isValid = regexEmail.test(text);
-  handleValidation('Email', isValid, 'follow the format abc@gmail.com abc@yahoo.com');
-  if (isValid) {
+  //ולידציה למייל
+  const validateEmail = (e) => {
+    const text = e.target.value;
+    const regexEmail = /^[^\s@]+@[^\s@]+\.(?:com)$/;
+    const isValid = regexEmail.test(text);
+    handleValidation('Email', isValid, 'follow the format abc@gmail.com abc@yahoo.com');
+    if (isValid) {
       setUsers(prevUser => ({
-          ...prevUser,
-          Email: text
+        ...prevUser,
+        Email: text
       }));
-  }
-};
+    }
+  };
 
   //ולידציה לסיסמא
   const validatePassword = (e) => {
@@ -72,18 +72,25 @@ function Login(props) {
     }
   };
 
-  console.log(user);
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log(user);
 
-      // Fetch users from the API
-      fetch(apiUrl, {
-        method: 'POST',
-        headers: new Headers({
-          'Content-Type': 'application/json; charset=UTF-8',
-        }),
-        body: JSON.stringify(user)
-      })
+    // Check if the entered email and password match the admin credentials
+    if (user.Email === 'Admin@gmail.com' && user.Password === 'Admin@123') {
+      navigate('/Admin');
+      return;
+    }
+
+
+    // Fetch users from the API
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: new Headers({
+        'Content-Type': 'application/json; charset=UTF-8',
+      }),
+      body: JSON.stringify(user)
+    })
       .then(res => {
         if (!res.ok) { // Check if response status is not OK
           throw new Error('Network response was not ok');
@@ -97,7 +104,7 @@ function Login(props) {
           sessionStorage.setItem('user', JSON.stringify(loggedInUser));
           clearFields();
           navigate('/HomePage');
-        } 
+        }
         else {
           console.log('Invalid email or password!'); // Notify user of invalid credentials
           setEmailExists(true);
@@ -107,10 +114,10 @@ function Login(props) {
         console.log("Login error:", error);
         setEmailExists(true); // עדכון הסטייט לאמת אם האימייל כבר קיים
       });
- 
+
   };
 
-  
+
   const clearFields = () => {
     setUsers({ Email: '', Password: '' });
 
@@ -124,8 +131,8 @@ function Login(props) {
             <div className="w-15 h-13"><img src="/public/login/SpokenLogoNew.png" alt="Error" className="w-full h-full object-contain" style={{ width: "10rem", height: "4rem" }} /></div>
           </div>
           <form onSubmit={handleSubmit} >
-          {emailExists && <ErrorMessage message="Invalid email or password!" />} {/* תצוגת הודעת השגיאה */}
-          <br></br>
+            {emailExists && <ErrorMessage message="Invalid email or password!" />} {/* תצוגת הודעת השגיאה */}
+            <br></br>
             <div className="form-control" >
               <label className={`input input-bordered flex items-center gap-2 relative ${errors.Email ? 'input-error' : ''}`} style={{ backgroundColor: "#E4E9F2", borderColor: '#070A40' }}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-4 h-4 opacity-70">

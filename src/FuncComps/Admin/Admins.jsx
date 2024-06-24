@@ -32,8 +32,8 @@ function Admins() {
             });
     };
 
-    const handleDelete = (userId) => {
-        fetch(`${apiUrl}/${userId}`, {
+    const handleDelete = (userEmail) => {
+        fetch(`${apiUrl}/${userEmail}`, {
             method: 'DELETE',
             headers: new Headers({
                 'Content-Type': 'application/json; charset=UTF-8',
@@ -41,7 +41,7 @@ function Admins() {
         })
             .then(res => {
                 if (res.ok) {
-                    setUsers(users.filter(user => user.id !== userId));
+                    setUsers(users.filter(user => user.email !== userEmail));
                 } else {
                     console.error("Error deleting user");
                 }
@@ -51,9 +51,7 @@ function Admins() {
             });
     };
 
-    const handleEdit = (user) => {
-        navigate('/EditUsers', { state: { user } });
-    };
+ 
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
@@ -83,17 +81,11 @@ function Admins() {
                                             <td>{user.phone}</td>
                                             <td>{user.langName}</td>
                                             <td>
+                                                
                                                 <button 
-                                                    className="btn btn-xs sm:btn-sm btn-outline " 
-                                                    onClick={() => handleEdit(user)}
-                                                    style={{ marginRight: '0.5rem',color:'green',backgroundColor: "rgba(255, 255, 255, 0)"}}
-                                                >
-                                                    Edit
-                                                </button>
-                                                <button 
-                                                    className="btn btn-xs sm:btn-sm btn-outline btn-danger" 
+                                                    className="btn btn-xs btn-outline btn-danger" 
                                                     onClick={() => handleDelete(user.email)}
-                                                    style={{ color:'red',  backgroundColor: "rgba(255, 255, 255, 0)", }}
+                                                    style={{ color:'red',  backgroundColor: "rgba(255, 255, 255, 0)",borderColor: "red", }}
                                                 >
                                                     Delete
                                                 </button>
