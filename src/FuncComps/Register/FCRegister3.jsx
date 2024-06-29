@@ -1,12 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import SignatureCanvas from "react-signature-canvas"; //מספק לי אפשרות לצייר חתימה
-import ErrorMessage from "../FCErrorMessage"; //קומפננטה שמציגת הודעת שגיאה 
-
-
+import ErrorMessage from "../FCErrorMessage"; //קומפננטה שמציגת הודעת שגיאה
 
 //const apiUrl = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Users';
-const apiUrl = "https://localhost:44326/api/Users";
+const apiUrl = "https://localhost:7224/api/Users";
 
 function RegistrationPage3(props) {
   const navigate = useNavigate();
@@ -27,7 +25,6 @@ function RegistrationPage3(props) {
     Signature: "",
   });
   const [emailExists, setEmailExists] = useState(false); // סטייט למעקב אם האימייל כבר קיים
-
 
   //פונקציה שנקראת כאשר המשתמש סיים לצייר את החתימה, היא שומרת את החתימה בסטייס של המשתמש
   const handleEnd = () => {
@@ -65,7 +62,8 @@ function RegistrationPage3(props) {
           console.log("err post=", "the email already exists");
           console.log(error);
           setEmailExists(true); // עדכון הסטייט לאמת אם האימייל כבר קיים
-          setTimeout(() => { // אם המייל קיים כבר מעבירים אותו חזרה לדף הראשון לשנות אותו
+          setTimeout(() => {
+            // אם המייל קיים כבר מעבירים אותו חזרה לדף הראשון לשנות אותו
             navigate("/Register", { state: { user } });
           }, 5000); // עיכוב במילי שניות (כאן 5000 מייצג 5 שניות)
         }
@@ -168,7 +166,6 @@ function RegistrationPage3(props) {
               <div className="button-container" style={{ display: "flex" }}>
                 <div className="form-control mt-6">
                   <button
-                  
                     style={{
                       marginLeft: "auto",
                       color: "#070A40",
@@ -188,14 +185,13 @@ function RegistrationPage3(props) {
                 <div style={{ flexGrow: "1" }}></div>
                 <div className="form-control mt-6">
                   <button
-                  style={{
-                    padding: "0.25rem 1rem",
-                     marginRight: "auto",
-                    backgroundColor: "#070A40",
-                    color: "#E4E9F2",
-                    borderColor: "#070A40",
-                  }}
-                  
+                    style={{
+                      padding: "0.25rem 1rem",
+                      marginRight: "auto",
+                      backgroundColor: "#070A40",
+                      color: "#E4E9F2",
+                      borderColor: "#070A40",
+                    }}
                     type="submit"
                     className="btn btn-xs sm:btn-sm  btn-primary"
                   >

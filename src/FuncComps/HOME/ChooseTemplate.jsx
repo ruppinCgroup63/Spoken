@@ -3,14 +3,25 @@ import React, { useState, useEffect } from "react";
 import "../CreateTemplate/style.css";
 import Card from "./FCCard";
 
-const apiUrlTemplate = "https://localhost:44326/api/Templates/getByUserEmail";
+/*const apiUrlTemplate = "https://localhost:44326/api/Templates/getByUserEmail";
 const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 const apiUrlUpdateFavorite = "https://localhost:44326/api/UserFavorites";
 const apiUrlFavorites = "https://localhost:44326/api/UserFavorites/getByUserEmail";
 const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
 const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
 const apiUrlCreateSummary = "https://localhost:44326/api/Summary";
-const apiUrlCreateBlocksInSummary = "https://localhost:44326/api/BlockInSummary";
+const apiUrlCreateBlocksInSummary = "https://localhost:44326/api/BlockInSummary";*/
+
+const apiUrlTemplate = "https://localhost:7224/api/Templates/getByUserEmail";
+const apiUrlBlocks =
+  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlUpdateFavorite = "https://localhost:7224/api/UserFavorites";
+const apiUrlFavorites =
+  "https://localhost:7224/api/UserFavorites/getByUserEmail";
+const apiUrlDeleteFavorites = "https://localhost:7224/api/api/UserFavorites";
+const apiUrlUpdateRecent = "https://localhost:7224/api/api/RecentTemplates";
+const apiUrlCreateSummary = "https://localhost:7224/api/Summary";
+const apiUrlCreateBlocksInSummary = "https://localhost:7224/api/BlockInSummary";
 
 function ChooseTemplate() {
   const navigate = useNavigate();
@@ -20,11 +31,12 @@ function ChooseTemplate() {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  
+
   const [error, setError] = useState(null);
   const [showFavorites, setShowFavorites] = useState(false);
-  
+
   useEffect(() => {
+    //פונקציה למשיכת כל התבניות שנוצרו על ידי משתמש מסוים - פרמטר : אימייל
     const fetchTemplatesAndFavorites = async () => {
       try {
         console.log("Fetching templates for email:", user.Email);
@@ -46,6 +58,7 @@ function ChooseTemplate() {
         const templatesData = await responseTemplates.json();
         console.log("Templates data:", templatesData);
 
+        //פונקציה למשיכת כל התבניות המועדפות של משתמש מסויים - פרמטר : אימייל
         const responseFavorites = await fetch(apiUrlFavorites, {
           method: "POST",
           headers: {
@@ -62,9 +75,11 @@ function ChooseTemplate() {
           console.warn("No favorites found or error fetching favorites");
         }
 
-        const templatesWithFavorites = templatesData.map(template => ({
+        const templatesWithFavorites = templatesData.map((template) => ({
           ...template,
-          isFavorite: favoritesData.some(fav => fav.templateNo === template.templateNo)
+          isFavorite: favoritesData.some(
+            (fav) => fav.templateNo === template.templateNo
+          ),
         }));
 
         console.log("Templates with favorites:", templatesWithFavorites);
@@ -78,14 +93,19 @@ function ChooseTemplate() {
     fetchTemplatesAndFavorites();
   }, [user.Email]);
 
-  const handleTemplateClick = (selectedTemplate) => {
-    setSelectedTemplate(selectedTemplate);
+  const handleTemplateClick = (templateClicked) => {
+    setSelectedTemplate(templateClicked);
 
+    console.log(
+      "-------------------setSelectedTemplate : ",
+      selectedTemplate,
+      "Temaplte clicked :",
+      templateClicked
+    );
+    //פונקציה למשיכת כל הבלוקים השייכים לתבנית מסויימת , פרמטר: מספר התבנית
     fetch(apiUrlBlocks, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(selectedTemplate),
     })
       .then((response) => {
@@ -96,18 +116,23 @@ function ChooseTemplate() {
       })
       .then((data) => {
         setSelectedTemplateBlocks(data);
+        console.log(data);
         navigate("/CreateSummary", {
-          state: { selectedTemplate, Data: data, user },
+          state: { selectedTemplate, data, user },
         });
-      
       })
       .catch((error) => {
         console.error("Error fetching blocks data:", error);
         setError("Failed to fetch blocks data. Please try again.");
       });
 
-    // Update recent templates
-    const recentTemplate = { Email: user.Email, TemplateNo: selectedTemplate.templateNo };
+    // Update recent templates - Gets the selected template and adds it to recent
+    const recentTemplate = {
+      Email: user.Email,
+      TemplateNo: selectedTemplate.templateNo,
+    };
+
+    //פונקציה לעדכון תבניות אחרונות - בעקבות לחיצה על תבנית
     fetch(apiUrlUpdateRecent, {
       method: "POST",
       headers: {
@@ -117,7 +142,9 @@ function ChooseTemplate() {
     })
       .then((response) => {
         if (!response.ok) {
-          return response.text().then(text => { throw new Error(text); });
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
         }
         return response.json();
       })
@@ -131,10 +158,12 @@ function ChooseTemplate() {
   };
 
   const handleFavoriteToggle = async (templateNo) => {
-    const template = templates.find(template => template.templateNo === templateNo);
+    const template = templates.find(
+      (template) => template.templateNo === templateNo
+    );
 
     const updatedFavorites = { Email: user.Email, TemplateNo: templateNo };
-    console.log('Sending update to server:', updatedFavorites);
+    console.log("Sending update to server:", updatedFavorites);
 
     try {
       if (template.isFavorite) {
@@ -165,7 +194,7 @@ function ChooseTemplate() {
         }
 
         const text = await response.text();
-        console.log('Raw response from server:', text);
+        console.log("Raw response from server:", text);
       }
 
       setTemplates((prevTemplates) =>
@@ -181,8 +210,11 @@ function ChooseTemplate() {
     }
   };
 
+  //פונקציה המנהלת את יצירת הסיכום ובונה אובייקט סיכום חדש
+  //הפונקציה מקבלת כפרמטר את התבנית שעליה ייכתב הסיכום - וממנה שולפים את הבלוקים
   const handleCreateSummaryClick = async (template) => {
-    console.log("handleCreateSummaryClick called with template:", template); // Add this line
+    console.log("handleCreateSummaryClick called with template:", template); // Add this line - debugging
+
     const summary = {
       SummaryNo: Math.random().toString(36).substring(2, 9),
       SummaryName: template.templateName,
@@ -192,6 +224,7 @@ function ChooseTemplate() {
     };
     console.log(summary);
 
+    //שליחת אובייקט הסיכום שיצרנו בצד לקוח לשרת, ושמירתו
     try {
       // Create summary in server
       const summaryResponse = await fetch(apiUrlCreateSummary, {
@@ -223,24 +256,29 @@ function ChooseTemplate() {
         throw new Error("Failed to fetch data");
       }
 
-      const selectedTemplateBlocks = await blocksResponse.json();
-      setSelectedTemplateBlocks(selectedTemplateBlocks);
-      console.log(selectedTemplateBlocks);
+      const blocksResults = await blocksResponse.json();
 
+      //עדכון הבלוקים של התבנית שנבחרה - לאחר שליפתם ממסד הנתונים והשמה במשתנה שיצרנו
+      setSelectedTemplateBlocks(blocksResults);
+      console.log("Blocks retrive from server - blockResults :", blocksResults);
+      console.log("selected template blocks : ", selectedTemplateBlocks);
       // Create blockInSummary in server
       const createdBlocks = [];
 
+      //יצירת העתק של הבלוקים של התבנית - לבלוקים של סיכום - עליהם נתמלל
       for (const block of selectedTemplateBlocks) {
+        //יצירת בלוק
         const summaryBlock = {
           SummaryNo: summary.SummaryNo,
           BlockNo: block.blockNo,
           TemplateNo: block.templateNo,
           Text: block.text || "",
+          Keyword: block.Keyword,
           IsApproved: false,
         };
-        
+
         console.log(summaryBlock);
-        
+
         const blockResponse = await fetch(apiUrlCreateBlocksInSummary, {
           method: "POST",
           headers: {
@@ -260,7 +298,10 @@ function ChooseTemplate() {
       }
 
       navigate("/CreateSummary", {
-        state: { summary: summary, selectedTemplateBlocks: selectedTemplateBlocks },
+        state: {
+          summary: summary,
+          selectedTemplateBlocks: blocksResults,
+        },
       });
     } catch (error) {
       console.error("Error during the POST process:", error.message);
@@ -270,29 +311,67 @@ function ChooseTemplate() {
 
   return (
     <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
-      <div className="card w-full max-w-md bg-base-100 shadow-xl p-5" style={{ backgroundColor: "#E4E9F2" }}>
+      <div
+        className="card w-full max-w-md bg-base-100 shadow-xl p-5"
+        style={{ backgroundColor: "#E4E9F2" }}
+      >
         <div className="card-body flex flex-col items-start justify-center">
           <header className="flex justify-between items-start w-full align-self-start mb-4">
-            <h3 className="text-sm self-start mb-2" style={{ color: "#070A40", cursor: "pointer" }}>
+            <h3
+              className="text-sm self-start mb-2"
+              style={{ color: "#070A40", cursor: "pointer" }}
+            >
               <b>{user.UserName}</b>
             </h3>
-            <label className="btn btn-circle swap swap-rotate self-start" style={{ backgroundColor: "#E4E9F2", alignSelf: "start", borderColor: "#E4E9F2", marginTop: "-18px" }}>
+            <label
+              className="btn btn-circle swap swap-rotate self-start"
+              style={{
+                backgroundColor: "#E4E9F2",
+                alignSelf: "start",
+                borderColor: "#E4E9F2",
+                marginTop: "-18px",
+              }}
+            >
               <input type="checkbox" />
-              <svg className="swap-off fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512">
+              <svg
+                className="swap-off fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
                 <path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" />
               </svg>
-              <svg className="swap-on fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512">
+              <svg
+                className="swap-on fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
                 <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
               </svg>
             </label>
           </header>
 
-          <h1 style={{ margin: '0 auto' }}><b>Templates</b></h1>
+          <h1 style={{ margin: "0 auto" }}>
+            <b>Templates</b>
+          </h1>
 
-          <div className="flex items-center" style={{ marginBottom: "4rem", margin: "0 auto", marginTop: "2rem" }}>
+          <div
+            className="flex items-center"
+            style={{
+              marginBottom: "4rem",
+              margin: "0 auto",
+              marginTop: "2rem",
+            }}
+          >
             <button
               className={`btn ${showFavorites ? "btn-active" : ""} btn-sm`}
-              onClick={() => { setShowFavorites(true); navigate("/FavoriteTemplates", { state: { templates, user } }); }}
+              onClick={() => {
+                setShowFavorites(true);
+                navigate("/FavoriteTemplates", { state: { templates, user } });
+              }}
               style={{
                 backgroundColor: showFavorites ? "#070A40" : "#E1E1E1",
                 borderColor: showFavorites ? "#070A40" : "#E1E1E1",
@@ -314,20 +393,24 @@ function ChooseTemplate() {
             </button>
           </div>
 
-          <main className="grid grid-cols-2 gap-2" style={{ marginTop: '2rem' }}>
+          <main
+            className="grid grid-cols-2 gap-2"
+            style={{ marginTop: "2rem" }}
+          >
             {templates.map((template) => (
-              <div
-                key={template.templateNo}
-                className="cursor-pointer"
-              >
+              <div key={template.templateNo} className="cursor-pointer">
                 <Card
                   title={template.templateName}
                   favorite={template.isFavorite}
                   description={template.description}
                   tags={template.tags || []}
-                  onFavoriteToggle={() => handleFavoriteToggle(template.templateNo)}
+                  onFavoriteToggle={() =>
+                    handleFavoriteToggle(template.templateNo)
+                  }
                   onCardClick={() => handleTemplateClick(template)}
-                  onCreateSummaryClick={() => handleCreateSummaryClick(template)}
+                  onCreateSummaryClick={() =>
+                    handleCreateSummaryClick(template)
+                  }
                 />
               </div>
             ))}

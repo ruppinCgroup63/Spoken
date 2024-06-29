@@ -16,7 +16,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
       type: ItemType,
       item: { BlockNo: item.BlockNo, index },
     }),
-    [index, item.BlockNo] // כל שינוי באחד מהערכים האלה יגרום להפעלה מחדש של הפונקציה 
+    [index, item.BlockNo] // כל שינוי באחד מהערכים האלה יגרום להפעלה מחדש של הפונקציה
   );
 
   // Drop logic -- שחרור הפריט
@@ -83,6 +83,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
             type="text"
             placeholder="Enter title"
             value={item.Title}
+            required
             onChange={(e) => {
               updateItem(index, "Title", e.target.value);
             }}
@@ -133,6 +134,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
             type="text"
             placeholder="Keyword"
             value={KeyWord}
+            required
             onChange={handleKeywordChange}
             onBlur={handleKeywordBlur}
             style={{
@@ -164,19 +166,18 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
               cursor: "pointer",
             }}
           >
-             {item.Type !== "file" && item.Type !== "signature" && (
-          <img
-            src="/public/createTemplate/keyword.png"
-            alt="Keyword"
-            style={{
-            position:"relative",
-            top: "-16px",
-            right: "-17px",
-            marginLeft:"2rem"
-   
-            }}
-          />
-        )}
+            {item.Type !== "file" && item.Type !== "signature" && (
+              <img
+                src="/public/createTemplate/keyword.png"
+                alt="Keyword"
+                style={{
+                  position: "relative",
+                  top: "-16px",
+                  right: "-17px",
+                  marginLeft: "2rem",
+                }}
+              />
+            )}
           </button>
         )}
       </div>

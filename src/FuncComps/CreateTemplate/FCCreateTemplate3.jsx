@@ -1,3 +1,4 @@
+import "regenerator-runtime/runtime"; // גורם לתמיכה של פונקציות אסינכרוניות ובגינרטורס
 import React, { useState, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DndProvider } from "react-dnd";
@@ -5,8 +6,10 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
 import DraggableItem from "./CreateBlockForTemplate3";
 
-const apiUrlTemplate = 'https://localhost:44326/api/Templates';
-const apiUrlBlock = 'https://localhost:44326/api/BlocksInTemplates';
+//const apiUrlTemplate = 'https://localhost:44326/api/Templates';
+const apiUrlTemplate = "https://localhost:7224/api/Templates";
+//const apiUrlBlock = 'https://localhost:44326/api/BlocksInTemplates';
+const apiUrlBlock = "https://localhost:7224/api/BlocksInTemplates";
 
 function CreateTemplate3() {
   const navigate = useNavigate();
@@ -14,16 +17,17 @@ function CreateTemplate3() {
   const [template, setTemplate] = useState(
     state.template || { TemplateName: "", description: "", IsPublic: false }
   );
-  const [isOpen, setIsOpen] = useState(false); 
+  const [isOpen, setIsOpen] = useState(false);
   const [items, setItems] = useState(state.items || []);
   const [nextBlockNumber, setNextBlockNumber] = useState(1);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const updateItem = useCallback(
     (index, field, value) => {
-      const newItems = items.map((item, idx) => 
+      const newItems = items.map((item, idx) =>
         idx === index ? { ...item, [field]: value } : item
       );
-      setItems(newItems);  
+      setItems(newItems);
     },
     [items]
   );
@@ -39,35 +43,52 @@ function CreateTemplate3() {
     [items]
   );
 
-  const addBlock = useCallback((type) => {
-    const blockNo = nextBlockNumber.toString();
-    setNextBlockNumber(nextBlockNumber + 1);
+  const addBlock = useCallback(
+    (type) => {
+      const blockNo = nextBlockNumber.toString();
+      setNextBlockNumber(nextBlockNumber + 1);
 
-    const newItem = {
-      TemplateNo: template.TemplateNo,
-      BlockNo: blockNo,
-      Type: type,
-      Title: "",
-      Text: "",
-      KeyWord: "",
-      IsActive: false,
-      IsMandatory: false,
-    };
+      const newItem = {
+        TemplateNo: template.TemplateNo,
+        BlockNo: blockNo,
+        Type: type,
+        Title: "",
+        Text: "",
+        KeyWord: "",
+        IsActive: false,
+        IsMandatory: false,
+      };
 
-    setItems((items) => [...items, newItem]);
-  }, [nextBlockNumber, template.TemplateNo]);
+      setItems((items) => [...items, newItem]);
+    },
+    [nextBlockNumber, template.TemplateNo]
+  );
 
+  /*const validateKeywords = () => {
+    for (const item of items) {
+      if (!item.KeyWord.trim()) {
+        return false;
+      }
+    }
+    return true;
+  };*/
   const handleSubmit = async (e) => {
     e.preventDefault();
+    /*setErrorMessage(""); // Reset error message
+
+    if (!validateKeywords()) {
+      setErrorMessage("Please fill in all keyword fields.");
+      return;
+    }*/
 
     try {
       const templateResponse = await fetch(apiUrlTemplate, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify(template)
+        body: JSON.stringify(template),
       });
 
       if (!templateResponse.ok) {
@@ -85,12 +106,12 @@ function CreateTemplate3() {
         };
 
         const blockResponse = await fetch(apiUrlBlock, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            "Content-Type": "application/json",
+            Accept: "application/json",
           },
-          body: JSON.stringify(blockToSend)
+          body: JSON.stringify(blockToSend),
         });
 
         if (!blockResponse.ok) {
@@ -102,10 +123,15 @@ function CreateTemplate3() {
       }
 
       //navigate("/HomePage", {
-       // state: { template: templateResult, items, origin: "CreateTemplate3" },
-     // });
+      // state: { template: templateResult, items, origin: "CreateTemplate3" },
+      // });
       navigate("/TemplateCreatedSuccessfully", {
-        state: { template: template, items, origin: "CreateTemplate3" },
+        state: {
+          template: template,
+          items,
+          user: state.user,
+          origin: "CreateTemplate3",
+        },
       });
     } catch (error) {
       console.error("Error during the POST process:", error.message);

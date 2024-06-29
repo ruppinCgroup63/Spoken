@@ -1,5 +1,4 @@
 import "regenerator-runtime/runtime"; // גורם לתמיכה של פונקציות אסינכרוניות ובגינרטורס
-import "regenerator-runtime/runtime"; // גורם לתמיכה של פונקציות אסינכרוניות ובגינרטורס
 import React, { useEffect, useState } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -7,27 +6,24 @@ import SpeechRecognition, {
 import { useLocation, useNavigate } from "react-router-dom";
 
 function TemplateToDictate() {
-
   //URL for the spelling - הכתובת לשרת לפרוצדורה של תיקון התמלול
   //const apiUrlBlockCorrector ='https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/TextCorrector';
-   const apiUrlBlockCorrector ="https://localhost:44326/api/TextCorrector";
-   
+  const apiUrlBlockCorrector = "https://localhost:7224/api/TextCorrector";
 
   //const apiUrlTemplate = "https://localhost:44326/api/Templates";
   const location = useLocation();
   const navigate = useNavigate();
   const { selectedTemplate, Data } = location.state || {}; //data is the items array
-  const { 
+  const {
     transcript,
-    listening, 
-    resetTranscript, 
+    listening,
+    resetTranscript,
     browserSupportsSpeechRecognition, // בדיקה שהדפדפן תומך בתמלול
   } = useSpeechRecognition();
 
   const [activeKeyword, setActiveKeyword] = useState(null); // מצב עבור מילת מפתח פעילה
   const [isDictating, setIsDictating] = useState(false); // מצב כדי לעקוב אחר הכתבה ולנהל את ההכתבה לבלוקים
-  const [items, setItems] = useState(Data || []); 
-
+  const [items, setItems] = useState(Data || []);
 
   //לשנות את גודל תיבת הטקסט של התמלול
   useEffect(() => {
@@ -58,7 +54,6 @@ function TemplateToDictate() {
     }
   }, [selectedTemplate, Data]);
 
-
   //התחלה האזנה בלבד רציפה - ללא הכתבה
   const handleStartListening = () => {
     if (!listening) {
@@ -73,8 +68,7 @@ function TemplateToDictate() {
     SpeechRecognition.stopListening();
     console.log("Stop listening...");
     setActiveKeyword(null); // איפוס מילות המפתח
-    setIsDictating(false);//איפוס מצב ההכתבה
-
+    setIsDictating(false); //איפוס מצב ההכתבה
   };
 
   //שליחה לשרת את התבנית והבלוקים
@@ -125,12 +119,14 @@ function TemplateToDictate() {
   //ניהול האזנה והתמלול
   useEffect(() => {
     console.log(transcript);
-    if (!isDictating) { //אם מצב ההכתבה לא פעיל
+    if (!isDictating) {
+      //אם מצב ההכתבה לא פעיל
       handleTranscriptKeywords(); // אנחנו בודקים את מילות המפתח בתמלול
-    } else if (transcript.toLowerCase().trim().endsWith("stop")) { //אם התמלול מסתיים בסטופ
+    } else if (transcript.toLowerCase().trim().endsWith("stop")) {
+      //אם התמלול מסתיים בסטופ
       handleStopDictating(); //עוצרים את ההכתבה לא את ההאזנה
     } else {
-      appendTranscriptToActiveBlock(); // אחרת התמלול מתווסף לבלוק שפעיל 
+      appendTranscriptToActiveBlock(); // אחרת התמלול מתווסף לבלוק שפעיל
     }
   }, [transcript]); // כל שינוי בטרנקריפט זה קורה
 
@@ -205,11 +201,12 @@ function TemplateToDictate() {
     e.target.style.height = e.target.scrollHeight + "px";
   };
 
-  if (!browserSupportsSpeechRecognition) { //בדיקה האם הדפדפן לא תומך בספיץ רגונישן
+  if (!browserSupportsSpeechRecognition) {
+    //בדיקה האם הדפדפן לא תומך בספיץ רגונישן
     return <span>Browser doesn't support speech recognition.</span>;
   }
   return (
-    <div className="bg-light-blue-500 min-h-screen flex justify-center items-center" >
+    <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
       <div style={{ width: "100%", maxWidth: "800px" }}>
         <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
           <div

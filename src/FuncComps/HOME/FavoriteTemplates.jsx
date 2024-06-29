@@ -3,8 +3,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Card from "./FCCard";
 import CreateSummary from "../CreateSummary/CreateSummary";
 
-const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
-const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+/*const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
+const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";*/
+const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
+const apiUrlBlocks =
+  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
 
 export default function FavoriteTemplates() {
   const navigate = useNavigate();
@@ -18,7 +21,7 @@ export default function FavoriteTemplates() {
 
   const handleFavoriteToggle = async (templateNo) => {
     const updatedFavorites = { Email: user.Email, TemplateNo: templateNo };
-    console.log('Sending delete request to server:', updatedFavorites);
+    console.log("Sending delete request to server:", updatedFavorites);
 
     try {
       const response = await fetch(apiUrlDeleteFavorites, {
@@ -35,11 +38,13 @@ export default function FavoriteTemplates() {
 
       // Update local favorites list after successful deletion
       setUpdatedTemplates((prevTemplates) =>
-        prevTemplates.map((template) =>
-          template.templateNo === templateNo
-            ? { ...template, isFavorite: false }
-            : template
-        ).filter(template => template.isFavorite)
+        prevTemplates
+          .map((template) =>
+            template.templateNo === templateNo
+              ? { ...template, isFavorite: false }
+              : template
+          )
+          .filter((template) => template.isFavorite)
       );
     } catch (error) {
       console.error("Failed to remove favorite:", error);
@@ -114,9 +119,18 @@ export default function FavoriteTemplates() {
             </label>
           </header>
 
-          <h1 style={{ margin: '0 auto' }}><b>Favorite Templates</b></h1>
+          <h1 style={{ margin: "0 auto" }}>
+            <b>Favorite Templates</b>
+          </h1>
 
-          <div className="flex items-center" style={{ marginBottom: "4rem", margin: "0 auto", marginTop: "2rem" }}>
+          <div
+            className="flex items-center"
+            style={{
+              marginBottom: "4rem",
+              margin: "0 auto",
+              marginTop: "2rem",
+            }}
+          >
             <button
               className={`btn ${showFavorites ? "btn-active" : ""} btn-sm`}
               onClick={() => setShowFavorites(true)}
@@ -143,30 +157,37 @@ export default function FavoriteTemplates() {
               All templates
             </button>
           </div>
-          <main className="grid grid-cols-2 gap-2" style={{ marginTop: '2rem' }}>
-            {updatedTemplates.filter(template => template.isFavorite).map((template) => (
-              <div
-                key={template.templateNo}
-                className="cursor-pointer"
-                onClick={() => handleTemplateClick(template)}
-              >
-                <Card
-                  title={template.templateName}
-                  favorite={template.isFavorite}
-                  description={template.description}
-                  tags={template.tags || []}
-                  onFavoriteToggle={() => handleFavoriteToggle(template.templateNo)}
-                  onCreateSummaryClick={() => (
-                    <CreateSummary
-                      template={template}
-                      user={user}
-                      setError={setError}
-                      setSelectedTemplateBlocks={setSelectedTemplateBlocks}
-                    />
-                  )}
-                />
-              </div>
-            ))}
+          <main
+            className="grid grid-cols-2 gap-2"
+            style={{ marginTop: "2rem" }}
+          >
+            {updatedTemplates
+              .filter((template) => template.isFavorite)
+              .map((template) => (
+                <div
+                  key={template.templateNo}
+                  className="cursor-pointer"
+                  onClick={() => handleTemplateClick(template)}
+                >
+                  <Card
+                    title={template.templateName}
+                    favorite={template.isFavorite}
+                    description={template.description}
+                    tags={template.tags || []}
+                    onFavoriteToggle={() =>
+                      handleFavoriteToggle(template.templateNo)
+                    }
+                    onCreateSummaryClick={() => (
+                      <CreateSummary
+                        template={template}
+                        user={user}
+                        setError={setError}
+                        setSelectedTemplateBlocks={setSelectedTemplateBlocks}
+                      />
+                    )}
+                  />
+                </div>
+              ))}
           </main>
         </div>
       </div>
