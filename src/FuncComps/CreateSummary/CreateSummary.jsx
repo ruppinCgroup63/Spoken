@@ -11,7 +11,7 @@ import axios from "axios";
 
 const CreateSummary = () => {
   const { state } = useLocation();
-  const { summary, selectedTemplateBlocks, user } = state;
+  const { summary, selectedTemplateBlocks, user } = state || {};
   const [blocks, setBlocks] = useState(selectedTemplateBlocks || []);
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
   /*const user = sessionStorage.getItem("user");
@@ -79,46 +79,6 @@ const CreateSummary = () => {
 
     doc.save("summary.pdf");
   };
-
-  //שליחה לשרת - בקשה דרך הקונטרולר
-  /*const handleAIClick = async () => {
-    try {
-      const correctedBlocks = await Promise.all(
-        blocks.map(async (block) => {
-          const response = await fetch(
-            "https://localhost:7224/api/TextCorrection/correct",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(block),
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          const correctedBlock = await response.json();
-          return correctedBlock;
-        })
-      );
-      setBlocks(correctedBlocks);
-    } catch (error) {
-      console.error("Error during the text correction process:", error.message);
-    }
-  };*/
-
-  // Extract the username from the email
-  const extractUserName = (email) => {
-    return email.split("@")[0];
-  };
-  const handleAIClick = () => {
-    console.log("AI clicked");
-  };
-
-  // בקשה ישירה דרך הפרונט - לכן התקנו AXIOS
   /* const handleAIClick = async () => {
     try {
       const correctedBlocks = await Promise.all(
@@ -129,46 +89,36 @@ const CreateSummary = () => {
       );
       setBlocks(correctedBlocks);
     } catch (error) {
+      console.error("Error during the text correction process:", error.message);
+    }
+  };*/
+
+  /***** */
+
+  const handleAIClick = async () => {
+    try {
+      const correctedBlocks = await Promise.all(
+        blocks.map(async (block) => {
+          const response = await axios.post(
+            "http://localhost:3000/correct-text",
+            {
+              text: block.text,
+            }
+          );
+          return { ...block, text: response.data.correctedText };
+        })
+      );
+      setBlocks(correctedBlocks);
+    } catch (error) {
       console.error("Error correcting text:", error);
     }
   };
 
-  const correctText = async (text) => {
-    const response = await fetch(
-      "https://localhost:7224/api/TextCorrection/correct",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text }),
-      }
-    );
-
-    const data = await response.json();
-    return data.CorrectedText.trim();
+  // Extract the username from the email
+  const extractUserName = (email) => {
+    if (!email) return "Unknown User";
+    return email.split("@")[0];
   };
-
-  /*const correctText = async (text) => {
-    const response = await fetch(
-      "https://api.openai.com/v1/engines/davinci-codex/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiToken}`,
-        },
-        body: JSON.stringify({
-          prompt: `Correct the grammar and spelling of the following text: ${text}`,
-          max_tokens: 60,
-          temperature: 0.7,
-        }),
-      }
-    );*/
-
-  /* const data = await response.json();
-    return data.choices[0].text.trim();
-  };*/
 
   const userName = extractUserName(summary.CreatorEmail);
 
@@ -186,7 +136,7 @@ const CreateSummary = () => {
       SpeechRecognition.startListening({
         continuous: true,
         //language: user.langName || "en-US", // Use user.LangName or default to "en-US"
-        language: "en-US", // Use user.LangName or default to "en-US"
+        language: "he-IL", // Use user.LangName or default to "en-US"
       });
       console.log("Started listening...");
     } else console.log("System is already listening");
@@ -230,12 +180,12 @@ const CreateSummary = () => {
     // ישנה מילת מפתח פועלת - כלומר בלוק שאליו מתמללים - וגם מצב הכתבה פועל
     if (activeKeyword && isDictating) {
       console.log(
-        "In if \n",
         "Active Key Is : ",
         activeKeyword,
-        "isDictating ? : ",
+        " isDictating ? : ",
         isDictating
       );
+
       // רק אם זוהתה מילת מפתח - ומצב הכתבה פועל נעדכן את הטקסט של הבלוק - כלומר הכתבה לבלוק
       setBlocks((prevItems) =>
         prevItems.map((item) =>
@@ -257,6 +207,7 @@ const CreateSummary = () => {
     }
 
     console.log("Items of the template are : ", blocks);
+
     //חיפוש/זיהוי מילת מפתח מתוך מילות המפתח של הבלוקים
     let foundKeyword = blocks.find((item) =>
       transcript.toLowerCase().endsWith(item.keyWord.toLowerCase())
@@ -352,7 +303,7 @@ const CreateSummary = () => {
         onClose={handleCloseModal}
         summary={summary}
         blocks={blocks}
-        userName={userName}
+        userName={extractUserName(summary?.CreatorEmail)}
       />
     </div>
   );

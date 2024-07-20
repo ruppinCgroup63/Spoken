@@ -30,14 +30,13 @@ function HomePage() {
   const [allTemplates, setAllTemplates] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState(null);
-
   const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
 
   useEffect(() => {
     const userFromStorage = JSON.parse(sessionStorage.getItem("user"));
     console.log(userFromStorage);
     if (userFromStorage) {
-      setUserName(userFromStorage.userName); //? למה פעמיים
+      setUserName(userFromStorage.userName);
       setUser({
         UserName: userFromStorage.userName,
         Email: userFromStorage.email,
@@ -142,7 +141,7 @@ function HomePage() {
     );
 
     const updatedFavorites = { Email: user.Email, TemplateNo: templateNo };
-    //אם התבנית כבר 'יימת במערך התבניות המועדפות אז זה אומר שהלחיצה הייתה כדי למחוק ממועדפים ולכן נמחק מהמערך את המופע של התבנית
+
     try {
       if (favorites.some((fav) => fav.templateNo === templateNo)) {
         const response = await fetch(apiUrlDeleteFavorites, {
@@ -216,9 +215,9 @@ function HomePage() {
         throw new Error(errorText);
       }
 
-      //  navigate("/CreateSummary", {
-      //        state: { selectedTemplate, Data: blocksData, user },
-      //  });
+      navigate("/TemplateToDictate", {
+        state: { selectedTemplate, Data: blocksData, user },
+      });
     } catch (error) {
       setError(error.message);
       console.error("Error handling template click:", error);

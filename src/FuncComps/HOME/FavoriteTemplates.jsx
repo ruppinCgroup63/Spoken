@@ -52,6 +52,7 @@ export default function FavoriteTemplates() {
   };
 
   const handleTemplateClick = async (template) => {
+    console.log("Template clicked:", template);
     try {
       const response = await fetch(apiUrlBlocks, {
         method: "POST",
@@ -66,14 +67,15 @@ export default function FavoriteTemplates() {
       }
 
       const blocksData = await response.json();
-      navigate("/TemplateToDictate", {
-        state: { selectedTemplate: template, Data: blocksData, user },
+      console.log("Fetched blocks data:", blocksData);
+      setSelectedTemplateBlocks(blocksData); // Set the blocks data here
+      navigate("/CreateSummary", {
+        state: { summary: template, selectedTemplateBlocks: blocksData, user },
       });
     } catch (error) {
       console.error("Error fetching blocks data:", error);
     }
   };
-
   return (
     <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
       <div
@@ -177,14 +179,7 @@ export default function FavoriteTemplates() {
                     onFavoriteToggle={() =>
                       handleFavoriteToggle(template.templateNo)
                     }
-                    onCreateSummaryClick={() => (
-                      <CreateSummary
-                        template={template}
-                        user={user}
-                        setError={setError}
-                        setSelectedTemplateBlocks={setSelectedTemplateBlocks}
-                      />
-                    )}
+                    onCreateSummaryClick={() => handleTemplateClick(template)}
                   />
                 </div>
               ))}
