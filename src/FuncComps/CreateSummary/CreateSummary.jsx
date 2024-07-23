@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime"; // גורם לתמיכה של פונקציות אסינכרוניות ובגינרטורס
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
@@ -9,19 +9,44 @@ import SummaryPreviewModal from "./SummaryPreviewModal ";
 import { jsPDF } from "jspdf";
 import axios from "axios";
 
+const apiUrlClients = "https://localhost:44326/api/Customers";
+const apiUrlSummaries = "https://localhost:44326/api/Summary";
+const apiUrlBlocks = "https://localhost:44326/api/BlockInSummary";
+
 const CreateSummary = () => {
+  const navigate = useNavigate();
   const { state } = useLocation();
   const { summary, selectedTemplateBlocks, user } = state || {};
   const [blocks, setBlocks] = useState(selectedTemplateBlocks || []);
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
-  /*const user = sessionStorage.getItem("user");
-  console.log(user);*/
-  console.log(
-    "Selected templates blovcks: ",
-    selectedTemplateBlocks,
-    "Assihn to variable blocks :",
-    blocks
-  );
+  const [clients, setClients] = useState([]); // מצב לשמירת שמות הלקוחות
+  const [selectedClient, setSelectedClient] = useState(""); // מצב לשמירת הלקוח שנבחר
+  const [isTranscribingStarted, setIsTranscribingStarted] = useState(false); // מצב הכפתור
+  const [activeKeyword, setActiveKeyword] = useState(null); // מצב עבור מילת מפתח פעילה
+
+  const voiceGreen = "public/Summery/Voice.png";
+  const voiceBlack = "public/Summery/VoiceB.png";
+  const startListeningButtonStyle = isTranscribingStarted
+    ? { backgroundColor: "#E4E9F2", color: "#070A40", borderColor: "#070A40" }
+    : { backgroundColor: "#070A40", color: "#E4E9F2", borderColor: "#070A40" };
+
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await fetch(apiUrlClients);
+        if (!response.ok) {
+          throw new Error("Failed to fetch clients");
+        }
+        const data = await response.json();
+        setClients(data);
+      } catch (error) {
+        console.error("Error fetching clients:", error);
+      }
+    };
+
+    fetchClients();
+  }, []);
+
   const {
     transcript,
     listening,
@@ -29,7 +54,6 @@ const CreateSummary = () => {
     browserSupportsSpeechRecognition, // בדיקה שהדפדפן תומך בתמלול
   } = useSpeechRecognition();
 
-  const [activeKeyword, setActiveKeyword] = useState(null); // מצב עבור מילת מפתח פעילה
   const [isDictating, setIsDictating] = useState(false); // מצב כדי לעקוב אחר הכתבה ולנהל את ההכתבה לבלוקים
 
   useEffect(() => {
@@ -79,38 +103,79 @@ const CreateSummary = () => {
 
     doc.save("summary.pdf");
   };
-  /* const handleAIClick = async () => {
-    try {
-      const correctedBlocks = await Promise.all(
-        blocks.map(async (block) => {
-          const correctedText = await correctText(block.text);
-          return { ...block, text: correctedText };
-        })
-      );
-      setBlocks(correctedBlocks);
-    } catch (error) {
-      console.error("Error during the text correction process:", error.message);
-    }
-  };*/
 
-  /***** */
+console.log(summary.CustomerId);
 
   const handleAIClick = async () => {
     try {
       const correctedBlocks = await Promise.all(
         blocks.map(async (block) => {
-          const response = await axios.post(
-            "http://localhost:3000/correct-text",
-            {
+          const response = await fetch("http://localhost:3000/correct-text", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
               text: block.text,
-            }
-          );
-          return { ...block, text: response.data.correctedText };
+            }),
+          });
+          const data = await response.json();
+          return { ...block, text: data.correctedText };
         })
       );
       setBlocks(correctedBlocks);
     } catch (error) {
       console.error("Error correcting text:", error);
+    }
+  };
+
+  const handleDocumentProductionClick = async () => {
+    if (!selectedClient) {
+      alert("Please select a client before saving the document.");
+      return;
+    }
+
+    try {
+      // Save the summary to the database
+      const summaryResponse = await fetch(apiUrlSummaries, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          SummaryNo:summary.SummaryNo,
+          SummaryName: summary.templateName,
+          Description: summary.description,
+          CreatorEmail: summary.creatorEmail,
+          CustomerId: selectedClient,
+        
+        }),
+      });
+      const summaryData = await summaryResponse.json();
+      const summaryId = summaryData.id;
+
+      // Save each block to the database with the summary ID
+      await Promise.all(
+        blocks.map((block) =>
+          fetch(apiUrlBlocks, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title: block.title,
+              keyWord: block.keyWord,
+              text: block.text,
+              summaryId: summaryId,
+            }),
+          })
+        )
+      );
+
+      alert("Document and blocks saved successfully!");
+    } catch (error) {
+      console.error("Error saving document and blocks:", error);
+      alert("An error occurred while saving the document and blocks.");
     }
   };
 
@@ -135,11 +200,13 @@ const CreateSummary = () => {
     if (!listening) {
       SpeechRecognition.startListening({
         continuous: true,
-        //language: user.langName || "en-US", // Use user.LangName or default to "en-US"
-        language: "he-IL", // Use user.LangName or default to "en-US"
+        language: "en-US", // Use user.LangName or default to "he-IL"
       });
       console.log("Started listening...");
-    } else console.log("System is already listening");
+      setIsTranscribingStarted(true); // Set the state to indicate that transcribing has started
+    } else {
+      handleStopListening(); // אם כבר מאזינים, עוצרים את ההאזנה
+    }
   };
 
   //עצירת האזנה
@@ -149,6 +216,7 @@ const CreateSummary = () => {
     console.log("Stop listening...");
     setActiveKeyword(null); // איפוס מילות המפתח
     setIsDictating(false); //איפוס מצב ההכתבה
+    setIsTranscribingStarted(false); // Reset the state to indicate that transcribing has stopped
   };
 
   //ניהול האזנה והתמלול
@@ -214,7 +282,7 @@ const CreateSummary = () => {
     );
     console.log("Founded keyword is : ", foundKeyword);
 
-    //במקרה ובו זוההתה מילת מפתח - ומצב הכתבה לא פועל - נפעיל אותו כדי לכתוב לבלוק המתאים
+    //במקרה ובו זוההתה מילת מפתח - ומצב ההכתבה לא פועל - נפעיל אותו כדי לכתוב לבלוק המתאים
     if (foundKeyword && !isDictating) {
       setIsDictating(true); //מפעילה את מצב ההכתבה
       setActiveKeyword(foundKeyword.keyWord); // מעדכנת את מילת המפתח
@@ -235,76 +303,259 @@ const CreateSummary = () => {
     setIsModalVisible(false);
   };
 
-  const isAnyBlockNotEmpty = blocks.some(
-    (block) => block.text && block.text.trim() !== ""
-  );
-  console.log(isAnyBlockNotEmpty);
-
   const stopButtonStyle = listening
     ? { backgroundColor: "#070a40", color: "#ffffff" }
     : {};
+
   return (
-    <div className="container">
-      <div className="header">
-        <img src="path/to/user/image.png" alt="UserImage" />
-        <h1>New patient admission</h1>
-        <span>{userName}</span>
-      </div>
-      <button className="restart-button" onClick={handleStartListening}>
-        {isAnyBlockNotEmpty ? "Restart" : "Start Transcrinig"}
-      </button>
+    <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
+      <div
+        className="card w-full max-w-md bg-base-100 shadow-xl p-5"
+        style={{ backgroundColor: "#E4E9F2" }}
+      >
+        <div className="card-body flex flex-col items-start justify-center">
+          <header className="flex justify-between items-start w-full align-self-start mb-4">
+            <label
+              className="btn btn-circle swap swap-rotate"
+              style={{
+                position: "absolute",
+                top: "30px",
+                left: "20px",
+                backgroundColor: "#E4E9F2",
+                borderColor: "#E4E9F2",
+              }}
+              onClick={() => navigate("/HomePage")} // חזרה למסך הבית
+            >
+              <input type="checkbox" />
+              <svg
+                className="swap-off fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
+                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+              </svg>
+              <svg
+                className="swap-on fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
+                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+              </svg>
+            </label>
+            <div style={{ marginTop: "5px" }}>
+              <h3
+                className="text-sm"
+                style={{ color: "#070A40", cursor: "pointer" }}
+              ></h3>
+            </div>
+            <label
+              className="btn btn-circle swap swap-rotate self-start"
+              style={{
+                backgroundColor: "#E4E9F2",
+                alignSelf: "start",
+                borderColor: "#E4E9F2",
+                marginTop: "-18px",
+                marginRight: "-15px",
+              }}
+            >
+              <input type="checkbox" />
+              <svg
+                className="swap-off fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
+                <path d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z" />
+              </svg>
+              <svg
+                className="swap-on fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
+                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+              </svg>
+            </label>
+          </header>
 
-      <div className="form-card">
-        <h2>{summary.SummaryName}</h2>
-        <p>{summary.Description}</p>
-
-        {blocks.map((block, index) => (
-          <div key={index} className="block">
-            <h3 className="block-title">{block.title}</h3>
-            <p className="block-subtitle">keyword: {block.keyWord || ""}</p>
-            <textarea
-              className="block-textarea"
-              placeholder="free text area..."
-              value={block.text}
-              onChange={(e) => handleTextChange(index, e.target.value)}
-            />
+          <div
+            className="flex flex-col items-center mb-4"
+            style={{ marginTop: "2rem" }}
+          >
+            <button
+              style={startListeningButtonStyle}
+              className="restart-button btn btn-xs sm:btn-sm  btn-primary"
+              onClick={handleStartListening}
+            >
+              {isTranscribingStarted ? "Restart" : "Start Transcribing"}
+            </button>
+            <div className="flex items-center mt-2">
+              <select
+                id="clientDropdown"
+                value={selectedClient}
+                onChange={(e) => setSelectedClient(e.target.value)}
+                className="select select-bordered select-xs w-full max-w-xs"
+                style={{
+                  color: "#070A40",
+                  backgroundColor: "rgba(255, 255, 255, 0)",
+                  borderColor: "#070A40",
+                }}
+              >
+                <option value="">Select a Client</option>
+                {clients.map((client) => (
+                  <option key={client.id} value={client.id}>
+                    {client.customerName}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
-        ))}
 
-        <div className="signed-date">
-          <label>Signed: ________________</label>
-          <label>Date: ________________</label>
+          <div style={{ borderColor: "#070A40" }} className="form-card">
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span
+                style={{
+                  marginRight: "auto",
+                  fontSize: "14px",
+                  color: "#070A40",
+                  position: "relative",
+                  top: "-3px",
+                }}
+              >
+                <b>Name: </b> {summary.templateName}
+              </span>
+              <span>
+                <img
+                  src={isTranscribingStarted ? voiceGreen : voiceBlack}
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    marginLeft: "10px",
+                    marginBottom: "10px",
+                  }}
+                  alt="Voice Icon"
+                />
+              </span>
+            </div>
+            <div
+              style={{
+                borderBottom: "1px solid silver",
+                width: "100%",
+                marginBottom: "1rem",
+              }}
+            ></div>
+
+            {blocks.map((block, index) => (
+              <div
+                key={index}
+                className="block"
+                style={{
+                  border: `2px solid ${
+                    activeKeyword && block.keyWord.toLowerCase() === activeKeyword.toLowerCase()
+                      ? "#04D9B2"
+                      : "#070A40"
+                  }`, // ירוק אם התמלול פעיל לבלוק הספציפי, כחול אם לא
+                  transition: "border-color 0.5s ease",
+                  marginBottom: "1rem",
+                }}
+              >
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", padding: "0.5rem" }}>
+                  <h3 className="block-title" style={{ marginBottom: "0.2rem" }}>{block.title}</h3>
+                  <p className="block-subtitle" style={{ marginBottom: "0.2rem" }}>keyword: {block.keyWord || ""}</p>
+                </div>
+                <div
+                  style={{
+                    borderBottom: "1px solid silver",
+                    width: "100%",
+                    marginBottom: "1rem",
+                  }}
+                ></div>
+                <textarea
+                  className="block-textarea"
+                  placeholder="free text area..."
+                  value={block.text}
+                  onChange={(e) => handleTextChange(index, e.target.value)}
+                  style={{ padding: "0.5rem" }}
+                />
+              </div>
+            ))}
+
+            <div className="signed-date">
+              <label>Signed: ___________ </label>{" "}
+              <label> Date: ____________</label>
+            </div>
+          </div>
+          <button
+            style={{
+              backgroundColor: "white",
+              color: "#070A40",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "100%",
+              marginBottom: "2rem",
+            }}
+            className="btn btn-xs sm:btn-sm "
+            onClick={handleAIClick}
+          >
+            <img
+              src="/public/Summery/Ai.png"
+              alt="AI Icon"
+              style={{ marginRight: "10px" }} // הוספת שוליים ימניים כדי להזיז שמאלה
+            />
+            AI-assisted drafting
+          </button>
+          <div className="button-group">
+            <button
+              className="btn btn-xs sm:btn-sm  btn-outline btn-primary"
+              style={{
+                color: "#070A40",
+                backgroundColor: "rgba(255, 255, 255, 0)",
+                borderColor: "#070A40",
+              }}
+              onClick={handlePreviewClick}
+            >
+              Preview
+            </button>
+            <button
+              className="btn btn-xs sm:btn-sm  btn-outline btn-primary"
+              style={{
+                color: "#070A40",
+                backgroundColor: "rgba(255, 255, 255, 0)",
+                borderColor: "#070A40",
+              }}
+              onClick={handleSaveAsPDF}
+            >
+              Save as PDF
+            </button>
+            <button
+              style={{
+                backgroundColor: "#070A40",
+                color: "#E4E9F2",
+                borderColor: "#070A40",
+              }}
+              className="btn btn-xs sm:btn-sm  btn-outline btn-primary"
+              onClick={handleDocumentProductionClick}
+            >
+              Document production
+            </button>
+          </div>
+
+          <SummaryPreviewModal
+            isVisible={isModalVisible}
+            onClose={handleCloseModal}
+            summary={summary}
+            blocks={blocks}
+            userName={extractUserName(summary?.CreatorEmail)}
+          />
         </div>
       </div>
-
-      <button className="ai-button" onClick={handleAIClick}>
-        <img src="path/to/ai-icon.png" alt="AI" />
-        AI-assisted drafting
-      </button>
-
-      <div className="button-group">
-        <button onClick={handlePreviewClick}>Preview</button>
-        <button onClick={handleSaveAsPDF}>Save as PDF</button>
-        <button
-          onClick={handleStopListening}
-          disabled={!listening}
-          style={stopButtonStyle}
-        >
-          Stop Listeting
-        </button>
-      </div>
-
-      <button className="document-production-button">
-        Document production
-      </button>
-
-      <SummaryPreviewModal
-        isVisible={isModalVisible}
-        onClose={handleCloseModal}
-        summary={summary}
-        blocks={blocks}
-        userName={extractUserName(summary?.CreatorEmail)}
-      />
     </div>
   );
 };

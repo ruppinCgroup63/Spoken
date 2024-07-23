@@ -4,7 +4,7 @@ import SignatureCanvas from "react-signature-canvas"; //מספק לי אפשרו
 import ErrorMessage from "../FCErrorMessage"; //קומפננטה שמציגת הודעת שגיאה
 
 //const apiUrl = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Users';
-const apiUrl = "https://localhost:7224/api/Users";
+const apiUrl = "https://localhost:44326/api/Users";
 
 function RegistrationPage3(props) {
   const navigate = useNavigate();

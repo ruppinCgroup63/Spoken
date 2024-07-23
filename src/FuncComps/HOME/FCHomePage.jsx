@@ -3,15 +3,15 @@ import { useNavigate } from "react-router-dom";
 import Card from "./FCCard";
 import CreateSummary from "../CreateSummary/CreateSummary";
 
-/*const apiUrlRecent = "https://localhost:44326/api/RecentTemplates/getByUserEmail";
+const apiUrlRecent = "https://localhost:44326/api/RecentTemplates/getByUserEmail";
 const apiUrlTemplates = "https://localhost:44326/api/Templates/getByUserEmail";
 const apiUrlFavorites = "https://localhost:44326/api/UserFavorites/getByUserEmail";
 const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 const apiUrlUpdateFavorite = "https://localhost:44326/api/UserFavorites";
 const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
-const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";*/
+const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
 
-const apiUrlRecent =
+/*const apiUrlRecent =
   "https://localhost:7224/api/RecentTemplates/getByUserEmail";
 const apiUrlTemplates = "https://localhost:7224/api/Templates/getByUserEmail";
 const apiUrlFavorites =
@@ -20,7 +20,7 @@ const apiUrlBlocks =
   "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
 const apiUrlUpdateFavorite = "https://localhost:7224/api/UserFavorites";
 const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
-const apiUrlUpdateRecent = "https://localhost:7224/api/RecentTemplates";
+const apiUrlUpdateRecent = "https://localhost:7224/api/RecentTemplates";*/
 
 function HomePage() {
   const navigate = useNavigate();

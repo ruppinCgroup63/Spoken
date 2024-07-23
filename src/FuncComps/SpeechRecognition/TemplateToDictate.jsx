@@ -8,9 +8,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 function TemplateToDictate() {
   //URL for the spelling - הכתובת לשרת לפרוצדורה של תיקון התמלול
   //const apiUrlBlockCorrector ='https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/TextCorrector';
-  const apiUrlBlockCorrector = "https://localhost:7224/api/TextCorrector";
+  const apiUrlBlockCorrector = "https://localhost:44326/api/TextCorrector";
+  const apiUrlTemplate = "https://localhost:44326/api/Templates";
 
-  //const apiUrlTemplate = "https://localhost:44326/api/Templates";
   const location = useLocation();
   const navigate = useNavigate();
   const { selectedTemplate, Data } = location.state || {}; //data is the items array

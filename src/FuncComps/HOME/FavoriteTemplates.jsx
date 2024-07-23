@@ -3,11 +3,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Card from "./FCCard";
 import CreateSummary from "../CreateSummary/CreateSummary";
 
-/*const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
-const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";*/
-const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
+const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
+const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+/*const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
 const apiUrlBlocks =
-  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
+  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";*/
 
 export default function FavoriteTemplates() {
   const navigate = useNavigate();
@@ -18,6 +18,12 @@ export default function FavoriteTemplates() {
   const [showFavorites, setShowFavorites] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
+
+  //חזרה לדף הבית
+  const handleButtonClick = () => {
+    navigate("/HomePage");
+  };
+
 
   const handleFavoriteToggle = async (templateNo) => {
     const updatedFavorites = { Email: user.Email, TemplateNo: templateNo };
@@ -84,12 +90,35 @@ export default function FavoriteTemplates() {
       >
         <div className="card-body flex flex-col items-start justify-center">
           <header className="flex justify-between items-start w-full align-self-start mb-4">
-            <h3
-              className="text-sm self-start mb-2"
-              style={{ color: "#070A40", cursor: "pointer" }}
+          <label
+              className="btn btn-circle swap swap-rotate"
+              style={{ position: "absolute", top: "30px", left: "20px" ,backgroundColor: "#E4E9F2", borderColor: "#E4E9F2"}}
+              onClick={handleButtonClick} //חזרה למסך הבית
             >
-              <b>{user.UserName}</b>
-            </h3>
+              <input type="checkbox" />
+              <svg
+                className="swap-off fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
+                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+              </svg>
+              <svg
+                className="swap-on fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
+                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+              </svg>
+            </label>
+            <div style={{ marginTop: "5px" }}> 
+              <h3 className="text-sm" style={{ color: "#070A40", cursor: "pointer" }}>               
+              </h3>
+            </div>
             <label
               className="btn btn-circle swap swap-rotate self-start"
               style={{
@@ -120,7 +149,26 @@ export default function FavoriteTemplates() {
               </svg>
             </label>
           </header>
-
+          <div
+            style={{ display: "flex", alignItems: "center", marginTop: "1rem" ,marginBottom:'2rem'}}
+          >
+            <img
+              src="/public/homePage/addTemplate.png"
+              alt="Error"
+              onClick={() => {
+                navigate("/CreateTemplate");
+              }}
+              style={{ marginRight: "0.5rem", cursor: "pointer" }}
+            />
+            <span
+              style={{ color: "#070A40", cursor: "pointer" }}
+              onClick={() => {
+                navigate("/CreateTemplate");
+              }}
+            >
+              New Template
+            </span>
+          </div>
           <h1 style={{ margin: "0 auto" }}>
             <b>Favorite Templates</b>
           </h1>
