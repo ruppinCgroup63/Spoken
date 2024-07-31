@@ -12,11 +12,13 @@ import axios from "axios";
 const apiUrlClients = "https://localhost:44326/api/Customers";
 const apiUrlSummaries = "https://localhost:44326/api/Summary";
 const apiUrlBlocks = "https://localhost:44326/api/BlockInSummary";
+const apiUrlGetBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 
 const CreateSummary = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { summary, selectedTemplateBlocks, user } = state || {};
+  const { template, selectedTemplateBlocks, user } = state || {};
+  const [selectedTemplate, setSelectedTemplate] = useState(template);
   const [blocks, setBlocks] = useState(selectedTemplateBlocks || []);
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
   const [clients, setClients] = useState([]); // מצב לשמירת שמות הלקוחות
@@ -79,13 +81,13 @@ const CreateSummary = () => {
     y += 10;
 
     doc.setFontSize(12);
-    doc.text(`Username: ${extractUserName(summary.CreatorEmail)}`, 10, y);
+    doc.text(`Username: ${extractUserName(template.CreatorEmail)}`, 10, y);
     y += 10;
 
-    doc.text(`Summary Name: ${summary.SummaryName}`, 10, y);
+    doc.text(`Summary Name: ${template.SummaryName}`, 10, y);
     y += 10;
 
-    doc.text(`Description: ${summary.Description}`, 10, y);
+    doc.text(`Description: ${template.Description}`, 10, y);
     y += 10;
 
     blocks.forEach((block, index) => {
@@ -104,7 +106,7 @@ const CreateSummary = () => {
     doc.save("summary.pdf");
   };
 
-console.log(summary.CustomerId);
+
 
   const handleAIClick = async () => {
     try {
@@ -129,49 +131,90 @@ console.log(summary.CustomerId);
     }
   };
 
+
   const handleDocumentProductionClick = async () => {
     if (!selectedClient) {
       alert("Please select a client before saving the document.");
       return;
     }
-
+  
+    console.log("handleCreateSummaryClick called with template:", template);
+    const summary = {
+      SummaryNo: Math.random().toString(36).substring(2, 9),
+      SummaryName: template.templateName,
+      Description: template.description,
+      Comments: "",
+      CreatorEmail: user.Email,
+      CustomerId: parseInt(selectedClient, 10)
+    };
+    console.log(summary);
+    console.log(selectedClient);
+  
     try {
-      // Save the summary to the database
+      // Create summary in server
       const summaryResponse = await fetch(apiUrlSummaries, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify({
-          SummaryNo:summary.SummaryNo,
-          SummaryName: summary.templateName,
-          Description: summary.description,
-          CreatorEmail: summary.creatorEmail,
-          CustomerId: selectedClient,
-        
-        }),
+        body: JSON.stringify(summary),
       });
-      const summaryData = await summaryResponse.json();
-      const summaryId = summaryData.id;
+  
+      if (!summaryResponse.ok) {
+        throw new Error(`HTTP error! Status: ${summaryResponse.status}`);
+      }
+  
+      const summaryResult = await summaryResponse.json();
+      console.log("Summary created successfully", summaryResult);
+  
+      // Fetch blocksInTemplate
+      const blocksResponse = await fetch(apiUrlGetBlocks, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedTemplate),
+      });
+  
+      if (!blocksResponse.ok) {
+        throw new Error("Failed to fetch data");
+      }
 
-      // Save each block to the database with the summary ID
-      await Promise.all(
-        blocks.map((block) =>
-          fetch(apiUrlBlocks, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              title: block.title,
-              keyWord: block.keyWord,
-              text: block.text,
-              summaryId: summaryId,
-            }),
-          })
-        )
-      );
-
+  
+      // Create blockInSummary in server
+      const createdBlocks = [];
+      
+      for (const block of selectedTemplateBlocks) {
+        const summaryBlock = {
+          SummaryNo: summary.SummaryNo,
+          BlockNo: block.blockNo,
+          TemplateNo: block.templateNo,
+          Text: block.text || "",
+          IsApproved: false,
+        };
+        console.log(selectedTemplateBlocks);
+        console.log(summaryBlock);
+  
+        const blockResponse = await fetch(apiUrlBlocks, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(summaryBlock),
+        });
+  
+        if (!blockResponse.ok) {
+          throw new Error(`HTTP error! Status: ${blockResponse.status}`);
+        }
+  
+        //const blockResult = await blockResponse.json();
+        //console.log("Block inserted successfully:", blockResult);
+        //createdBlocks.push(blockResult);
+        //console.log(blockResult);
+      }
+  
       alert("Document and blocks saved successfully!");
     } catch (error) {
       console.error("Error saving document and blocks:", error);
@@ -184,16 +227,17 @@ console.log(summary.CustomerId);
     if (!email) return "Unknown User";
     return email.split("@")[0];
   };
+  
 
-  const userName = extractUserName(summary.CreatorEmail);
+  //const userName = extractUserName(template.CreatorEmail);
 
-  //UseEffect עבור בדיקה האם הועברה תבנית-סיכום , ובלוקים של התבנית
+  {/*//UseEffect עבור בדיקה האם הועברה תבנית-סיכום , ובלוקים של התבנית
   useEffect(() => {
     if (!summary || !blocks) {
       console.error("No template data found!");
       return;
     }
-  }, [summary, blocks]);
+  }, [summary, blocks]);*/}
 
   //התחלה האזנה (בלבד) רציפה - ללא הכתבה
   const handleStartListening = () => {
@@ -306,6 +350,10 @@ console.log(summary.CustomerId);
   const stopButtonStyle = listening
     ? { backgroundColor: "#070a40", color: "#ffffff" }
     : {};
+
+    //console.log(summary);
+    console.log(template);
+
 
   return (
     <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
@@ -428,7 +476,7 @@ console.log(summary.CustomerId);
                   top: "-3px",
                 }}
               >
-                <b>Name: </b> {summary.templateName}
+                <b>Name: </b> {template.templateName}
               </span>
               <span>
                 <img
@@ -550,9 +598,9 @@ console.log(summary.CustomerId);
           <SummaryPreviewModal
             isVisible={isModalVisible}
             onClose={handleCloseModal}
-            summary={summary}
+            summary={template}
             blocks={blocks}
-            userName={extractUserName(summary?.CreatorEmail)}
+            userName={extractUserName(template?.CreatorEmail)}
           />
         </div>
       </div>

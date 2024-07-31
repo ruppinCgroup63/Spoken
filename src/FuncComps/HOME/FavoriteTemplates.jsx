@@ -76,7 +76,7 @@ export default function FavoriteTemplates() {
       console.log("Fetched blocks data:", blocksData);
       setSelectedTemplateBlocks(blocksData); // Set the blocks data here
       navigate("/CreateSummary", {
-        state: { summary: template, selectedTemplateBlocks: blocksData, user },
+        state: { template: template, selectedTemplateBlocks: blocksData, user },
       });
     } catch (error) {
       console.error("Error fetching blocks data:", error);
