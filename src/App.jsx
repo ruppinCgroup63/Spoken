@@ -18,8 +18,7 @@ import CreateSummary from "./FuncComps/CreateSummary/CreateSummary";
 import TemplateCreatedSuccessfully from "./FuncComps/CreateTemplate/TemplateCreatedSuccessfully";
 import Admins from "./FuncComps/Admin/Admins";
 import EditUser from "./FuncComps/Admin/EditUsers";
-
-
+import SummarySuccess from "./FuncComps/CreateSummary/SummarySuccess";
 
 function App() {
   const [usersList, setUsersList] = useState([]);
@@ -51,6 +50,7 @@ function App() {
             <Route path="/TemplateCreatedSuccessfully" element={<TemplateCreatedSuccessfully/>}/>
             <Route path="/Admin" element={<Admins/>}/>
             <Route path="/EditUsers" element={<EditUser/>}/>
+            <Route path="/SummarySuccess" element={<SummarySuccess/>}/>
           </Routes>
         </BrowserRouter>
       </div>
