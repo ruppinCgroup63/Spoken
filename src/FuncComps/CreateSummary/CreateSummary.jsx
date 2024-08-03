@@ -356,6 +356,7 @@ const CreateSummary = () => {
 
 
   return (
+    
     <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
       <div
         className="card w-full max-w-md bg-base-100 shadow-xl p-5"

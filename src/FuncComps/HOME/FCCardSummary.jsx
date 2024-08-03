@@ -5,7 +5,7 @@ function CardSummary({
   description,
   tags,
   onCardClick,
-  onCreateSummaryClick
+  onPreviewClick
 }) {
   return (
     <div className="col-md-6 mb-4" onClick={onCardClick}>
@@ -32,8 +32,8 @@ function CardSummary({
             className="btn btn-primary mt-4"
             onClick={(e) => {
               e.stopPropagation();
-              console.log("Create Summary button clicked"); // Add this line
-              onCreateSummaryClick();
+              console.log("Create Summary button clicked"); 
+              onPreviewClick();
             }}
           >
             Preview

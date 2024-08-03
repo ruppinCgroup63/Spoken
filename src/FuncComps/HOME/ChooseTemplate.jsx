@@ -104,6 +104,7 @@ function ChooseTemplate() {
   const handleTemplateClick = (templateClicked) => {
     setSelectedTemplate(templateClicked);
 
+  
     console.log(
       "-------------------setSelectedTemplate : ",
       selectedTemplate,
