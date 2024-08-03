@@ -18,6 +18,8 @@ import CreateSummary from "./FuncComps/CreateSummary/CreateSummary";
 import TemplateCreatedSuccessfully from "./FuncComps/CreateTemplate/TemplateCreatedSuccessfully";
 import Admins from "./FuncComps/Admin/Admins";
 import EditUser from "./FuncComps/Admin/EditUsers";
+import AllSummery from "./FuncComps/HOME/AllSummery";
+import SummaryPreview from "./FuncComps/HOME/SummaryPreview";
 
 
 
@@ -51,6 +53,8 @@ function App() {
             <Route path="/TemplateCreatedSuccessfully" element={<TemplateCreatedSuccessfully/>}/>
             <Route path="/Admin" element={<Admins/>}/>
             <Route path="/EditUsers" element={<EditUser/>}/>
+            <Route path="/AllSummery" element={<AllSummery/>}/>
+            <Route path="/SummaryPreview" element={<SummaryPreview/>}/>
           </Routes>
         </BrowserRouter>
       </div>
