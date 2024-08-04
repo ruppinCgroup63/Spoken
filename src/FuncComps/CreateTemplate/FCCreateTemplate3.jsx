@@ -1,5 +1,5 @@
 import "regenerator-runtime/runtime"; // גורם לתמיכה של פונקציות אסינכרוניות ובגינרטורס
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback,useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -7,9 +7,7 @@ import "react-resizable/css/styles.css";
 import DraggableItem from "./CreateBlockForTemplate3";
 
 const apiUrlTemplate = 'https://localhost:44326/api/Templates';
-//const apiUrlTemplate = "https://localhost:7224/api/Templates";
 const apiUrlBlock = 'https://localhost:44326/api/BlocksInTemplates';
-//const apiUrlBlock = "https://localhost:7224/api/BlocksInTemplates";
 
 function CreateTemplate3() {
   const navigate = useNavigate();
@@ -21,7 +19,15 @@ function CreateTemplate3() {
   const [items, setItems] = useState(state.items || []);
   const [nextBlockNumber, setNextBlockNumber] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
+  const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    // לקרוא את הנתונים מה-sessionStorage כאשר הקומפוננטה נטענת
+    const user = sessionStorage.getItem("user");
+    if (user) {
+      setUser(JSON.parse(user));
+    }
+  }, []); 
   const updateItem = useCallback(
     (index, field, value) => {
       const newItems = items.map((item, idx) =>
@@ -63,23 +69,13 @@ function CreateTemplate3() {
     },
     [nextBlockNumber, template.TemplateNo]
   );
+//חזרה לדף הבית
+const handleButtonClick = () => {
+  navigate("/HomePage");
+};
 
-  /*const validateKeywords = () => {
-    for (const item of items) {
-      if (!item.KeyWord.trim()) {
-        return false;
-      }
-    }
-    return true;
-  };*/
   const handleSubmit = async (e) => {
     e.preventDefault();
-    /*setErrorMessage(""); // Reset error message
-
-    if (!validateKeywords()) {
-      setErrorMessage("Please fill in all keyword fields.");
-      return;
-    }*/
 
     try {
       const templateResponse = await fetch(apiUrlTemplate, {
@@ -99,7 +95,6 @@ function CreateTemplate3() {
       console.log("Create Template successfully", templateResult);
 
       for (const block of items) {
-        // לוודא ש-BlockNo הוא מחרוזת
         const blockToSend = {
           ...block,
           BlockNo: block.BlockNo.toString(),
@@ -122,14 +117,11 @@ function CreateTemplate3() {
         console.log("Block inserted successfully:", blockResult);
       }
 
-      //navigate("/HomePage", {
-      // state: { template: templateResult, items, origin: "CreateTemplate3" },
-      // });
       navigate("/TemplateCreatedSuccessfully", {
         state: {
           template: template,
-          items,
-          user: state.user,
+          selectedTemplateBlocks:items,
+          user: user,
           origin: "CreateTemplate3",
         },
       });
@@ -149,7 +141,33 @@ function CreateTemplate3() {
         >
           <div className="card-body flex items-center justify-center">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="steps space-x-2 mb-4">
+            <label
+              className="btn btn-circle swap swap-rotate"
+              style={{ position: "absolute", top: "30px", left: "20px" ,backgroundColor: "#E4E9F2", borderColor: "#E4E9F2"}}
+              onClick={handleButtonClick} //חזרה למסך הבית
+            >
+              <input type="checkbox" />
+              <svg
+                className="swap-off fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
+                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+              </svg>
+              <svg
+                className="swap-on fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
+                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+              </svg>
+            </label>
+
+              <div className="steps space-x-2 mb-4" style={{marginTop:'60px'}}>
                 <div
                   className="step step-primary"
                   style={{ color: "#070A40" }}
@@ -178,7 +196,7 @@ function CreateTemplate3() {
                 style={{
                   margin: "10px",
                   padding: "10px",
-                  minHeight: "300px",
+                  minHeight: "50px", // שונה לגובה מינימלי נמוך
                   border: "1px solid #070A40",
                   position: "relative",
                   borderRadius: "0.6rem",
@@ -205,7 +223,6 @@ function CreateTemplate3() {
                   }}
                 ></div>
 
-                {/* חלק של מילת המפתח */}
                 <div
                   style={{
                     display: "flex",
@@ -256,7 +273,11 @@ function CreateTemplate3() {
                   }}
                 ></div>
 
-                <div className="container">
+                <div style={{
+                    borderBottom: "1px solid silver",
+                    width: "100%",
+                    marginBottom: "2rem",
+                  }}>
                   {items.map((item, index) => {
                     if (item.Type === "file") {
                       return (

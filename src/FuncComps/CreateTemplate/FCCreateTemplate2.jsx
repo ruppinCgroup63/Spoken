@@ -75,6 +75,11 @@ function CreateTemplate2() {
     setItems((items) => items.filter((_, i) => i !== index));
   }, []);
 
+  //חזרה לדף הבית
+  const handleButtonClick = () => {
+    navigate("/HomePage");
+  };
+
   // פונקציה שמזיזה פריט (בלוק) בתוך אייטמס לפי האינדקסים דראג זה הפריט שנגרר והובר זה הפריט שמעליו הוא מונח
   const moveItem = useCallback((dragIndex, hoverIndex) => {
     setItems((prevItems) => {
@@ -113,7 +118,34 @@ function CreateTemplate2() {
         >
           <div className="card-body flex items-center justify-center">
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="steps space-x-2 mb-4">
+
+            <label
+              className="btn btn-circle swap swap-rotate"
+              style={{ position: "absolute", top: "30px", left: "20px" ,backgroundColor: "#E4E9F2", borderColor: "#E4E9F2"}}
+              onClick={handleButtonClick} //חזרה למסך הבית
+            >
+              <input type="checkbox" />
+              <svg
+                className="swap-off fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
+                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+              </svg>
+              <svg
+                className="swap-on fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+              >
+                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+              </svg>
+            </label>
+            
+              <div className="steps space-x-2 mb-4" style={{marginTop:'60px'}}>
                 <div className="step step-primary" data-content="✓">
                   Name
                 </div>

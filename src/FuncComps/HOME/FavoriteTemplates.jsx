@@ -149,8 +149,11 @@ export default function FavoriteTemplates() {
               </svg>
             </label>
           </header>
+          <h1 style={{ margin: "0 auto" }}>
+            <b>Favorite Templates</b>
+          </h1>
           <div
-            style={{ display: "flex", alignItems: "center", marginTop: "1rem" ,marginBottom:'2rem'}}
+            style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}
           >
             <img
               src="/public/homePage/addTemplate.png"
@@ -169,10 +172,7 @@ export default function FavoriteTemplates() {
               New Template
             </span>
           </div>
-          <h1 style={{ margin: "0 auto" }}>
-            <b>Favorite Templates</b>
-          </h1>
-
+        
           <div
             className="flex items-center"
             style={{

@@ -60,6 +60,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
             width: "100%",
             marginBottom: "5px",
             border: "1px solid silver",
+            padding: "5px", // הוספתי padding קטן
           }}
         />
       );
@@ -91,6 +92,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
               width: "100%",
               marginBottom: "5px",
               border: "1px solid silver",
+              padding: "5px", // הוספתי padding קטן
             }}
           />
           <textarea
@@ -101,6 +103,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
               width: "100%",
               height: "45px",
               border: "1px solid silver",
+              padding: "5px", // הוספתי padding קטן
             }}
           />
         </>
@@ -116,7 +119,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
       maxConstraints={[350, 100]}
       resizeHandles={["e", "w"]}
       className="resizable"
-      style={{ margin: "auto" }}
+      style={{ margin: "5px 0" }} // הוספתי margin קטן כדי להקטין את הרווחים
     >
       <div
         ref={(node) => drag(drop(node))}
@@ -158,7 +161,6 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              //backgroundColor: "#28a745",
               color: "white",
               padding: "0 8px",
               borderRadius: "50%",

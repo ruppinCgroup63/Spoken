@@ -46,7 +46,7 @@ function App() {
             <Route path="/ChooseTemplate" element={<ChooseTemplate />} />
             <Route path="/TemplateToDictate" element={<TemplateToDictate />} />
             <Route path="/FavoriteTemplates" element={<FavoriteTemplates/>}/>
-            <Route path="CreateSummary" element={<CreateSummary/>}/>
+            <Route path="/CreateSummary" element={<CreateSummary/>}/>
             <Route path="/TemplateCreatedSuccessfully" element={<TemplateCreatedSuccessfully/>}/>
             <Route path="/Admin" element={<Admins/>}/>
             <Route path="/EditUsers" element={<EditUser/>}/>

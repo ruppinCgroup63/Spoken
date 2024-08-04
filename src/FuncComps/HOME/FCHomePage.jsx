@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "./FCCard";
-import CreateSummary from "../CreateSummary/CreateSummary";
 
 const apiUrlRecent = "https://localhost:44326/api/RecentTemplates/getByUserEmail";
 const apiUrlTemplates = "https://localhost:44326/api/Templates/getByUserEmail";
@@ -11,23 +10,11 @@ const apiUrlUpdateFavorite = "https://localhost:44326/api/UserFavorites";
 const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
 const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
 
-/*const apiUrlRecent =
-  "https://localhost:7224/api/RecentTemplates/getByUserEmail";
-const apiUrlTemplates = "https://localhost:7224/api/Templates/getByUserEmail";
-const apiUrlFavorites =
-  "https://localhost:7224/api/UserFavorites/getByUserEmail";
-const apiUrlBlocks =
-  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
-const apiUrlUpdateFavorite = "https://localhost:7224/api/UserFavorites";
-const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
-const apiUrlUpdateRecent = "https://localhost:7224/api/RecentTemplates";*/
-
 function HomePage() {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
   const [user, setUser] = useState(null);
   const [recentTemplates, setRecentTemplates] = useState([]);
-  const [allTemplates, setAllTemplates] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState(null);
   const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
@@ -105,7 +92,6 @@ function HomePage() {
       );
 
       setRecentTemplates(filteredTemplates);
-      setAllTemplates(templates);
     } catch (error) {
       setError(error.message);
       console.error("Error fetching templates:", error);
@@ -224,6 +210,31 @@ function HomePage() {
     }
   };
 
+  const handleCreateSummaryClick = async (template) => {
+    try {
+      const responseBlocks = await fetch(apiUrlBlocks, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(template),
+      });
+
+      if (!responseBlocks.ok) {
+        throw new Error("Failed to fetch blocks data");
+      }
+
+      const blocksData = await responseBlocks.json();
+      setSelectedTemplateBlocks(blocksData);
+      navigate("/CreateSummary", {
+        state: { template, selectedTemplateBlocks: blocksData, user },
+      });
+    } catch (error) {
+      setError("Failed to fetch blocks data. Please try again.");
+      console.error("Error fetching blocks data:", error);
+    }
+  };
+
   return (
     <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
       <div
@@ -324,14 +335,7 @@ function HomePage() {
                   onFavoriteToggle={() =>
                     handleFavoriteToggle(template.templateNo)
                   }
-                  onCreateSummaryClick={() => (
-                    <CreateSummary
-                      template={template}
-                      user={user}
-                      setError={setError}
-                      setSelectedTemplateBlocks={setSelectedTemplateBlocks}
-                    />
-                  )}
+                  onCreateSummaryClick={() => handleCreateSummaryClick(template)}
                 />
               </div>
             ))}

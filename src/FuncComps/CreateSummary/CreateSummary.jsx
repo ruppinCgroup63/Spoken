@@ -7,7 +7,7 @@ import SpeechRecognition, {
 import "./SummaryPage.css";
 import SummaryPreviewModal from "./SummaryPreviewModal ";
 import { jsPDF } from "jspdf";
-import axios from "axios";
+import "jspdf-autotable";
 
 const apiUrlClients = "https://localhost:44326/api/Customers";
 const apiUrlSummaries = "https://localhost:44326/api/Summary";
@@ -25,13 +25,19 @@ const CreateSummary = () => {
   const [selectedClient, setSelectedClient] = useState(""); // מצב לשמירת הלקוח שנבחר
   const [isTranscribingStarted, setIsTranscribingStarted] = useState(false); // מצב הכפתור
   const [activeKeyword, setActiveKeyword] = useState(null); // מצב עבור מילת מפתח פעילה
-
+  const currentDate = new Date().toLocaleDateString(); // Get current date
+  const logoPath = "public/login/SpokenLogoNew.png";
   const voiceGreen = "public/Summery/Voice.png";
   const voiceBlack = "public/Summery/VoiceB.png";
   const startListeningButtonStyle = isTranscribingStarted
     ? { backgroundColor: "#E4E9F2", color: "#070A40", borderColor: "#070A40" }
     : { backgroundColor: "#070A40", color: "#E4E9F2", borderColor: "#070A40" };
 
+
+    console.log(selectedTemplate);
+    console.log(selectedTemplateBlocks);
+    
+    console.log(state);
   useEffect(() => {
     const fetchClients = async () => {
       try {
@@ -72,39 +78,110 @@ const CreateSummary = () => {
     console.log("Save button clicked");
   };
 
+  console.log(user);
   const handleSaveAsPDF = () => {
     const doc = new jsPDF();
-    let y = 10;
+    let y = 20;
+    const pageHeight = doc.internal.pageSize.height;
+
+    // Add logo
+    doc.addImage(logoPath, "PNG", 10, 10, 30, 10);
 
     doc.setFontSize(18);
-    doc.text("New patient admission", 10, y);
-    y += 10;
+    doc.setFont("helvetica", "bold");
+    doc.text(template.templateName, 105, y, { align: "center" });
+    y += 20;
 
     doc.setFontSize(12);
-    doc.text(`Username: ${extractUserName(template.CreatorEmail)}`, 10, y);
-    y += 10;
+    doc.setFont("helvetica", "normal");
 
-    doc.text(`Summary Name: ${template.SummaryName}`, 10, y);
-    y += 10;
+    const selectedClientName = clients.find(client => client.id === parseInt(selectedClient))?.customerName || "Unknown Client";
 
-    doc.text(`Description: ${template.Description}`, 10, y);
-    y += 10;
+    // Display creator, client, and description in one line
+    const creatorText = `Creator: ${extractUserName(user.Email)}`;
+    const clientText = `Client: ${selectedClientName}`;
+    const descriptionText = `Description: ${template.description}`;
+
+    // Calculate positions to ensure they fit in one line
+    const margin = 10;
+    const spacing = 70; // Adjust spacing as needed
+    const creatorX = margin;
+    const clientX = creatorX + spacing;
+    const descriptionX = clientX + spacing;
+
+    doc.text(creatorText, creatorX, y);
+    doc.text(clientText, clientX, y);
+    doc.text(descriptionText, descriptionX, y);
+    y += 10; // Move to the next line
 
     blocks.forEach((block, index) => {
-      doc.text(`Block ${index + 1}: ${block.title}`, 10, y);
-      y += 10;
-      doc.text(`Keyword: ${block.keyWord || ""}`, 10, y);
-      y += 10;
-      doc.text(`Text: ${block.text}`, 10, y);
-      y += 10;
+      y += 10; // Add space before each block title
+
+      if (y + 40 > pageHeight) { // Check if there is enough space for the next block, otherwise add a new page
+        doc.addPage();
+        y = 20;
+      }
+
+      doc.setFontSize(12);
+      doc.setFont("helvetica", "normal");
+      doc.text(`${block.title}`, 10, y);
+      y += 6;
+
+      const blockTop = y; // Start of text
+      const lines = doc.splitTextToSize(block.text, 180); // Adjust the width as needed
+
+      const blockHeight = lines.length * 6 + 6; // Calculate block height
+      if (blockTop + blockHeight + 10 > pageHeight) { // Check if there is enough space for the block, otherwise add a new page
+        doc.addPage();
+        y = 20;
+      }
+
+      // Draw the rectangle before adding the text
+      doc.rect(8, blockTop, 194, blockHeight, 'S');
+
+      // Add the text inside the rectangle
+      lines.forEach((line, i) => {
+        y += 6; // Move y position down before adding the text to ensure it starts inside the rectangle
+        doc.text(line, 10, y);
+      });
+
+      y += 10; // Space after each block
     });
 
-    doc.text("Signed: ________________", 10, y);
-    y += 10;
-    doc.text("Date: ________________", 10, y);
+    // Add space before the signature
+    y += 20;
 
-    doc.save("summary.pdf");
+    if (y + 20 > pageHeight) { // Check if there is enough space for the signature and date, otherwise add a new page
+      doc.addPage();
+      y = 20;
+    }
+
+    doc.setFont("helvetica", "normal");
+    doc.text("Signed:", 10, y);
+
+    if (user.Signature) {
+      // Use the full data URL directly and adjust the size and position
+      doc.addImage(user.Signature, "PNG", 22, y - 10, 30, 15); // Adjust the size and position as needed
+    } else {
+      doc.text("______________", 40, y);
+    }
+
+    y += 20; // Adjust the space after the signature
+    doc.text(`Date: ${currentDate}`, 10, y);
+
+    // Save the PDF
+    const fileName = `${template.templateName}.pdf`;
+    doc.save(fileName);
+
+    // Delay opening the file
+    setTimeout(() => {
+      const pdfUrl = URL.createObjectURL(doc.output('blob'));
+      window.open(pdfUrl);
+    }, 1000); // Delay of 1 second
   };
+
+
+
 
 
 
@@ -131,13 +208,12 @@ const CreateSummary = () => {
     }
   };
 
-
   const handleDocumentProductionClick = async () => {
     if (!selectedClient) {
       alert("Please select a client before saving the document.");
       return;
     }
-  
+
     console.log("handleCreateSummaryClick called with template:", template);
     const summary = {
       SummaryNo: Math.random().toString(36).substring(2, 9),
@@ -149,7 +225,7 @@ const CreateSummary = () => {
     };
     console.log(summary);
     console.log(selectedClient);
-  
+
     try {
       // Create summary in server
       const summaryResponse = await fetch(apiUrlSummaries, {
@@ -160,14 +236,14 @@ const CreateSummary = () => {
         },
         body: JSON.stringify(summary),
       });
-  
+
       if (!summaryResponse.ok) {
         throw new Error(`HTTP error! Status: ${summaryResponse.status}`);
       }
-  
+
       const summaryResult = await summaryResponse.json();
       console.log("Summary created successfully", summaryResult);
-  
+
       // Fetch blocksInTemplate
       const blocksResponse = await fetch(apiUrlGetBlocks, {
         method: "POST",
@@ -176,15 +252,15 @@ const CreateSummary = () => {
         },
         body: JSON.stringify(selectedTemplate),
       });
-  
+
       if (!blocksResponse.ok) {
         throw new Error("Failed to fetch data");
       }
 
-  
+
       // Create blockInSummary in server
       const createdBlocks = [];
-      
+
       for (const block of selectedTemplateBlocks) {
         const summaryBlock = {
           SummaryNo: summary.SummaryNo,
@@ -195,7 +271,7 @@ const CreateSummary = () => {
         };
         console.log(selectedTemplateBlocks);
         console.log(summaryBlock);
-  
+
         const blockResponse = await fetch(apiUrlBlocks, {
           method: "POST",
           headers: {
@@ -204,17 +280,12 @@ const CreateSummary = () => {
           },
           body: JSON.stringify(summaryBlock),
         });
-  
+
         if (!blockResponse.ok) {
           throw new Error(`HTTP error! Status: ${blockResponse.status}`);
         }
-  
-        //const blockResult = await blockResponse.json();
-        //console.log("Block inserted successfully:", blockResult);
-        //createdBlocks.push(blockResult);
-        //console.log(blockResult);
       }
-  
+
       alert("Document and blocks saved successfully!");
     } catch (error) {
       console.error("Error saving document and blocks:", error);
@@ -227,19 +298,7 @@ const CreateSummary = () => {
     if (!email) return "Unknown User";
     return email.split("@")[0];
   };
-  
 
-  //const userName = extractUserName(template.CreatorEmail);
-
-  {/*//UseEffect עבור בדיקה האם הועברה תבנית-סיכום , ובלוקים של התבנית
-  useEffect(() => {
-    if (!summary || !blocks) {
-      console.error("No template data found!");
-      return;
-    }
-  }, [summary, blocks]);*/}
-
-  //התחלה האזנה (בלבד) רציפה - ללא הכתבה
   const handleStartListening = () => {
     if (!listening) {
       SpeechRecognition.startListening({
@@ -253,8 +312,6 @@ const CreateSummary = () => {
     }
   };
 
-  //עצירת האזנה
-  //פונקציה שמטפלת בעצירת ההאזנה - עוצר תמלול והאזנה - מיקרופון מכובה
   const handleStopListening = () => {
     SpeechRecognition.stopListening();
     console.log("Stop listening...");
@@ -263,42 +320,27 @@ const CreateSummary = () => {
     setIsTranscribingStarted(false); // Reset the state to indicate that transcribing has stopped
   };
 
-  //ניהול האזנה והתמלול
   useEffect(() => {
     console.log(transcript);
     if (!isDictating) {
-      //אם מצב ההכתבה לא פעיל
       handleTranscriptKeywords(); // אנחנו בודקים את מילות המפתח בתמלול
     } else if (transcript.toLowerCase().trim().endsWith("stop")) {
-      //אם התמלול מסתיים בסטופ
       handleStopDictating(); //עוצרים את ההכתבה לא את ההאזנה
     } else {
       appendTranscriptToActiveBlock(); // אחרת התמלול מתווסף לבלוק שפעיל
     }
   }, [transcript]); // כל שינוי בטרנקריפט זה קורה
 
-  //עצירת התמלול בלבד - איפוס מילת מפתח איפוס מצב הכתבה
   const handleStopDictating = () => {
     console.log("Stop dictating - last KeyWord was ", activeKeyword);
     setIsDictating(false);
-    console.log("is dictating now turn from on to : ", isDictating);
     setActiveKeyword(null);
     resetTranscript();
   };
 
-  //ההכתבה לבלוק - פונקציה לניהול ההכתבה לבלוק
   const appendTranscriptToActiveBlock = () => {
     console.log(`Append transcript to ${activeKeyword}`);
-    // ישנה מילת מפתח פועלת - כלומר בלוק שאליו מתמללים - וגם מצב הכתבה פועל
     if (activeKeyword && isDictating) {
-      console.log(
-        "Active Key Is : ",
-        activeKeyword,
-        " isDictating ? : ",
-        isDictating
-      );
-
-      // רק אם זוהתה מילת מפתח - ומצב הכתבה פועל נעדכן את הטקסט של הבלוק - כלומר הכתבה לבלוק
       setBlocks((prevItems) =>
         prevItems.map((item) =>
           item.keyWord.toLowerCase() === activeKeyword.toLowerCase()
@@ -310,23 +352,17 @@ const CreateSummary = () => {
     }
   };
 
-  //פונקציה שמנהלת את ההכתבה לתוך הקומפוננטה
   const handleTranscriptKeywords = () => {
-    //תנאי מקדים - בדיקה שהמערכת מאזינה
     if (!listening) {
       console.log("system is not listeting");
       return;
     }
 
-    console.log("Items of the template are : ", blocks);
-
-    //חיפוש/זיהוי מילת מפתח מתוך מילות המפתח של הבלוקים
     let foundKeyword = blocks.find((item) =>
       transcript.toLowerCase().endsWith(item.keyWord.toLowerCase())
     );
     console.log("Founded keyword is : ", foundKeyword);
 
-    //במקרה ובו זוההתה מילת מפתח - ומצב ההכתבה לא פועל - נפעיל אותו כדי לכתוב לבלוק המתאים
     if (foundKeyword && !isDictating) {
       setIsDictating(true); //מפעילה את מצב ההכתבה
       setActiveKeyword(foundKeyword.keyWord); // מעדכנת את מילת המפתח
@@ -335,7 +371,6 @@ const CreateSummary = () => {
   };
 
   if (!browserSupportsSpeechRecognition) {
-    //בדיקה האם הדפדפן לא תומך בספיץ רגונישן
     return <span>Browser doesn't support speech recognition.</span>;
   }
 
@@ -351,12 +386,7 @@ const CreateSummary = () => {
     ? { backgroundColor: "#070a40", color: "#ffffff" }
     : {};
 
-    //console.log(summary);
-    console.log(template);
-
-
   return (
-    
     <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
       <div
         className="card w-full max-w-md bg-base-100 shadow-xl p-5"
@@ -432,7 +462,9 @@ const CreateSummary = () => {
               </svg>
             </label>
           </header>
-
+          <h1 style={{ margin: "0 auto" }}>
+            <b>Create Summary</b>
+          </h1>
           <div
             className="flex flex-col items-center mb-4"
             style={{ marginTop: "2rem" }}
@@ -505,11 +537,10 @@ const CreateSummary = () => {
                 key={index}
                 className="block"
                 style={{
-                  border: `2px solid ${
-                    activeKeyword && block.keyWord.toLowerCase() === activeKeyword.toLowerCase()
+                  border: `1px solid ${activeKeyword && block.keyWord.toLowerCase() === activeKeyword.toLowerCase()
                       ? "#04D9B2"
                       : "#070A40"
-                  }`, // ירוק אם התמלול פעיל לבלוק הספציפי, כחול אם לא
+                    }`, // ירוק אם התמלול פעיל לבלוק הספציפי, כחול אם לא
                   transition: "border-color 0.5s ease",
                   marginBottom: "1rem",
                 }}
@@ -534,12 +565,20 @@ const CreateSummary = () => {
                 />
               </div>
             ))}
+<div className="signed-date" style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginLeft: '0' }}>
+  <label style={{ marginRight: '10px' }}><b>Signed:</b></label>
+  {user.Signature ? (
+    <img src={user.Signature} alt="Signature" style={{ width: '100px', height: '40px', marginRight: '20px' }} />
+  ) : (
+    <span style={{ marginRight: '50px' }}> ___________ </span>
+  )}
+  <label style={{ marginLeft: '20px', marginRight: '10px' }}><b>Date:</b></label>
+  <span>{currentDate}</span>
+</div>
 
-            <div className="signed-date">
-              <label>Signed: ___________ </label>{" "}
-              <label> Date: ____________</label>
-            </div>
-          </div>
+
+
+</div>
           <button
             style={{
               backgroundColor: "white",
