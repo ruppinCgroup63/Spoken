@@ -86,6 +86,15 @@ function ChooseTemplate() {
 
   const handleTemplateClick = (templateClicked) => {
     setSelectedTemplate(templateClicked);
+
+  
+    console.log(
+      "-------------------setSelectedTemplate : ",
+      selectedTemplate,
+      "Temaplte clicked :",
+      templateClicked
+    );
+    //פונקציה למשיכת כל הבלוקים השייכים לתבנית מסויימת , פרמטר: מספר התבנית
     fetch(apiUrlBlocks, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

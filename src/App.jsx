@@ -18,7 +18,14 @@ import CreateSummary from "./FuncComps/CreateSummary/CreateSummary";
 import TemplateCreatedSuccessfully from "./FuncComps/CreateTemplate/TemplateCreatedSuccessfully";
 import Admins from "./FuncComps/Admin/Admins";
 import EditUser from "./FuncComps/Admin/EditUsers";
+<<<<<<< HEAD
+import AllSummery from "./FuncComps/HOME/AllSummery";
+import SummaryPreview from "./FuncComps/HOME/SummaryPreview";
+
+
+=======
 import SummarySuccess from "./FuncComps/CreateSummary/SummarySuccess";
+>>>>>>> 615f6b3121056dfa0e7b4684a75621cd3cdcf552
 
 function App() {
   const [usersList, setUsersList] = useState([]);
@@ -50,6 +57,8 @@ function App() {
             <Route path="/TemplateCreatedSuccessfully" element={<TemplateCreatedSuccessfully/>}/>
             <Route path="/Admin" element={<Admins/>}/>
             <Route path="/EditUsers" element={<EditUser/>}/>
+            <Route path="/AllSummery" element={<AllSummery/>}/>
+            <Route path="/SummaryPreview" element={<SummaryPreview/>}/>
             <Route path="/SummarySuccess" element={<SummarySuccess/>}/>
           </Routes>
         </BrowserRouter>

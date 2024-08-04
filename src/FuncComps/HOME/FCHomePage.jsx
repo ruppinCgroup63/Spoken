@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Card from "./FCCard";
+import "./HomePage.css";
 
 const apiUrlRecent = "https://localhost:44326/api/RecentTemplates/getByUserEmail";
 const apiUrlTemplates = "https://localhost:44326/api/Templates/getByUserEmail";
@@ -18,10 +19,10 @@ function HomePage() {
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState(null);
   const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
+  const [navOpen, setNavOpen] = useState(false); // State to manage the nav bar
 
   useEffect(() => {
     const userFromStorage = JSON.parse(sessionStorage.getItem("user"));
-    console.log(userFromStorage);
     if (userFromStorage) {
       setUserName(userFromStorage.userName);
       setUser({
@@ -174,7 +175,7 @@ function HomePage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(selectedTemplate), // Ensure the key matches the expected key in the API
+        body: JSON.stringify(selectedTemplate),
       });
 
       if (!responseBlocks.ok) {
@@ -183,7 +184,6 @@ function HomePage() {
 
       const blocksData = await responseBlocks.json();
 
-      // Update recent templates
       const recentTemplate = {
         Email: user.Email,
         TemplateNo: selectedTemplate.templateNo,
@@ -257,6 +257,10 @@ function HomePage() {
                 borderColor: "#E4E9F2",
                 marginTop: "-18px",
               }}
+              onClick={() => {
+                console.log("SVG clicked");
+                setNavOpen(!navOpen);
+              }} // Toggle nav bar
             >
               <input type="checkbox" />
               <svg
@@ -342,6 +346,13 @@ function HomePage() {
           </main>
         </div>
       </div>
+      {navOpen && (
+        <div className="side-nav">
+          <ul>
+            <li onClick={() => navigate("/AllSummery")}>All Summaries</li>
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
