@@ -145,7 +145,7 @@ function CreateTemplate2() {
               </svg>
             </label>
             
-              <div className="steps space-x-2 mb-4" style={{marginTop:'60px'}}>
+              <div className="steps space-x-2 mb-4" style={{marginTop:'60px',marginBottom:'50px'}}>
                 <div className="step step-primary" data-content="✓">
                   Name
                 </div>

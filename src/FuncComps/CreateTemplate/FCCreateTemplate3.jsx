@@ -19,15 +19,34 @@ function CreateTemplate3() {
   const [items, setItems] = useState(state.items || []);
   const [nextBlockNumber, setNextBlockNumber] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState();
 
   useEffect(() => {
     // לקרוא את הנתונים מה-sessionStorage כאשר הקומפוננטה נטענת
     const user = sessionStorage.getItem("user");
+    console.log(user);
     if (user) {
-      setUser(JSON.parse(user));
+      const parsedUser =JSON.parse(user);
+      const newUser={
+        ConfirmPassword:parsedUser.confirmPassword,
+        DomainName: parsedUser.domainName,
+        Email: parsedUser.email,
+        Employee: parsedUser.employee,
+        Job: parsedUser.job,
+        LangName: parsedUser.langName,
+        Password:parsedUser.password,
+        Phone: parsedUser.phone,
+        Signature: parsedUser.signature,
+        UserName: parsedUser.userName
+      }
+      console.log(newUser);
+      setUser(newUser);
     }
   }, []); 
+
+console.log(user);  
+
+
   const updateItem = useCallback(
     (index, field, value) => {
       const newItems = items.map((item, idx) =>
@@ -167,7 +186,7 @@ const handleButtonClick = () => {
               </svg>
             </label>
 
-              <div className="steps space-x-2 mb-4" style={{marginTop:'60px'}}>
+              <div className="steps space-x-2 mb-4" style={{marginTop:'50px',marginBottom:'50px'}}>
                 <div
                   className="step step-primary"
                   style={{ color: "#070A40" }}
