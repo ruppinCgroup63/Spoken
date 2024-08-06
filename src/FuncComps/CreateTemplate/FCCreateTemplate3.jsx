@@ -1,13 +1,15 @@
 import "regenerator-runtime/runtime"; // גורם לתמיכה של פונקציות אסינכרוניות ובגינרטורס
-import React, { useState, useCallback,useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
 import DraggableItem from "./CreateBlockForTemplate3";
 
-const apiUrlTemplate = 'https://localhost:44326/api/Templates';
-const apiUrlBlock = 'https://localhost:44326/api/BlocksInTemplates';
+//const apiUrlTemplate = 'https://localhost:44326/api/Templates';
+//const apiUrlBlock = 'https://localhost:44326/api/BlocksInTemplates';
+const apiUrlTemplate = "https://localhost:7224/api/Templates";
+const apiUrlBlock = "https://localhost:7224/api/BlocksInTemplates";
 
 function CreateTemplate3() {
   const navigate = useNavigate();
@@ -26,26 +28,25 @@ function CreateTemplate3() {
     const user = sessionStorage.getItem("user");
     console.log(user);
     if (user) {
-      const parsedUser =JSON.parse(user);
-      const newUser={
-        ConfirmPassword:parsedUser.confirmPassword,
+      const parsedUser = JSON.parse(user);
+      const newUser = {
+        ConfirmPassword: parsedUser.confirmPassword,
         DomainName: parsedUser.domainName,
         Email: parsedUser.email,
         Employee: parsedUser.employee,
         Job: parsedUser.job,
         LangName: parsedUser.langName,
-        Password:parsedUser.password,
+        Password: parsedUser.password,
         Phone: parsedUser.phone,
         Signature: parsedUser.signature,
-        UserName: parsedUser.userName
-      }
+        UserName: parsedUser.userName,
+      };
       console.log(newUser);
       setUser(newUser);
     }
-  }, []); 
+  }, []);
 
-console.log(user);  
-
+  console.log(user);
 
   const updateItem = useCallback(
     (index, field, value) => {
@@ -88,10 +89,10 @@ console.log(user);
     },
     [nextBlockNumber, template.TemplateNo]
   );
-//חזרה לדף הבית
-const handleButtonClick = () => {
-  navigate("/HomePage");
-};
+  //חזרה לדף הבית
+  const handleButtonClick = () => {
+    navigate("/HomePage");
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -139,7 +140,7 @@ const handleButtonClick = () => {
       navigate("/TemplateCreatedSuccessfully", {
         state: {
           template: template,
-          selectedTemplateBlocks:items,
+          selectedTemplateBlocks: items,
           user: user,
           origin: "CreateTemplate3",
         },
@@ -160,33 +161,42 @@ const handleButtonClick = () => {
         >
           <div className="card-body flex items-center justify-center">
             <form onSubmit={handleSubmit} className="space-y-4">
-            <label
-              className="btn btn-circle swap swap-rotate"
-              style={{ position: "absolute", top: "30px", left: "20px" ,backgroundColor: "#E4E9F2", borderColor: "#E4E9F2"}}
-              onClick={handleButtonClick} //חזרה למסך הבית
-            >
-              <input type="checkbox" />
-              <svg
-                className="swap-off fill-current"
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 512 512"
+              <label
+                className="btn btn-circle swap swap-rotate"
+                style={{
+                  position: "absolute",
+                  top: "30px",
+                  left: "20px",
+                  backgroundColor: "#E4E9F2",
+                  borderColor: "#E4E9F2",
+                }}
+                onClick={handleButtonClick} //חזרה למסך הבית
               >
-                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
-              </svg>
-              <svg
-                className="swap-on fill-current"
-                xmlns="http://www.w3.org/2000/svg"
-                width="32"
-                height="32"
-                viewBox="0 0 512 512"
-              >
-                <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
-              </svg>
-            </label>
+                <input type="checkbox" />
+                <svg
+                  className="swap-off fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 512 512"
+                >
+                  <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+                </svg>
+                <svg
+                  className="swap-on fill-current"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="32"
+                  height="32"
+                  viewBox="0 0 512 512"
+                >
+                  <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
+                </svg>
+              </label>
 
-              <div className="steps space-x-2 mb-4" style={{marginTop:'50px',marginBottom:'50px'}}>
+              <div
+                className="steps space-x-2 mb-4"
+                style={{ marginTop: "50px", marginBottom: "50px" }}
+              >
                 <div
                   className="step step-primary"
                   style={{ color: "#070A40" }}
@@ -292,11 +302,13 @@ const handleButtonClick = () => {
                   }}
                 ></div>
 
-                <div style={{
+                <div
+                  style={{
                     borderBottom: "1px solid silver",
                     width: "100%",
                     marginBottom: "2rem",
-                  }}>
+                  }}
+                >
                   {items.map((item, index) => {
                     if (item.Type === "file") {
                       return (

@@ -3,8 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Card from "./FCCard";
 import CreateSummary from "../CreateSummary/CreateSummary";
 
-const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
-const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
+const apiUrlBlocks =
+  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
 /*const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
 const apiUrlBlocks =
   "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";*/
@@ -23,7 +24,6 @@ export default function FavoriteTemplates() {
   const handleButtonClick = () => {
     navigate("/HomePage");
   };
-
 
   const handleFavoriteToggle = async (templateNo) => {
     const updatedFavorites = { Email: user.Email, TemplateNo: templateNo };
@@ -90,9 +90,15 @@ export default function FavoriteTemplates() {
       >
         <div className="card-body flex flex-col items-start justify-center">
           <header className="flex justify-between items-start w-full align-self-start mb-4">
-          <label
+            <label
               className="btn btn-circle swap swap-rotate"
-              style={{ position: "absolute", top: "30px", left: "20px" ,backgroundColor: "#E4E9F2", borderColor: "#E4E9F2"}}
+              style={{
+                position: "absolute",
+                top: "30px",
+                left: "20px",
+                backgroundColor: "#E4E9F2",
+                borderColor: "#E4E9F2",
+              }}
               onClick={handleButtonClick} //חזרה למסך הבית
             >
               <input type="checkbox" />
@@ -115,9 +121,11 @@ export default function FavoriteTemplates() {
                 <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
               </svg>
             </label>
-            <div style={{ marginTop: "5px" }}> 
-              <h3 className="text-sm" style={{ color: "#070A40", cursor: "pointer" }}>               
-              </h3>
+            <div style={{ marginTop: "5px" }}>
+              <h3
+                className="text-sm"
+                style={{ color: "#070A40", cursor: "pointer" }}
+              ></h3>
             </div>
             <label
               className="btn btn-circle swap swap-rotate self-start"
@@ -172,7 +180,7 @@ export default function FavoriteTemplates() {
               New Template
             </span>
           </div>
-        
+
           <div
             className="flex items-center"
             style={{

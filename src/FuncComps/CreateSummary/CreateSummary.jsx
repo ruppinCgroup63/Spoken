@@ -1,5 +1,5 @@
 import "regenerator-runtime/runtime"; // גורם לתמיכה של פונקציות אסינכרוניות ובגינרטורס
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -9,22 +9,25 @@ import SummaryPreviewModal from "./SummaryPreviewModal ";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 
-const apiUrlClients = "https://localhost:44326/api/Customers";
-const apiUrlSummaries = "https://localhost:44326/api/Summary";
-const apiUrlBlocks = "https://localhost:44326/api/BlockInSummary";
-const apiUrlGetBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlClients = "https://localhost:7224/api/Customers";
+const apiUrlSummaries = "https://localhost:7224/api/Summary";
+const apiUrlBlocks = "https://localhost:7224/api/BlockInSummary";
+const apiUrlGetBlocks =
+  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
 
 const CreateSummary = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { template, selectedTemplateBlocks, user } = state || {};
-  const [selectedTemplate, setSelectedTemplate] = useState(template);
+  const [selectedTemplate] = useState(template);
   const [blocks, setBlocks] = useState(selectedTemplateBlocks || []);
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
   const [clients, setClients] = useState([]); // מצב לשמירת שמות הלקוחות
   const [selectedClient, setSelectedClient] = useState(""); // מצב לשמירת הלקוח שנבחר
   const [isTranscribingStarted, setIsTranscribingStarted] = useState(false); // מצב הכפתור
   const [activeKeyword, setActiveKeyword] = useState(null); // מצב עבור מילת מפתח פעילה
+  const [isDictating, setIsDictating] = useState(false); // מצב כדי לעקוב אחר הכתבה ולנהל את ההכתבה לבלוקים
+  const [lastProcessedTranscript, setLastProcessedTranscript] = useState("");
   const currentDate = new Date().toLocaleDateString(); // Get current date
   const logoPath = "public/login/SpokenLogoNew.png";
   const voiceGreen = "public/Summery/Voice.png";
@@ -33,11 +36,10 @@ const CreateSummary = () => {
     ? { backgroundColor: "#E4E9F2", color: "#070A40", borderColor: "#070A40" }
     : { backgroundColor: "#070A40", color: "#E4E9F2", borderColor: "#070A40" };
 
+  // console.log(selectedTemplate);
+  // console.log(selectedTemplateBlocks);
 
-    console.log(selectedTemplate);
-    console.log(selectedTemplateBlocks);
-    
-    console.log(state);
+  // console.log(state);
   useEffect(() => {
     const fetchClients = async () => {
       try {
@@ -62,23 +64,25 @@ const CreateSummary = () => {
     browserSupportsSpeechRecognition, // בדיקה שהדפדפן תומך בתמלול
   } = useSpeechRecognition();
 
-  const [isDictating, setIsDictating] = useState(false); // מצב כדי לעקוב אחר הכתבה ולנהל את ההכתבה לבלוקים
-
   useEffect(() => {
     setBlocks(selectedTemplateBlocks);
   }, [selectedTemplateBlocks]);
 
-  const handleTextChange = (index, newText) => {
-    const updatedBlocks = [...blocks];
-    updatedBlocks[index].text = newText;
-    setBlocks(updatedBlocks);
-  };
+  // const handleTextChange = (index, newText) => {
+  //   // const updatedBlocks = [...blocks];
+  //   // updatedBlocks[index].text = newText;
+  //   // setBlocks(updatedBlocks);
+  //   const updatedBlocks = [...blocksRef.current];
+  //   updatedBlocks[index].text = newText;
+  //   blocksRef.current = updatedBlocks;
+  //   setBlocks(updatedBlocks);
+  // };
 
-  const handleSaveClick = () => {
-    console.log("Save button clicked");
-  };
+  // const handleSaveClick = () => {
+  //   console.log("Save button clicked");
+  // };
 
-  console.log(user);
+  // console.log(user);
   const handleSaveAsPDF = () => {
     const doc = new jsPDF();
     let y = 20;
@@ -95,7 +99,9 @@ const CreateSummary = () => {
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
 
-    const selectedClientName = clients.find(client => client.id === parseInt(selectedClient))?.customerName || "Unknown Client";
+    const selectedClientName =
+      clients.find((client) => client.id === parseInt(selectedClient))
+        ?.customerName || "Unknown Client";
 
     // Display creator, client, and description in one line
     const creatorText = `Creator: ${extractUserName(user.Email)}`;
@@ -117,7 +123,8 @@ const CreateSummary = () => {
     blocks.forEach((block, index) => {
       y += 10; // Add space before each block title
 
-      if (y + 40 > pageHeight) { // Check if there is enough space for the next block, otherwise add a new page
+      if (y + 40 > pageHeight) {
+        // Check if there is enough space for the next block, otherwise add a new page
         doc.addPage();
         y = 20;
       }
@@ -131,13 +138,14 @@ const CreateSummary = () => {
       const lines = doc.splitTextToSize(block.text, 180); // Adjust the width as needed
 
       const blockHeight = lines.length * 6 + 6; // Calculate block height
-      if (blockTop + blockHeight + 10 > pageHeight) { // Check if there is enough space for the block, otherwise add a new page
+      if (blockTop + blockHeight + 10 > pageHeight) {
+        // Check if there is enough space for the block, otherwise add a new page
         doc.addPage();
         y = 20;
       }
 
       // Draw the rectangle before adding the text
-      doc.rect(8, blockTop, 194, blockHeight, 'S');
+      doc.rect(8, blockTop, 194, blockHeight, "S");
 
       // Add the text inside the rectangle
       lines.forEach((line, i) => {
@@ -151,7 +159,8 @@ const CreateSummary = () => {
     // Add space before the signature
     y += 20;
 
-    if (y + 20 > pageHeight) { // Check if there is enough space for the signature and date, otherwise add a new page
+    if (y + 20 > pageHeight) {
+      // Check if there is enough space for the signature and date, otherwise add a new page
       doc.addPage();
       y = 20;
     }
@@ -175,38 +184,33 @@ const CreateSummary = () => {
 
     // Delay opening the file
     setTimeout(() => {
-      const pdfUrl = URL.createObjectURL(doc.output('blob'));
+      const pdfUrl = URL.createObjectURL(doc.output("blob"));
       window.open(pdfUrl);
     }, 1000); // Delay of 1 second
   };
 
-
-
-
-
-
-  const handleAIClick = async () => {
-    try {
-      const correctedBlocks = await Promise.all(
-        blocks.map(async (block) => {
-          const response = await fetch("http://localhost:3000/correct-text", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              text: block.text,
-            }),
-          });
-          const data = await response.json();
-          return { ...block, text: data.correctedText };
-        })
-      );
-      setBlocks(correctedBlocks);
-    } catch (error) {
-      console.error("Error correcting text:", error);
-    }
-  };
+  // const handleAIClick = async () => {
+  //   try {
+  //     const correctedBlocks = await Promise.all(
+  //       blocks.map(async (block) => {
+  //         const response = await fetch("http://localhost:3000/correct-text", {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //           body: JSON.stringify({
+  //             text: block.text,
+  //           }),
+  //         });
+  //         const data = await response.json();
+  //         return { ...block, text: data.correctedText };
+  //       })
+  //     );
+  //     setBlocks(correctedBlocks);
+  //   } catch (error) {
+  //     console.error("Error correcting text:", error);
+  //   }
+  // };
 
   const handleDocumentProductionClick = async () => {
     if (!selectedClient) {
@@ -214,17 +218,17 @@ const CreateSummary = () => {
       return;
     }
 
-    console.log("handleCreateSummaryClick called with template:", template);
+    // console.log("handleCreateSummaryClick called with template:", template);
     const summary = {
       SummaryNo: Math.random().toString(36).substring(2, 9),
       SummaryName: template.templateName,
       Description: template.description,
       Comments: "",
       CreatorEmail: user.Email,
-      CustomerId: parseInt(selectedClient, 10)
+      CustomerId: parseInt(selectedClient, 10),
     };
-    console.log(summary);
-    console.log(selectedClient);
+    // console.log(summary);
+    // console.log(selectedClient);
 
     try {
       // Create summary in server
@@ -242,7 +246,7 @@ const CreateSummary = () => {
       }
 
       const summaryResult = await summaryResponse.json();
-      console.log("Summary created successfully", summaryResult);
+      // console.log("Summary created successfully", summaryResult);
 
       // Fetch blocksInTemplate
       const blocksResponse = await fetch(apiUrlGetBlocks, {
@@ -257,7 +261,6 @@ const CreateSummary = () => {
         throw new Error("Failed to fetch data");
       }
 
-
       // Create blockInSummary in server
       const createdBlocks = [];
 
@@ -269,8 +272,8 @@ const CreateSummary = () => {
           Text: block.text || "",
           IsApproved: false,
         };
-        console.log(selectedTemplateBlocks);
-        console.log(summaryBlock);
+        // console.log(selectedTemplateBlocks);
+        // console.log(summaryBlock);
 
         const blockResponse = await fetch(apiUrlBlocks, {
           method: "POST",
@@ -299,13 +302,14 @@ const CreateSummary = () => {
     return email.split("@")[0];
   };
 
+  // start listening
   const handleStartListening = () => {
     if (!listening) {
       SpeechRecognition.startListening({
         continuous: true,
         language: "en-US", // Use user.LangName or default to "he-IL"
       });
-      console.log("Started listening...");
+      // console.log("Started listening...");
       setIsTranscribingStarted(true); // Set the state to indicate that transcribing has started
     } else {
       handleStopListening(); // אם כבר מאזינים, עוצרים את ההאזנה
@@ -314,14 +318,14 @@ const CreateSummary = () => {
 
   const handleStopListening = () => {
     SpeechRecognition.stopListening();
-    console.log("Stop listening...");
+    // console.log("Stop listening...");
     setActiveKeyword(null); // איפוס מילות המפתח
     setIsDictating(false); //איפוס מצב ההכתבה
     setIsTranscribingStarted(false); // Reset the state to indicate that transcribing has stopped
   };
 
-  useEffect(() => {
-    console.log(transcript);
+  const transcripting = useCallback(() => {
+    // console.log(transcript);
     if (!isDictating) {
       handleTranscriptKeywords(); // אנחנו בודקים את מילות המפתח בתמלול
     } else if (transcript.toLowerCase().trim().endsWith("stop")) {
@@ -329,46 +333,70 @@ const CreateSummary = () => {
     } else {
       appendTranscriptToActiveBlock(); // אחרת התמלול מתווסף לבלוק שפעיל
     }
-  }, [transcript]); // כל שינוי בטרנקריפט זה קורה
+  }, [transcript, isDictating]);
 
-  const handleStopDictating = () => {
-    console.log("Stop dictating - last KeyWord was ", activeKeyword);
+  useEffect(() => {
+    // console.log(transcript);
+    // if (!isDictating) {
+    //   handleTranscriptKeywords(); // אנחנו בודקים את מילות המפתח בתמלול
+    // } else if (transcript.toLowerCase().trim().endsWith("stop")) {
+    //   handleStopDictating(); //עוצרים את ההכתבה לא את ההאזנה
+    // } else {
+    //   appendTranscriptToActiveBlock(); // אחרת התמלול מתווסף לבלוק שפעיל
+    // }
+    transcripting();
+  }, [transcripting]); // כל שינוי בטרנקריפט זה קורה
+
+  const handleStopDictating = useCallback(() => {
+    // console.log("Stop dictating - last KeyWord was ", activeKeyword);
     setIsDictating(false);
     setActiveKeyword(null);
     resetTranscript();
-  };
+  }, [setIsDictating, setActiveKeyword, resetTranscript]);
 
-  const appendTranscriptToActiveBlock = () => {
-    console.log(`Append transcript to ${activeKeyword}`);
+  const appendTranscriptToActiveBlock = useCallback(() => {
+    // console.log(`Append transcript to ${activeKeyword}`);
     if (activeKeyword && isDictating) {
-      setBlocks((prevItems) =>
-        prevItems.map((item) =>
-          item.keyWord.toLowerCase() === activeKeyword.toLowerCase()
-            ? { ...item, text: (item.text || "") + " " + transcript }
-            : item
-        )
-      );
-      resetTranscript();
+      if (transcript !== lastProcessedTranscript) {
+        const newText = transcript.replace(lastProcessedTranscript, "").trim();
+        setBlocks((prevItems) =>
+          prevItems.map((item) =>
+            item.keyWord.toLowerCase() === activeKeyword.toLowerCase()
+              ? { ...item, text: (item.text || "") + " " + newText }
+              : item
+          )
+        );
+        setLastProcessedTranscript(transcript);
+      }
+      // resetTranscript();
     }
-  };
+  }, [activeKeyword, isDictating, transcript, lastProcessedTranscript]);
 
-  const handleTranscriptKeywords = () => {
+  const handleTranscriptKeywords = useCallback(() => {
     if (!listening) {
-      console.log("system is not listeting");
+      // console.log("system is not listeting");
       return;
     }
 
     let foundKeyword = blocks.find((item) =>
       transcript.toLowerCase().endsWith(item.keyWord.toLowerCase())
     );
-    console.log("Founded keyword is : ", foundKeyword);
+    // console.log("Founded keyword is : ", foundKeyword);
 
     if (foundKeyword && !isDictating) {
       setIsDictating(true); //מפעילה את מצב ההכתבה
       setActiveKeyword(foundKeyword.keyWord); // מעדכנת את מילת המפתח
       resetTranscript(); // איפוס התמלול כדי שלא יכתוב לתוך הבלוק מה ששמע עד כה
     }
-  };
+  }, [
+    transcript,
+    setIsDictating,
+    setActiveKeyword,
+    resetTranscript,
+    isDictating,
+    listening,
+    blocks,
+  ]);
 
   if (!browserSupportsSpeechRecognition) {
     return <span>Browser doesn't support speech recognition.</span>;
@@ -537,17 +565,36 @@ const CreateSummary = () => {
                 key={index}
                 className="block"
                 style={{
-                  border: `1px solid ${activeKeyword && block.keyWord.toLowerCase() === activeKeyword.toLowerCase()
+                  border: `1px solid ${
+                    activeKeyword &&
+                    block.keyWord.toLowerCase() === activeKeyword.toLowerCase()
                       ? "#04D9B2"
                       : "#070A40"
-                    }`, // ירוק אם התמלול פעיל לבלוק הספציפי, כחול אם לא
+                  }`, // ירוק אם התמלול פעיל לבלוק הספציפי, כחול אם לא
                   transition: "border-color 0.5s ease",
                   marginBottom: "1rem",
                 }}
               >
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", padding: "0.5rem" }}>
-                  <h3 className="block-title" style={{ marginBottom: "0.2rem" }}>{block.title}</h3>
-                  <p className="block-subtitle" style={{ marginBottom: "0.2rem" }}>keyword: {block.keyWord || ""}</p>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    padding: "0.5rem",
+                  }}
+                >
+                  <h3
+                    className="block-title"
+                    style={{ marginBottom: "0.2rem" }}
+                  >
+                    {block.title}
+                  </h3>
+                  <p
+                    className="block-subtitle"
+                    style={{ marginBottom: "0.2rem" }}
+                  >
+                    keyword: {block.keyWord || ""}
+                  </p>
                 </div>
                 <div
                   style={{
@@ -560,26 +607,44 @@ const CreateSummary = () => {
                   className="block-textarea"
                   placeholder="free text area..."
                   value={block.text}
-                  onChange={(e) => handleTextChange(index, e.target.value)}
+                  readOnly
+                  // onChange={(e) => handleTextChange(index, e.target.value)}
                   style={{ padding: "0.5rem" }}
                 />
               </div>
             ))}
-<div className="signed-date" style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginLeft: '0' }}>
-  <label style={{ marginRight: '10px' }}><b>Signed:</b></label>
-  {user.Signature ? (
-    <img src={user.Signature} alt="Signature" style={{ width: '100px', height: '40px', marginRight: '20px' }} />
-  ) : (
-    <span style={{ marginRight: '50px' }}> ___________ </span>
-  )}
-  <label style={{ marginLeft: '20px', marginRight: '10px' }}><b>Date:</b></label>
-  <span>{currentDate}</span>
-</div>
-
-
-
-</div>
-          <button
+            <div
+              className="signed-date"
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                marginLeft: "0",
+              }}
+            >
+              <label style={{ marginRight: "10px" }}>
+                <b>Signed:</b>
+              </label>
+              {user.Signature ? (
+                <img
+                  src={user.Signature}
+                  alt="Signature"
+                  style={{
+                    width: "100px",
+                    height: "40px",
+                    marginRight: "20px",
+                  }}
+                />
+              ) : (
+                <span style={{ marginRight: "50px" }}> ___________ </span>
+              )}
+              <label style={{ marginLeft: "20px", marginRight: "10px" }}>
+                <b>Date:</b>
+              </label>
+              <span>{currentDate}</span>
+            </div>
+          </div>
+          {/* <button
             style={{
               backgroundColor: "white",
               color: "#070A40",
@@ -598,7 +663,7 @@ const CreateSummary = () => {
               style={{ marginRight: "10px" }} // הוספת שוליים ימניים כדי להזיז שמאלה
             />
             AI-assisted drafting
-          </button>
+          </button> */}
           <div className="button-group">
             <button
               className="btn btn-xs sm:btn-sm  btn-outline btn-primary"
