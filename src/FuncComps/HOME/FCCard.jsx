@@ -48,7 +48,12 @@ function Card({
             ))}
           </div>
           <button
-            className="btn btn-primary mt-4"
+            className="btn btn-xs sm:btn-sm  btn-outline btn-primary"
+            style={{
+              color: "#E4E9F2",
+              backgroundColor: "#070A40",
+              borderColor: "#070A40",
+            }}
             onClick={(e) => {
               e.stopPropagation();
               console.log("Create Summary button clicked"); // Add this line

@@ -4,14 +4,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 export default function TemplateCreatedSuccessfully() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const template = state?.template;
-  const items = state?.items;
-  const user = state?.user;
+  const { template, selectedTemplateBlocks, user } = state || {};
+
+  //const items = state?.items;
+  //const user = state?.user;
 
   // בדיקות נוספות
-  console.log("State:", state);
+  console.log("user:", user);
   console.log("Template:", template);
-  console.log("TemplateName:", template?.TemplateName);
+  console.log("selectedTemplateBlocks:", selectedTemplateBlocks);
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-light-blue-500">
       <div
@@ -54,8 +56,8 @@ export default function TemplateCreatedSuccessfully() {
             onClick={() =>
               navigate("/CreateSummary", {
                 state: {
-                  summary: template,
-                  selectedTemplateBlocks: items,
+                  template: template, 
+                  selectedTemplateBlocks:selectedTemplateBlocks,
                   user: user,
                 },
               })

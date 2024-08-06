@@ -21,6 +21,7 @@ import EditUser from "./FuncComps/Admin/EditUsers";
 import AllSummery from "./FuncComps/HOME/AllSummery";
 import SummaryPreview from "./FuncComps/HOME/SummaryPreview";
 import SummarySuccess from "./FuncComps/CreateSummary/SummarySuccess";
+import ForgotPassword from "./FuncComps/ForgotPassword";
 
 function App() {
   const [usersList, setUsersList] = useState([]);
@@ -48,13 +49,14 @@ function App() {
             <Route path="/ChooseTemplate" element={<ChooseTemplate />} />
             <Route path="/TemplateToDictate" element={<TemplateToDictate />} />
             <Route path="/FavoriteTemplates" element={<FavoriteTemplates/>}/>
-            <Route path="CreateSummary" element={<CreateSummary/>}/>
+            <Route path="/CreateSummary" element={<CreateSummary/>}/>
             <Route path="/TemplateCreatedSuccessfully" element={<TemplateCreatedSuccessfully/>}/>
             <Route path="/Admin" element={<Admins/>}/>
             <Route path="/EditUsers" element={<EditUser/>}/>
             <Route path="/AllSummery" element={<AllSummery/>}/>
             <Route path="/SummaryPreview" element={<SummaryPreview/>}/>
             <Route path="/SummarySuccess" element={<SummarySuccess/>}/>
+            <Route path="/ForgotPassword" element={<ForgotPassword/>}/>    
           </Routes>
         </BrowserRouter>
       </div>

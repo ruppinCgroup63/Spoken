@@ -222,7 +222,7 @@ function Login(props) {
             {/* Forgot password button */}
             <div className="form-control">
               <button
-                onClick={() => (window.location.href = "/forgot-password")}
+                onClick={() => (window.location.href = "/ForgotPassword")}
                 style={{
                   color: "#2D4BA6",
                   fontSize: "0.68rem",

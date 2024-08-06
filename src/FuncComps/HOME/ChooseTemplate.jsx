@@ -12,17 +12,6 @@ const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
 const apiUrlCreateSummary = "https://localhost:44326/api/Summary";
 const apiUrlCreateBlocksInSummary = "https://localhost:44326/api/BlockInSummary";
 
-/*const apiUrlTemplate = "https://localhost:7224/api/Templates/getByUserEmail";
-const apiUrlBlocks =
-  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
-const apiUrlUpdateFavorite = "https://localhost:7224/api/UserFavorites";
-const apiUrlFavorites =
-  "https://localhost:7224/api/UserFavorites/getByUserEmail";
-const apiUrlDeleteFavorites = "https://localhost:7224/api/api/UserFavorites";
-const apiUrlUpdateRecent = "https://localhost:7224/api/api/RecentTemplates";
-const apiUrlCreateSummary = "https://localhost:7224/api/Summary";
-const apiUrlCreateBlocksInSummary = "https://localhost:7224/api/BlockInSummary";*/
-
 function ChooseTemplate() {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -31,20 +20,15 @@ function ChooseTemplate() {
   const [templates, setTemplates] = useState([]);
   const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-
   const [error, setError] = useState(null);
   const [showFavorites, setShowFavorites] = useState(false);
-
 
   //חזרה לדף הבית
   const handleButtonClick = () => {
     navigate("/HomePage");
   };
 
-
-
   useEffect(() => {
-    //פונקציה למשיכת כל התבניות שנוצרו על ידי משתמש מסוים - פרמטר : אימייל
     const fetchTemplatesAndFavorites = async () => {
       try {
         console.log("Fetching templates for email:", user.Email);
@@ -66,7 +50,6 @@ function ChooseTemplate() {
         const templatesData = await responseTemplates.json();
         console.log("Templates data:", templatesData);
 
-        //פונקציה למשיכת כל התבניות המועדפות של משתמש מסויים - פרמטר : אימייל
         const responseFavorites = await fetch(apiUrlFavorites, {
           method: "POST",
           headers: {
@@ -115,7 +98,7 @@ function ChooseTemplate() {
     fetch(apiUrlBlocks, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(selectedTemplate),
+      body: JSON.stringify(templateClicked),
     })
       .then((response) => {
         if (!response.ok) {
@@ -125,9 +108,8 @@ function ChooseTemplate() {
       })
       .then((data) => {
         setSelectedTemplateBlocks(data);
-        console.log(data);
         navigate("/CreateSummary", {
-          state: { selectedTemplate, data, user },
+          state: { selectedTemplate: templateClicked, data, user },
         });
       })
       .catch((error) => {
@@ -135,13 +117,11 @@ function ChooseTemplate() {
         setError("Failed to fetch blocks data. Please try again.");
       });
 
-    // Update recent templates - Gets the selected template and adds it to recent
     const recentTemplate = {
       Email: user.Email,
-      TemplateNo: selectedTemplate.templateNo,
+      TemplateNo: templateClicked.templateNo,
     };
 
-    //פונקציה לעדכון תבניות אחרונות - בעקבות לחיצה על תבנית
     fetch(apiUrlUpdateRecent, {
       method: "POST",
       headers: {
@@ -176,7 +156,6 @@ function ChooseTemplate() {
 
     try {
       if (template.isFavorite) {
-        // Remove from favorites
         const response = await fetch(apiUrlDeleteFavorites, {
           method: "DELETE",
           headers: {
@@ -189,7 +168,6 @@ function ChooseTemplate() {
           throw new Error("Failed to remove favorite");
         }
       } else {
-        // Add to favorites
         const response = await fetch(apiUrlUpdateFavorite, {
           method: "POST",
           headers: {
@@ -219,41 +197,9 @@ function ChooseTemplate() {
     }
   };
 
-  //פונקציה המנהלת את יצירת הסיכום ובונה אובייקט סיכום חדש
-  //הפונקציה מקבלת כפרמטר את התבנית שעליה ייכתב הסיכום - וממנה שולפים את הבלוקים
   const handleCreateSummaryClick = async (template) => {
-    console.log("handleCreateSummaryClick called with template:", template); // Add this line - debugging
-
-    const summary = {
-      SummaryNo: Math.random().toString(36).substring(2, 9),
-      SummaryName: template.templateName,
-      Description: template.description,
-      comments: "",
-      CreatorEmail: user.Email,
-    };
-    console.log(summary);
-
-    //שליחת אובייקט הסיכום שיצרנו בצד לקוח לשרת, ושמירתו
     try {
-      // Create summary in server
-      const summaryResponse = await fetch(apiUrlCreateSummary, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(summary),
-      });
-
-      if (!summaryResponse.ok) {
-        throw new Error(`HTTP error! Status: ${summaryResponse.status}`);
-      }
-
-      const summaryResult = await summaryResponse.json();
-      console.log("Summary created successfully", summaryResult);
-
-      // Fetch blocksInTemplate
-      const blocksResponse = await fetch(apiUrlBlocks, {
+      const responseBlocks = await fetch(apiUrlBlocks, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -261,60 +207,18 @@ function ChooseTemplate() {
         body: JSON.stringify(template),
       });
 
-      if (!blocksResponse.ok) {
-        throw new Error("Failed to fetch data");
+      if (!responseBlocks.ok) {
+        throw new Error("Failed to fetch blocks data");
       }
 
-      const blocksResults = await blocksResponse.json();
-
-      //עדכון הבלוקים של התבנית שנבחרה - לאחר שליפתם ממסד הנתונים והשמה במשתנה שיצרנו
-      setSelectedTemplateBlocks(blocksResults);
-      console.log("Blocks retrive from server - blockResults :", blocksResults);
-      console.log("selected template blocks : ", selectedTemplateBlocks);
-      // Create blockInSummary in server
-      const createdBlocks = [];
-
-      //יצירת העתק של הבלוקים של התבנית - לבלוקים של סיכום - עליהם נתמלל
-      for (const block of selectedTemplateBlocks) {
-        //יצירת בלוק
-        const summaryBlock = {
-          SummaryNo: summary.SummaryNo,
-          BlockNo: block.blockNo,
-          TemplateNo: block.templateNo,
-          Text: block.text || "",
-          Keyword: block.Keyword,
-          IsApproved: false,
-        };
-
-        console.log(summaryBlock);
-
-        const blockResponse = await fetch(apiUrlCreateBlocksInSummary, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(summaryBlock),
-        });
-
-        if (!blockResponse.ok) {
-          throw new Error(`HTTP error! Status: ${blockResponse.status}`);
-        }
-
-        const blockResult = await blockResponse.json();
-        console.log("Block inserted successfully:", blockResult);
-        createdBlocks.push(blockResult);
-      }
-
+      const blocksData = await responseBlocks.json();
+      setSelectedTemplateBlocks(blocksData);
       navigate("/CreateSummary", {
-        state: {
-          summary: summary,
-          selectedTemplateBlocks: blocksResults,
-        },
+        state: { template, selectedTemplateBlocks: blocksData, user },
       });
     } catch (error) {
-      console.error("Error during the POST process:", error.message);
-      setError("Failed to create summary. Please try again.");
+      setError("Failed to fetch blocks data. Please try again.");
+      console.error("Error fetching blocks data:", error);
     }
   };
 
@@ -351,7 +255,7 @@ function ChooseTemplate() {
                 <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
               </svg>
             </label>
-           <div style={{ marginTop: "5px" }}> 
+            <div style={{ marginTop: "5px" }}> 
               <h3 className="text-sm" style={{ color: "#070A40", cursor: "pointer" }}>              
               </h3>
             </div>
@@ -386,8 +290,12 @@ function ChooseTemplate() {
               </svg>
             </label>
           </header>
+          <h1 style={{ margin: "0 auto" }}>
+            <b>Templates</b>
+          </h1>
+
           <div
-            style={{ display: "flex", alignItems: "center", marginTop: "1rem" ,marginBottom:'2rem'}}
+            style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}
           >
             <img
               src="/public/homePage/addTemplate.png"
@@ -406,10 +314,7 @@ function ChooseTemplate() {
               New Template
             </span>
           </div>
-          <h1 style={{ margin: "0 auto" }}>
-            <b>Templates</b>
-          </h1>
-
+        
           <div
             className="flex items-center"
             style={{
