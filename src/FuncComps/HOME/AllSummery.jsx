@@ -31,9 +31,15 @@ function AllSummery() {
         throw new Error("Failed to fetch ");
       }
       const data = await response.json();
-      setSummaries(data);
-      setFilteredSummaries(data); 
+      
+      const updateData = data.map(s => 
+   ({ ...s, customerId: s.customerId != null ? s.customerId.toString() : "" }));
+
+      setSummaries(updateData);
+      setFilteredSummaries(updateData); 
+
       console.log(data);
+      console.log(updateData);
 
     } catch (error) {
       console.error("Error fetching summaries:", error);

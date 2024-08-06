@@ -12,12 +12,13 @@ const SummaryPreview = () => {
   const [error, setError] = useState('');
 
 
+
   useEffect(() => {
     if (summary && summary.summaryNo) {
       fetchBlocks(summary.summaryNo);
     }
   }, [summary]);
-
+  
   const fetchBlocks = async (summaryNo) => {
     try {
       const response = await fetch(apiUrlBlocks, {
