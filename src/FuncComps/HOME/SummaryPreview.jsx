@@ -10,6 +10,7 @@ const SummaryPreview = () => {
   const navigate = useNavigate();
   const { summary, user } = state || {};
   const [blocks, setBlocks] = useState([]);
+
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -23,6 +24,23 @@ const SummaryPreview = () => {
 
   //fetch blocks for summary no
   //create fetch to blocks
+  const fetchBlocks = async (summaryNo) => {
+    try {
+      const response = await fetch(apiUrlBlocks, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ summaryNo }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+      const data = await response.json();
+      setBlocks(data);
+    } catch (error) {
+      console.error("Error fetching blocks data:", error);
+      setError("Failed to fetch blocks data. Please try again.");
+    }
+  };
 
   return (
     <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
@@ -68,7 +86,7 @@ const SummaryPreview = () => {
           <div className="header">
             <img src="path/to/user/image.png" alt="UserImage" />
             <h1>New patient admission</h1>
-            <span>{extractUserName(user.email)}</span>
+            <span>{user.email}</span>
           </div>
 
           <div style={{ borderColor: "#070A40" }} className="form-card">
