@@ -46,7 +46,7 @@ function AllSummery() {
     const fetchAllCustomers = async () => {
       try {
         const response = await fetch(apiUrlCustomers, {
-          method: "GET",
+          method: "POST",
           headers: { "Content-Type": "application/json; charset=UTF-8" },
         });
         if (!response.ok) {

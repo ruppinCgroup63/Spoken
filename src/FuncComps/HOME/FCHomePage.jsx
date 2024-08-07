@@ -253,7 +253,7 @@ function HomePage() {
               className="text-sm self-start mb-2"
               style={{ color: "#070A40", cursor: "pointer" }}
             >
-              <b>{userName}</b>
+              <b>Hello! {userName}</b>
             </h3>
             <label
               className="btn btn-circle swap swap-rotate self-start"
