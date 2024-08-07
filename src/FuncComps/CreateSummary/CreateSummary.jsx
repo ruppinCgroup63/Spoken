@@ -9,11 +9,10 @@ import SummaryPreviewModal from "./SummaryPreviewModal ";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 
-const apiUrlClients = "https://localhost:7224/api/Customers";
-const apiUrlSummaries = "https://localhost:7224/api/Summary";
-const apiUrlBlocks = "https://localhost:7224/api/BlockInSummary";
-const apiUrlGetBlocks =
-  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlClients = "https://localhost:44326/api/Customers";
+const apiUrlSummaries = "https://localhost:44326/api/Summary";
+const apiUrlBlocks = "https://localhost:44326/api/BlockInSummary";
+const apiUrlGetBlocks ="https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 
 const CreateSummary = () => {
   const navigate = useNavigate();
@@ -189,28 +188,28 @@ const CreateSummary = () => {
     }, 1000); // Delay of 1 second
   };
 
-  // const handleAIClick = async () => {
-  //   try {
-  //     const correctedBlocks = await Promise.all(
-  //       blocks.map(async (block) => {
-  //         const response = await fetch("http://localhost:3000/correct-text", {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({
-  //             text: block.text,
-  //           }),
-  //         });
-  //         const data = await response.json();
-  //         return { ...block, text: data.correctedText };
-  //       })
-  //     );
-  //     setBlocks(correctedBlocks);
-  //   } catch (error) {
-  //     console.error("Error correcting text:", error);
-  //   }
-  // };
+   const handleAIClick = async () => {
+     try {
+      const correctedBlocks = await Promise.all(
+        blocks.map(async (block) => {
+           const response = await fetch("http://localhost:3000/correct-text", {
+             method: "POST",
+           headers: {
+               "Content-Type": "application/json",
+             },
+             body: JSON.stringify({
+               text: block.text,
+             }),
+           });
+           const data = await response.json();
+           return { ...block, text: data.correctedText };
+         })
+       );
+       setBlocks(correctedBlocks);
+     } catch (error) {
+       console.error("Error correcting text:", error);
+     }
+ };
 
   const handleDocumentProductionClick = async () => {
     if (!selectedClient) {
@@ -644,7 +643,7 @@ const CreateSummary = () => {
               <span>{currentDate}</span>
             </div>
           </div>
-          {/* <button
+         <button
             style={{
               backgroundColor: "white",
               color: "#070A40",
@@ -663,7 +662,7 @@ const CreateSummary = () => {
               style={{ marginRight: "10px" }} // הוספת שוליים ימניים כדי להזיז שמאלה
             />
             AI-assisted drafting
-          </button> */}
+          </button> 
           <div className="button-group">
             <button
               className="btn btn-xs sm:btn-sm  btn-outline btn-primary"
@@ -685,7 +684,7 @@ const CreateSummary = () => {
               }}
               onClick={handleSaveAsPDF}
             >
-              Save as PDF
+              Save As PDF
             </button>
             <button
               style={{
@@ -696,7 +695,7 @@ const CreateSummary = () => {
               className="btn btn-xs sm:btn-sm  btn-outline btn-primary"
               onClick={handleDocumentProductionClick}
             >
-              Document production
+              Document Production
             </button>
           </div>
 

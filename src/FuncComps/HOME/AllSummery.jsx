@@ -11,10 +11,8 @@ function AllSummery() {
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [filteredSummaries, setFilteredSummaries] = useState([]);
 
-  // const apiUrlSummaries = "https://localhost:44326/api/Summary/getByUserEmail";
-  const apiUrlSummaries = "https://localhost:7224/api/Summary/getByUserEmail";
-  //const apiUrlCustomers = "https://localhost:44326/api/Customers";
-  const apiUrl = "https://localhost:7224/api/Customers";
+  const apiUrlSummaries = "https://localhost:44326/api/Summary/getByUserEmail";
+  const apiUrlCustomers = "https://localhost:44326/api/Customers";
   const user = JSON.parse(sessionStorage.getItem("user")) || {};
 
   // fetch all summary
@@ -28,8 +26,8 @@ function AllSummery() {
         });
         if (!response.ok) {
           const errorText = await response.text();
-          console.error("Error response from  API:", errorText);
-          throw new Error("Failed to fetch ");
+          console.error("Error response from API:", errorText);
+          throw new Error("Failed to fetch");
         }
         const data = await response.json();
         setSummaries(data);
@@ -43,7 +41,7 @@ function AllSummery() {
     fetchAllSummaries();
   }, [user.email]);
 
-  //fetch all customers
+  // fetch all customers
   useEffect(() => {
     const fetchAllCustomers = async () => {
       try {
@@ -175,13 +173,14 @@ function AllSummery() {
             style={{ marginBottom: "2rem", marginTop: "2rem", width: "100%" }}
           >
             <select
-              className="form-select w-full"
+              className="form-select w-auto"
               value={selectedCustomer}
               onChange={handleCustomerChange}
               style={{
                 color: "#070A40",
                 backgroundColor: "rgba(255, 255, 255, 0)",
                 borderColor: "#070A40",
+                marginRight: "auto",
               }}
             >
               <option value="">All Customers</option>

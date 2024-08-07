@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Card from "./FCCard";
 import CreateSummary from "../CreateSummary/CreateSummary";
 
-const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
+const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
 const apiUrlBlocks =
-  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
+  "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 /*const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
 const apiUrlBlocks =
   "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";*/
