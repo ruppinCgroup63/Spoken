@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Card from "./FCCard";
 import "./HomePage.css";
 
@@ -13,13 +13,14 @@ const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
 
 function HomePage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [userName, setUserName] = useState("");
   const [user, setUser] = useState(null);
   const [recentTemplates, setRecentTemplates] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState(null);
   const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
-  const [navOpen, setNavOpen] = useState(false); // State to manage the nav bar
+  const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
     const userFromStorage = JSON.parse(sessionStorage.getItem("user"));
@@ -235,13 +236,18 @@ function HomePage() {
     }
   };
 
+  const handleLogout = () => {
+    sessionStorage.removeItem("user");
+    navigate("/");
+  };
+
   return (
-    <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
+    <div className="bg-light-blue-500 min-h-screen flex justify-center items-center relative">
       <div
-        className="card w-full max-w-md bg-base-100 shadow-xl p-5"
+        className="card w-full max-w-md bg-base-100 shadow-xl p-5 relative"
         style={{ backgroundColor: "#E4E9F2" }}
       >
-        <div className="card-body flex flex-col items-start justify-center">
+        <div className="card-body flex flex-col items-start justify-center relative transition-transform transform">
           <header className="flex justify-between items-start w-full align-self-start mb-4">
             <h3
               className="text-sm self-start mb-2"
@@ -256,13 +262,13 @@ function HomePage() {
                 alignSelf: "start",
                 borderColor: "#E4E9F2",
                 marginTop: "-18px",
+                zIndex: "10",
               }}
               onClick={() => {
                 console.log("SVG clicked");
                 setNavOpen(!navOpen);
               }} // Toggle nav bar
             >
-              <input type="checkbox" />
               <svg
                 className="swap-off fill-current"
                 xmlns="http://www.w3.org/2000/svg"
@@ -339,20 +345,79 @@ function HomePage() {
                   onFavoriteToggle={() =>
                     handleFavoriteToggle(template.templateNo)
                   }
-                  onCreateSummaryClick={() => handleCreateSummaryClick(template)}
+                  onCreateSummaryClick={() =>
+                    handleCreateSummaryClick(template)
+                  }
                 />
               </div>
             ))}
           </main>
         </div>
+        <ul
+          className="menu menu-horizontal bg-white shadow-lg rounded-box mt-6 absolute bottom-4 left-1/2 transform -translate-x-1/2 w-10/12 max-w-xs mx-auto z-50 floating-menu"
+          style={{
+            padding: "3.5px",
+            justifyContent: "space-around",
+            display: "flex",
+            borderRadius: "8px",
+            marginTop:'2.5px'
+          
+          }}
+        >
+          <li
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "0 10px"
+            }}
+          >
+            <a className="tooltip tooltip-bottom" data-tip="Home" onClick={() => navigate("/HomePage")}>
+              <img
+                src={
+                  location.pathname === "/HomePage"
+                    ? "/public/Menu/HomeB.png"
+                    : "/public/Menu/HomeW.png"
+                }
+                alt="Home"
+                className="h-6 w-6"
+              />
+            </a>
+          </li>
+          <li
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "0 10px",
+            }}
+          >
+            <a className="tooltip tooltip-bottom" data-tip="All Summary" onClick={() => navigate("/AllSummery")}>
+              <img
+                src="/public/Menu/BookW.png"
+                alt="All Summary"
+                className="h-6 w-6"
+              />
+            </a>
+          </li>
+          <li
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "0 10px",
+            }}
+          >
+            <a className="tooltip tooltip-bottom" data-tip="LogOut" onClick={handleLogout}>
+              <img
+                src="/public/Menu/LogoutW.png"
+                alt="LogOut"
+                className="h-6 w-6"
+              />
+            </a>
+          </li>
+        </ul>
       </div>
-      {navOpen && (
-        <div className="side-nav">
-          <ul>
-            <li onClick={() => navigate("/AllSummery")}>All Summaries</li>
-          </ul>
-        </div>
-      )}
     </div>
   );
 }
