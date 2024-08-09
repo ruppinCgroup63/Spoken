@@ -268,7 +268,7 @@ const CreateSummary = () => {
           SummaryNo: summary.SummaryNo,
           BlockNo: block.blockNo,
           TemplateNo: block.templateNo,
-          Text: block.text || "",
+          Text: block.text,
           IsApproved: false,
         };
         // console.log(selectedTemplateBlocks);

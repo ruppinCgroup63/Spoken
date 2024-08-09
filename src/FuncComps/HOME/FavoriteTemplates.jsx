@@ -19,11 +19,78 @@ export default function FavoriteTemplates() {
   const [showFavorites, setShowFavorites] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   //חזרה לדף הבית
   const handleButtonClick = () => {
-    navigate("/HomePage");
+    navigate("/FavoriteTemplate", {
+    });
   };
+
+
+  const handleTemplateClick = (templateClicked) => {
+    setSelectedTemplate(templateClicked);
+
+  
+    console.log(
+      "-------------------setSelectedTemplate : ",
+      selectedTemplate,
+      "Temaplte clicked :",
+      templateClicked
+    );
+    //פונקציה למשיכת כל הבלוקים השייכים לתבנית מסויימת , פרמטר: מספר התבנית
+    fetch(apiUrlBlocks, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(templateClicked),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setSelectedTemplateBlocks(data);
+        navigate("/TemplatePreview", {
+          state: { selectedTemplate: templateClicked, data, user },
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching blocks data:", error);
+        setError("Failed to fetch blocks data. Please try again.");
+      });
+
+    const recentTemplate = {
+      Email: user.Email,
+      TemplateNo: templateClicked.templateNo,
+    };
+
+    fetch(apiUrlUpdateRecent, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(recentTemplate),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Recent template updated:", data);
+      })
+      .catch((error) => {
+        console.error("Error updating recent template:", error);
+        setError("Failed to update recent template. Please try again.");
+      });
+  };
+
+
 
   const handleFavoriteToggle = async (templateNo) => {
     const updatedFavorites = { Email: user.Email, TemplateNo: templateNo };
@@ -57,7 +124,7 @@ export default function FavoriteTemplates() {
     }
   };
 
-  const handleTemplateClick = async (template) => {
+  const CreateSummaryClick = async (template) => {
     console.log("Template clicked:", template);
     try {
       const response = await fetch(apiUrlBlocks, {
@@ -235,7 +302,7 @@ export default function FavoriteTemplates() {
                     onFavoriteToggle={() =>
                       handleFavoriteToggle(template.templateNo)}
                     onCardClick={() => handleTemplateClick(template)}
-                    onCreateSummaryClick={() => handleTemplateClick(template)}
+                    onCreateSummaryClick={() => CreateSummaryClick(template)}
                   />
                 </div>
               ))}
