@@ -67,21 +67,15 @@ const CreateSummary = () => {
     setBlocks(selectedTemplateBlocks);
   }, [selectedTemplateBlocks]);
 
-  // const handleTextChange = (index, newText) => {
-  //   // const updatedBlocks = [...blocks];
-  //   // updatedBlocks[index].text = newText;
-  //   // setBlocks(updatedBlocks);
-  //   const updatedBlocks = [...blocksRef.current];
-  //   updatedBlocks[index].text = newText;
-  //   blocksRef.current = updatedBlocks;
-  //   setBlocks(updatedBlocks);
-  // };
 
-  // const handleSaveClick = () => {
-  //   console.log("Save button clicked");
-  // };
 
-  // console.log(user);
+   const handleTextChange = (index, newText) => {
+      const updatedBlocks = [...blocks];
+      updatedBlocks[index].text = newText;
+      setBlocks(updatedBlocks);
+   };
+
+
   const handleSaveAsPDF = () => {
     const doc = new jsPDF();
     let y = 20;
@@ -605,8 +599,8 @@ const CreateSummary = () => {
                   className="block-textarea"
                   placeholder="free text area..."
                   value={block.text}
-                  readOnly
-                  // onChange={(e) => handleTextChange(index, e.target.value)}
+                  
+                  onChange={(e) => handleTextChange(index, e.target.value)}
                   style={{ padding: "0.5rem" }}
                 />
               </div>
