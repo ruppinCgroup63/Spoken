@@ -25,7 +25,7 @@ function ChooseTemplate() {
 
   //חזרה לדף הבית
   const handleButtonClick = () => {
-    navigate("/HomePage");
+    navigate("/ChooseTemplate");
   };
 
   useEffect(() => {
