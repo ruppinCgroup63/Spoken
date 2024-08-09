@@ -202,7 +202,7 @@ function HomePage() {
         throw new Error(errorText);
       }
 
-      navigate("/TemplateToDictate", {
+      navigate("/TemplatePreview", {
         state: { selectedTemplate, Data: blocksData, user },
       });
     } catch (error) {

@@ -12,7 +12,7 @@ import CreateTemplate2 from "./FuncComps/CreateTemplate/FCCreateTemplate2";
 import CreateTemplate3 from "./FuncComps/CreateTemplate/FCCreateTemplate3";
 import "./FuncComps/CreateTemplate/createTemplat3.css";
 import ChooseTemplate from "./FuncComps/HOME/ChooseTemplate";
-import TemplateToDictate from "./FuncComps/SpeechRecognition/TemplateToDictate";
+import TemplateToDictate from "./FuncComps/CreateTemplate/TemplatePreview";
 import FavoriteTemplates from "./FuncComps/HOME/FavoriteTemplates";
 import CreateSummary from "./FuncComps/CreateSummary/CreateSummary";
 import TemplateCreatedSuccessfully from "./FuncComps/CreateTemplate/TemplateCreatedSuccessfully";
@@ -47,7 +47,7 @@ function App() {
             <Route path="/CreateTemplate2" element={<CreateTemplate2 />} />
             <Route path="/CreateTemplate3" element={<CreateTemplate3 />} />
             <Route path="/ChooseTemplate" element={<ChooseTemplate />} />
-            <Route path="/TemplateToDictate" element={<TemplateToDictate />} />
+            <Route path="/TemplatePreview" element={<TemplateToDictate />} />
             <Route path="/FavoriteTemplates" element={<FavoriteTemplates/>}/>
             <Route path="/CreateSummary" element={<CreateSummary/>}/>
             <Route path="/TemplateCreatedSuccessfully" element={<TemplateCreatedSuccessfully/>}/>

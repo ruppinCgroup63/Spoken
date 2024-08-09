@@ -9,7 +9,6 @@ import SummaryPreviewModal from "./SummaryPreviewModal ";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 
-
 const apiUrlClients = "https://localhost:44326/api/Customers";
 const apiUrlSummaries = "https://localhost:44326/api/Summary";
 const apiUrlBlocks = "https://localhost:44326/api/BlockInSummary";
@@ -36,6 +35,10 @@ const CreateSummary = () => {
     ? { backgroundColor: "#E4E9F2", color: "#070A40", borderColor: "#070A40" }
     : { backgroundColor: "#070A40", color: "#E4E9F2", borderColor: "#070A40" };
 
+  // console.log(selectedTemplate);
+  // console.log(selectedTemplateBlocks);
+
+  // console.log(state);
   useEffect(() => {
     const fetchClients = async () => {
       try {
@@ -64,6 +67,21 @@ const CreateSummary = () => {
     setBlocks(selectedTemplateBlocks);
   }, [selectedTemplateBlocks]);
 
+  // const handleTextChange = (index, newText) => {
+  //   // const updatedBlocks = [...blocks];
+  //   // updatedBlocks[index].text = newText;
+  //   // setBlocks(updatedBlocks);
+  //   const updatedBlocks = [...blocksRef.current];
+  //   updatedBlocks[index].text = newText;
+  //   blocksRef.current = updatedBlocks;
+  //   setBlocks(updatedBlocks);
+  // };
+
+  // const handleSaveClick = () => {
+  //   console.log("Save button clicked");
+  // };
+
+  // console.log(user);
   const handleSaveAsPDF = () => {
     const doc = new jsPDF();
     let y = 20;
@@ -170,28 +188,28 @@ const CreateSummary = () => {
     }, 1000); // Delay of 1 second
   };
 
-  const handleAIClick = async () => {
-    try {
+   const handleAIClick = async () => {
+     try {
       const correctedBlocks = await Promise.all(
         blocks.map(async (block) => {
-          const response = await fetch("http://localhost:3000/correct-text", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              text: block.text,
-            }),
-          });
-          const data = await response.json();
-          return { ...block, text: data.correctedText };
-        })
-      );
-      setBlocks(correctedBlocks);
-    } catch (error) {
-      console.error("Error correcting text:", error);
-    }
-  };
+           const response = await fetch("http://localhost:3000/correct-text", {
+             method: "POST",
+           headers: {
+               "Content-Type": "application/json",
+             },
+             body: JSON.stringify({
+               text: block.text,
+             }),
+           });
+           const data = await response.json();
+           return { ...block, text: data.correctedText };
+         })
+       );
+       setBlocks(correctedBlocks);
+     } catch (error) {
+       console.error("Error correcting text:", error);
+     }
+ };
 
   const handleDocumentProductionClick = async () => {
     if (!selectedClient) {
@@ -199,6 +217,7 @@ const CreateSummary = () => {
       return;
     }
 
+    // console.log("handleCreateSummaryClick called with template:", template);
     const summary = {
       SummaryNo: Math.random().toString(36).substring(2, 9),
       SummaryName: template.templateName,
@@ -207,8 +226,11 @@ const CreateSummary = () => {
       CreatorEmail: user.Email,
       CustomerId: parseInt(selectedClient, 10),
     };
+    // console.log(summary);
+    // console.log(selectedClient);
 
     try {
+      // Create summary in server
       const summaryResponse = await fetch(apiUrlSummaries, {
         method: "POST",
         headers: {
@@ -223,7 +245,9 @@ const CreateSummary = () => {
       }
 
       const summaryResult = await summaryResponse.json();
+      // console.log("Summary created successfully", summaryResult);
 
+      // Fetch blocksInTemplate
       const blocksResponse = await fetch(apiUrlGetBlocks, {
         method: "POST",
         headers: {
@@ -236,6 +260,9 @@ const CreateSummary = () => {
         throw new Error("Failed to fetch data");
       }
 
+      // Create blockInSummary in server
+      const createdBlocks = [];
+
       for (const block of selectedTemplateBlocks) {
         const summaryBlock = {
           SummaryNo: summary.SummaryNo,
@@ -244,6 +271,8 @@ const CreateSummary = () => {
           Text: block.text || "",
           IsApproved: false,
         };
+        // console.log(selectedTemplateBlocks);
+        // console.log(summaryBlock);
 
         const blockResponse = await fetch(apiUrlBlocks, {
           method: "POST",
@@ -260,58 +289,72 @@ const CreateSummary = () => {
       }
 
       alert("Document and blocks saved successfully!");
-      navigate("/SummarySuccess");
     } catch (error) {
       console.error("Error saving document and blocks:", error);
       alert("An error occurred while saving the document and blocks.");
     }
   };
 
+  // Extract the username from the email
   const extractUserName = (email) => {
     if (!email) return "Unknown User";
     return email.split("@")[0];
   };
 
+  // start listening
   const handleStartListening = () => {
     if (!listening) {
       SpeechRecognition.startListening({
         continuous: true,
-        language: "en-US",
+        language: "en-US", // Use user.LangName or default to "he-IL"
       });
-      setIsTranscribingStarted(true);
+      // console.log("Started listening...");
+      setIsTranscribingStarted(true); // Set the state to indicate that transcribing has started
     } else {
-      handleStopListening();
+      handleStopListening(); // אם כבר מאזינים, עוצרים את ההאזנה
     }
   };
 
   const handleStopListening = () => {
     SpeechRecognition.stopListening();
-    setActiveKeyword(null);
-    setIsDictating(false);
-    setIsTranscribingStarted(false);
+    // console.log("Stop listening...");
+    setActiveKeyword(null); // איפוס מילות המפתח
+    setIsDictating(false); //איפוס מצב ההכתבה
+    setIsTranscribingStarted(false); // Reset the state to indicate that transcribing has stopped
   };
 
   const transcripting = useCallback(() => {
+    // console.log(transcript);
     if (!isDictating) {
-      handleTranscriptKeywords();
+      handleTranscriptKeywords(); // אנחנו בודקים את מילות המפתח בתמלול
     } else if (transcript.toLowerCase().trim().endsWith("stop")) {
-      handleStopDictating();
+      handleStopDictating(); //עוצרים את ההכתבה לא את ההאזנה
     } else {
-      appendTranscriptToActiveBlock();
+      appendTranscriptToActiveBlock(); // אחרת התמלול מתווסף לבלוק שפעיל
     }
   }, [transcript, isDictating]);
 
   useEffect(() => {
+    // console.log(transcript);
+    // if (!isDictating) {
+    //   handleTranscriptKeywords(); // אנחנו בודקים את מילות המפתח בתמלול
+    // } else if (transcript.toLowerCase().trim().endsWith("stop")) {
+    //   handleStopDictating(); //עוצרים את ההכתבה לא את ההאזנה
+    // } else {
+    //   appendTranscriptToActiveBlock(); // אחרת התמלול מתווסף לבלוק שפעיל
+    // }
     transcripting();
-  }, [transcripting]);
+  }, [transcripting]); // כל שינוי בטרנקריפט זה קורה
 
   const handleStopDictating = useCallback(() => {
+    // console.log("Stop dictating - last KeyWord was ", activeKeyword);
     setIsDictating(false);
     setActiveKeyword(null);
     resetTranscript();
   }, [setIsDictating, setActiveKeyword, resetTranscript]);
 
   const appendTranscriptToActiveBlock = useCallback(() => {
+    // console.log(`Append transcript to ${activeKeyword}`);
     if (activeKeyword && isDictating) {
       if (transcript !== lastProcessedTranscript) {
         const newText = transcript.replace(lastProcessedTranscript, "").trim();
@@ -324,22 +367,25 @@ const CreateSummary = () => {
         );
         setLastProcessedTranscript(transcript);
       }
+      // resetTranscript();
     }
   }, [activeKeyword, isDictating, transcript, lastProcessedTranscript]);
 
   const handleTranscriptKeywords = useCallback(() => {
     if (!listening) {
+      // console.log("system is not listeting");
       return;
     }
 
     let foundKeyword = blocks.find((item) =>
       transcript.toLowerCase().endsWith(item.keyWord.toLowerCase())
     );
+    // console.log("Founded keyword is : ", foundKeyword);
 
     if (foundKeyword && !isDictating) {
-      setIsDictating(true);
-      setActiveKeyword(foundKeyword.keyWord);
-      resetTranscript();
+      setIsDictating(true); //מפעילה את מצב ההכתבה
+      setActiveKeyword(foundKeyword.keyWord); // מעדכנת את מילת המפתח
+      resetTranscript(); // איפוס התמלול כדי שלא יכתוב לתוך הבלוק מה ששמע עד כה
     }
   }, [
     transcript,
@@ -355,9 +401,7 @@ const CreateSummary = () => {
     return <span>Browser doesn't support speech recognition.</span>;
   }
 
-  const handlePreviewClick = () => {
-    setIsModalVisible(true);
-  };
+
 
   const handleCloseModal = () => {
     setIsModalVisible(false);
@@ -384,7 +428,7 @@ const CreateSummary = () => {
                 backgroundColor: "#E4E9F2",
                 borderColor: "#E4E9F2",
               }}
-              onClick={() => navigate("/HomePage")}
+              onClick={() => navigate("/HomePage")} // חזרה למסך הבית
             >
               <input type="checkbox" />
               <svg
@@ -561,6 +605,7 @@ const CreateSummary = () => {
                   placeholder="free text area..."
                   value={block.text}
                   readOnly
+                  // onChange={(e) => handleTextChange(index, e.target.value)}
                   style={{ padding: "0.5rem" }}
                 />
               </div>
@@ -596,7 +641,7 @@ const CreateSummary = () => {
               <span>{currentDate}</span>
             </div>
           </div>
-          <button
+         <button
             style={{
               backgroundColor: "white",
               color: "#070A40",
@@ -615,19 +660,8 @@ const CreateSummary = () => {
               style={{ marginRight: "10px" }} // הוספת שוליים ימניים כדי להזיז שמאלה
             />
             AI-assisted drafting
-          </button>
+          </button> 
           <div className="button-group">
-            <button
-              className="btn btn-xs sm:btn-sm  btn-outline btn-primary"
-              style={{
-                color: "#070A40",
-                backgroundColor: "rgba(255, 255, 255, 0)",
-                borderColor: "#070A40",
-              }}
-              onClick={handlePreviewClick}
-            >
-              Preview
-            </button>
             <button
               className="btn btn-xs sm:btn-sm  btn-outline btn-primary"
               style={{
