@@ -25,6 +25,12 @@ export default function SummerySuccess() {
     navigate("/HomePage");
   };
 
+  const handlePreviewClick = () => {
+    navigate("/SummaryPreview", {
+      state: { user },
+    });
+  };
+
   return (
     <div style={{ 
       display: 'flex', 
@@ -46,6 +52,17 @@ export default function SummerySuccess() {
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '40px' }}>
           <img src="public/summarySuc/summarySucc.svg" alt="Success" style={{ width: '200px', height: '200px',marginBottom:'2rem' }} /> {/* כאן יש להוסיף את התמונה */}
         </div>  
+        <button
+              className="btn btn-xs sm:btn-sm  btn-outline btn-primary"
+              style={{
+                color: "#070A40",
+                backgroundColor: "rgba(255, 255, 255, 0)",
+                borderColor: "#070A40",
+              }}
+              onClick={handlePreviewClick}
+            >
+              Preview
+            </button>
         <button
           style={{
             width: '200px', // רוחב קבוע של 200 פיקסלים

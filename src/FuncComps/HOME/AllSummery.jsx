@@ -46,7 +46,7 @@ function AllSummery() {
     const fetchAllCustomers = async () => {
       try {
         const response = await fetch(apiUrlCustomers, {
-          method: "POST",
+          method: "GET",
           headers: { "Content-Type": "application/json; charset=UTF-8" },
         });
         if (!response.ok) {
@@ -79,7 +79,7 @@ function AllSummery() {
       setFilteredSummaries(summaries);
     } else {
       const filtered = summaries.filter(
-        (summary) => summary.customerId === customerId
+        (summary) => summary.customerId == customerId
       );
       setFilteredSummaries(filtered);
     }
