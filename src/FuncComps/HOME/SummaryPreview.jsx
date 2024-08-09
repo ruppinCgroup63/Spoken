@@ -10,6 +10,7 @@ const SummaryPreview = () => {
   const { summary, user } = state || {};
   const [blocks, setBlocks] = useState([]);
   const [error, setError] = useState('');
+  const currentDate = new Date().toLocaleDateString(); // Get current date
 
   useEffect(() => {
     if (summary && summary.summaryNo) {
@@ -58,7 +59,7 @@ const SummaryPreview = () => {
                 backgroundColor: "#E4E9F2",
                 borderColor: "#E4E9F2",
               }}
-              onClick={() => navigate(-1)} // Back to previous page
+              onClick={() => navigate("/AllSummery")} // Back to previous page
             >
               <input type="checkbox" />
               <svg className="swap-off fill-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512">
@@ -71,10 +72,9 @@ const SummaryPreview = () => {
           </header>
 
           <div className="header">
-            <img src="path/to/user/image.png" alt="UserImage" />
             <h1>{summary.summaryName}</h1> 
             <h3>{summary.description    }</h3>          
-            <span>{user.userName}</span>
+            
           </div>
           
           <div style={{ borderColor: "#070A40" }} className="form-card">
@@ -98,8 +98,6 @@ const SummaryPreview = () => {
                 marginBottom: "1rem",
               }}
             ></div>
-
-            <p>{summary.description}</p>
 
             {blocks.map((block, index) => (
               <div
@@ -129,10 +127,35 @@ const SummaryPreview = () => {
                   > </textarea>
               </div>
             ))}
-
-            <div className="signed-date">
-              <label>Signed: ________________</label>
-              <label>Date: ________________</label>
+            <div
+              className="signed-date"
+              style={{
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                marginLeft: "0",
+              }}
+            >
+              <label style={{ marginRight: "10px" }}>
+                <b>Signed:</b>
+              </label>
+              {user.signature ? (
+                <img
+                  src={user.signature}
+                  alt="Signature"
+                  style={{
+                    width: "100px",
+                    height: "40px",
+                    marginRight: "20px",
+                  }}
+                />
+              ) : (
+                <span style={{ marginRight: "50px" }}> ___________ </span>
+              )}
+              <label style={{ marginLeft: "20px", marginRight: "10px" }}>
+                <b>Date:</b>
+              </label>
+              <span>{currentDate}</span>
             </div>
           </div>
           {error && <p className="error-message">{error}</p>}
