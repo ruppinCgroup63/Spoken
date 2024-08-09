@@ -288,7 +288,8 @@ const CreateSummary = () => {
         }
       }
 
-      alert("Document and blocks saved successfully!");
+     // alert("Document and blocks saved successfully!");
+      navigate("/SummarySuccess");
     } catch (error) {
       console.error("Error saving document and blocks:", error);
       alert("An error occurred while saving the document and blocks.");

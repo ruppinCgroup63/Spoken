@@ -55,9 +55,12 @@ export default function SummerySuccess() {
         <button
               className="btn btn-xs sm:btn-sm  btn-outline btn-primary"
               style={{
+                width: '200px', // רוחב קבוע של 200 פיקסלים
+            padding: '10px 0', // שומר על הגובה של הכפתור
                 color: "#070A40",
                 backgroundColor: "rgba(255, 255, 255, 0)",
                 borderColor: "#070A40",
+                marginBottom:'20px'
               }}
               onClick={handlePreviewClick}
             >
