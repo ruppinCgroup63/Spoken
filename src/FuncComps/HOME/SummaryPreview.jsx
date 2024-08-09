@@ -21,11 +21,10 @@ const SummaryPreview = () => {
   const fetchBlocks = async (summaryNo) => {
     try {
       console.log("Fetching blocks for summaryNo:", summaryNo); // Debug log
-      console.log(JSON.stringify({ summaryNo }))
-      const response = await fetch(apiUrlBlocks + "?summaryNo=" + summaryNo, {
+      const response = await fetch(apiUrlBlocks, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        //body: JSON.stringify({ summaryNo }),
+        body: JSON.stringify(summaryNo), // Send only summaryNo as string
       });
       if (!response.ok) {
         const errorText = await response.text();
@@ -73,8 +72,7 @@ const SummaryPreview = () => {
 
           <div className="header">
             <h1>{summary.summaryName}</h1> 
-            <h3>{summary.description    }</h3>          
-            
+            <h3>{summary.description}</h3>          
           </div>
           
           <div style={{ borderColor: "#070A40" }} className="form-card">
@@ -124,7 +122,7 @@ const SummaryPreview = () => {
                   value={block.text}
                   readOnly
                   style={{ padding: "0.5rem" }}
-                  > </textarea>
+                /> 
               </div>
             ))}
             <div
