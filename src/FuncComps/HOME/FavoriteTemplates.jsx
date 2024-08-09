@@ -225,7 +225,7 @@ export default function FavoriteTemplates() {
                 <div
                   key={template.templateNo}
                   className="cursor-pointer"
-                  onClick={() => handleTemplateClick(template)}
+                  
                 >
                   <Card
                     title={template.templateName}
@@ -233,8 +233,8 @@ export default function FavoriteTemplates() {
                     description={template.description}
                     tags={template.tags || []}
                     onFavoriteToggle={() =>
-                      handleFavoriteToggle(template.templateNo)
-                    }
+                      handleFavoriteToggle(template.templateNo)}
+                    onCardClick={() => handleTemplateClick(template)}
                     onCreateSummaryClick={() => handleTemplateClick(template)}
                   />
                 </div>
