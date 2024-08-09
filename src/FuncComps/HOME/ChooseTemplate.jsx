@@ -108,7 +108,7 @@ function ChooseTemplate() {
       })
       .then((data) => {
         setSelectedTemplateBlocks(data);
-        navigate("/CreateSummary", {
+        navigate("/TemplatePreview", {
           state: { selectedTemplate: templateClicked, data, user },
         });
       })
