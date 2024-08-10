@@ -238,7 +238,9 @@ const CreateSummary = () => {
         }
       }
 
-      navigate("/SummarySuccess");
+      navigate("/SummarySuccess", {
+        state: { user , summary},
+      });
     } catch (error) {
       console.error("Error saving document and blocks:", error);
       alert("An error occurred while saving the document and blocks.");

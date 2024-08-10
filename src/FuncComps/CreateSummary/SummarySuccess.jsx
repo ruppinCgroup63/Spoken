@@ -7,6 +7,8 @@ export default function SummerySuccess() {
   const navigate = useNavigate();
   const location = useLocation();
   const { blocks } = location.state || { blocks: [] }; // מקבל את הנתונים מהדף הקודם
+  const summary = location.state ;
+
 
   // שליפת המייל מה-`sessionStorage`
   const user = JSON.parse(sessionStorage.getItem('user'));
@@ -27,7 +29,7 @@ export default function SummerySuccess() {
 
   const handlePreviewClick = () => {
     navigate("/SummaryPreview", {
-      state: { user },
+      state: { user , summary},
     });
   };
 
