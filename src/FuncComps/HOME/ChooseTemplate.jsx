@@ -120,7 +120,7 @@ function ChooseTemplate() {
         navigate("/TemplatePreview", {
           state: {
             selectedTemplate: templateClicked,
-            data,
+            selectedTemplateBlocks: data,
             user,
           },
         });
@@ -229,8 +229,8 @@ function ChooseTemplate() {
       navigate("/CreateSummary", {
         state: {
           template,
-          //selectedTemplateBlocks: blocksData,
-          blocksData,
+          selectedTemplateBlocks: blocksData,
+          //blocksData,
           user,
         },
       });

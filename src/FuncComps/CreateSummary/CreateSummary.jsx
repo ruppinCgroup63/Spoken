@@ -378,7 +378,7 @@ console.log(
       }
 
       const summaryResult = await summaryResponse.json();
-
+      const addBlockList = [];
       for (const block of blocks) {
         const summaryBlock = {
           SummaryNo: summary.SummaryNo,
@@ -387,6 +387,8 @@ console.log(
           Text: block.text,
           IsApproved: false,
         };
+
+        addBlockList.push(summaryBlock);
 
         const blockResponse = await fetch(apiUrlBlocks, {
           method: "POST",
@@ -403,7 +405,7 @@ console.log(
       }
 
       navigate("/SummarySuccess", {
-        state: { user , summary},
+        state: { user, addBlockList, summary },
       });
     } catch (error) {
       console.error("Error saving document and blocks:", error);

@@ -6,21 +6,25 @@ import { useLocation, useNavigate } from "react-router-dom";
 const apiUrlBlocks =
   "https://localhost:7224/api/BlockInSummary/getBlocksBySummaryNo";
 
-const SummaryPreview = () => {
+const NewPreview = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const { summary, user } = state || {};
-  const [blocks, setBlocks] = useState([]);
+  const { user, summary } = state || {};
+  //const [addBlockList, setAddBlockList] = useState([]);
   const [error, setError] = useState("");
   const currentDate = new Date().toLocaleDateString(); // Get current date
 
-  useEffect(() => {
-    if (summary && summary.summaryNo) {
-      fetchBlocks(summary.summaryNo);
-    }
-  }, [summary]);
+  console.log(summary);
+  console.log(state.summary);
 
-  const fetchBlocks = async (summaryNo) => {
+  /*useEffect(() => {
+    debugger;
+    if (summary && summary.summary) {
+      fetchBlocks(summary.summary.summaryNo);
+    }
+  }, [summary]);*/
+
+  /* const fetchBlocks = async (summaryNo) => {
     try {
       console.log("Fetching blocks for summaryNo:", summaryNo); // Debug log
       const response = await fetch(apiUrlBlocks, {
@@ -35,7 +39,7 @@ const SummaryPreview = () => {
       }
       const data = await response.json();
       console.log("Fetched blocks data:", data); // Debug log
-      setBlocks(data);
+      //setAddBlockList(data);
     } catch (error) {
       console.error("Error fetching blocks data:", error);
       setError("Failed to fetch blocks data. Please try again.");
@@ -44,7 +48,7 @@ const SummaryPreview = () => {
 
   if (!summary || !user) {
     return <div>No summary or user data found.</div>;
-  }
+  }*/
 
   return (
     <div className="bg-light-blue-500 min-h-screen flex justify-center items-center">
@@ -88,8 +92,8 @@ const SummaryPreview = () => {
           </header>
 
           <div className="header">
-            <h1>{summary.summaryName}</h1>
-            <h3>{summary.description}</h3>
+            <h1>{summary.summary.SummaryName}</h1>
+            <h3>{summary.summary.Description}</h3>
           </div>
 
           <div style={{ borderColor: "#070A40" }} className="form-card">
@@ -103,7 +107,7 @@ const SummaryPreview = () => {
                   top: "-3px",
                 }}
               >
-                <b>Name: </b> {summary.summaryName}
+                <b>Name: </b> {summary.summary.SummaryName}
               </span>
             </div>
             <div
@@ -114,7 +118,7 @@ const SummaryPreview = () => {
               }}
             ></div>
 
-            {blocks.map((block, index) => (
+            {summary.addBlockList.map((block, index) => (
               <div
                 key={index}
                 className="block"
@@ -148,7 +152,7 @@ const SummaryPreview = () => {
                 <textarea
                   className="block-textarea"
                   placeholder="free text area..."
-                  value={block.text}
+                  value={block.Text}
                   readOnly
                   style={{ padding: "0.5rem" }}
                 />
@@ -177,7 +181,7 @@ const SummaryPreview = () => {
                   }}
                 />
               ) : (
-                <span style={{ marginRight: "50px" }}> _____ </span>
+                <span style={{ marginRight: "50px" }}> ___________ </span>
               )}
               <label style={{ marginLeft: "20px", marginRight: "10px" }}>
                 <b>Date:</b>
@@ -192,4 +196,4 @@ const SummaryPreview = () => {
   );
 };
 
-export default SummaryPreview;
+export default NewPreview;

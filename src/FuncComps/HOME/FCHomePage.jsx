@@ -238,7 +238,7 @@ function HomePage() {
       const blocksData = await responseBlocks.json();
       // Navigate to CreateSummary with the selected template and blocks
       navigate("/CreateSummary", {
-        state: { template, blocksData, user },
+        state: { template, selectedTemplateBlocks: blocksData, user },
       });
 
       /*  setSelectedTemplateBlocks(blocksData);

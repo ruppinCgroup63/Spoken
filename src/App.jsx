@@ -22,6 +22,7 @@ import AllSummery from "./FuncComps/HOME/AllSummery";
 import SummaryPreview from "./FuncComps/HOME/SummaryPreview";
 import SummarySuccess from "./FuncComps/CreateSummary/SummarySuccess";
 import ForgotPassword from "./FuncComps/ForgotPassword";
+import NewPreview from "./FuncComps/CreateSummary/NewPreview";
 
 function App() {
   const [usersList, setUsersList] = useState([]);
@@ -64,6 +65,7 @@ function App() {
             <Route path="/SummaryPreview" element={<SummaryPreview />} />
             <Route path="/SummarySuccess" element={<SummarySuccess />} />
             <Route path="/ForgotPassword" element={<ForgotPassword />} />
+            <Route path="/NewPreview" element={<NewPreview />} />
           </Routes>
         </BrowserRouter>
       </div>
