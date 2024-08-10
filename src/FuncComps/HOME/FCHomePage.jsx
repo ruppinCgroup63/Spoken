@@ -3,13 +3,23 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Card from "./FCCard";
 import "./HomePage.css";
 
-const apiUrlRecent = "https://localhost:44326/api/RecentTemplates/getByUserEmail";
+/*const apiUrlRecent = "https://localhost:44326/api/RecentTemplates/getByUserEmail";
 const apiUrlTemplates = "https://localhost:44326/api/Templates/getByUserEmail";
 const apiUrlFavorites = "https://localhost:44326/api/UserFavorites/getByUserEmail";
 const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 const apiUrlUpdateFavorite = "https://localhost:44326/api/UserFavorites";
 const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
-const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
+const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";*/
+const apiUrlRecent =
+  "https://localhost:7224/api/RecentTemplates/getByUserEmail";
+const apiUrlTemplates = "https://localhost:7224/api/Templates/getByUserEmail";
+const apiUrlFavorites =
+  "https://localhost:7224/api/UserFavorites/getByUserEmail";
+const apiUrlBlocks =
+  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlUpdateFavorite = "https://localhost:7224/api/UserFavorites";
+const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
+const apiUrlUpdateRecent = "https://localhost:7224/api/RecentTemplates";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -19,7 +29,7 @@ function HomePage() {
   const [recentTemplates, setRecentTemplates] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState(null);
-  const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
+  //const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
   const [navOpen, setNavOpen] = useState(false);
 
   useEffect(() => {
@@ -169,7 +179,7 @@ function HomePage() {
   };
 
   const handleTemplateClick = async (selectedTemplate) => {
-    console.log(selectedTemplate.templateNo);
+    //console.log(selectedTemplate.templateNo);
     try {
       const responseBlocks = await fetch(apiUrlBlocks, {
         method: "POST",
@@ -226,10 +236,15 @@ function HomePage() {
       }
 
       const blocksData = await responseBlocks.json();
-      setSelectedTemplateBlocks(blocksData);
+      // Navigate to CreateSummary with the selected template and blocks
+      navigate("/CreateSummary", {
+        state: { template, blocksData, user },
+      });
+
+      /*  setSelectedTemplateBlocks(blocksData);
       navigate("/CreateSummary", {
         state: { template, selectedTemplateBlocks: blocksData, user },
-      });
+      });*/
     } catch (error) {
       setError("Failed to fetch blocks data. Please try again.");
       console.error("Error fetching blocks data:", error);
@@ -360,8 +375,7 @@ function HomePage() {
             justifyContent: "space-around",
             display: "flex",
             borderRadius: "8px",
-            marginTop:'2.5px'
-          
+            marginTop: "2.5px",
           }}
         >
           <li
@@ -369,10 +383,14 @@ function HomePage() {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              padding: "0 10px"
+              padding: "0 10px",
             }}
           >
-            <a className="tooltip tooltip-bottom" data-tip="Home" onClick={() => navigate("/HomePage")}>
+            <a
+              className="tooltip tooltip-bottom"
+              data-tip="Home"
+              onClick={() => navigate("/HomePage")}
+            >
               <img
                 src={
                   location.pathname === "/HomePage"
@@ -392,7 +410,11 @@ function HomePage() {
               padding: "0 10px",
             }}
           >
-            <a className="tooltip tooltip-bottom" data-tip="All Summary" onClick={() => navigate("/AllSummery")}>
+            <a
+              className="tooltip tooltip-bottom"
+              data-tip="All Summary"
+              onClick={() => navigate("/AllSummery")}
+            >
               <img
                 src="/public/Menu/BookW.png"
                 alt="All Summary"
@@ -408,7 +430,11 @@ function HomePage() {
               padding: "0 10px",
             }}
           >
-            <a className="tooltip tooltip-bottom" data-tip="LogOut" onClick={handleLogout}>
+            <a
+              className="tooltip tooltip-bottom"
+              data-tip="LogOut"
+              onClick={handleLogout}
+            >
               <img
                 src="/public/Menu/LogoutW.png"
                 alt="LogOut"

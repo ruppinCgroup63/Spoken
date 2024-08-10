@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // const apiUrl ='https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Users';
-const apiUrl ='https://localhost:44326/api/Users';
-//const apiUrl = "https://localhost:7224/api/Users";
+//const apiUrl ='https://localhost:44326/api/Users';
+const apiUrl = "https://localhost:7224/api/Users";
 
 function Admins() {
   const navigate = useNavigate();

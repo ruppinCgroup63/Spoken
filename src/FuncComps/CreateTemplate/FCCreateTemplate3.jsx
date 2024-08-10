@@ -6,10 +6,10 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import "react-resizable/css/styles.css";
 import DraggableItem from "./CreateBlockForTemplate3";
 
-const apiUrlTemplate = 'https://localhost:44326/api/Templates';
-const apiUrlBlock = 'https://localhost:44326/api/BlocksInTemplates';
-//const apiUrlTemplate = "https://localhost:7224/api/Templates";
-//const apiUrlBlock = "https://localhost:7224/api/BlocksInTemplates";
+/*const apiUrlTemplate = 'https://localhost:44326/api/Templates';
+const apiUrlBlock = 'https://localhost:44326/api/BlocksInTemplates';*/
+const apiUrlTemplate = "https://localhost:7224/api/Templates";
+const apiUrlBlock = "https://localhost:7224/api/BlocksInTemplates";
 
 function CreateTemplate3() {
   const navigate = useNavigate();

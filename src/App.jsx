@@ -29,6 +29,7 @@ function App() {
   const getUserFromChild = (user) => {
     setUsersList((prevUsersList) => [...prevUsersList, user]);
   };
+
   //     <Route path="/Main" element={<Main />} />
   console.log(usersList);
   //console.log(userData);
@@ -41,22 +42,28 @@ function App() {
             <Route path="/" element={<Login userList={usersList} />} />
             <Route path="/Register" element={<RegistrationPage />} />
             <Route path="/Register2" element={<RegistrationPage2 />} />
-            <Route path="/Register3"element={<RegistrationPage3 sendtoParent={getUserFromChild} />}/>
+            <Route
+              path="/Register3"
+              element={<RegistrationPage3 sendtoParent={getUserFromChild} />}
+            />
             <Route path="/HomePage" element={<HomePage />} />
             <Route path="/CreateTemplate" element={<CreateTemplate />} />
             <Route path="/CreateTemplate2" element={<CreateTemplate2 />} />
             <Route path="/CreateTemplate3" element={<CreateTemplate3 />} />
             <Route path="/ChooseTemplate" element={<ChooseTemplate />} />
             <Route path="/TemplatePreview" element={<TemplateToDictate />} />
-            <Route path="/FavoriteTemplates" element={<FavoriteTemplates/>}/>
-            <Route path="/CreateSummary" element={<CreateSummary/>}/>
-            <Route path="/TemplateCreatedSuccessfully" element={<TemplateCreatedSuccessfully/>}/>
-            <Route path="/Admin" element={<Admins/>}/>
-            <Route path="/EditUsers" element={<EditUser/>}/>
-            <Route path="/AllSummery" element={<AllSummery/>}/>
-            <Route path="/SummaryPreview" element={<SummaryPreview/>}/>
-            <Route path="/SummarySuccess" element={<SummarySuccess/>}/>
-            <Route path="/ForgotPassword" element={<ForgotPassword/>}/>    
+            <Route path="/FavoriteTemplates" element={<FavoriteTemplates />} />
+            <Route path="/CreateSummary" element={<CreateSummary />} />
+            <Route
+              path="/TemplateCreatedSuccessfully"
+              element={<TemplateCreatedSuccessfully />}
+            />
+            <Route path="/Admin" element={<Admins />} />
+            <Route path="/EditUsers" element={<EditUser />} />
+            <Route path="/AllSummery" element={<AllSummery />} />
+            <Route path="/SummaryPreview" element={<SummaryPreview />} />
+            <Route path="/SummarySuccess" element={<SummarySuccess />} />
+            <Route path="/ForgotPassword" element={<ForgotPassword />} />
           </Routes>
         </BrowserRouter>
       </div>

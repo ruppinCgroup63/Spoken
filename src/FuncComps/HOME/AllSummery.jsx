@@ -11,8 +11,8 @@ function AllSummery() {
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [filteredSummaries, setFilteredSummaries] = useState([]);
 
-  const apiUrlSummaries = "https://localhost:44326/api/Summary/getByUserEmail";
-  const apiUrlCustomers = "https://localhost:44326/api/Customers";
+  const apiUrlSummaries = "https://localhost:7224/api/Summary/getByUserEmail";
+  const apiUrlCustomers = "https://localhost:7224/api/Customers";
   const user = JSON.parse(sessionStorage.getItem("user")) || {};
 
   // fetch all summary

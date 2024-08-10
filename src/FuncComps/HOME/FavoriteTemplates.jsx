@@ -3,12 +3,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Card from "./FCCard";
 import CreateSummary from "../CreateSummary/CreateSummary";
 
-const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
+//const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
+//const apiUrlBlocks =
+//"https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+
+const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
 const apiUrlBlocks =
-  "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
-/*const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
-const apiUrlBlocks =
-  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";*/
+  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
 
 export default function FavoriteTemplates() {
   const navigate = useNavigate();
@@ -23,15 +24,12 @@ export default function FavoriteTemplates() {
 
   //חזרה לדף הבית
   const handleButtonClick = () => {
-    navigate("/FavoriteTemplate", {
-    });
+    navigate("/HomePage", {});
   };
-
 
   const handleTemplateClick = (templateClicked) => {
     setSelectedTemplate(templateClicked);
 
-  
     console.log(
       "-------------------setSelectedTemplate : ",
       selectedTemplate,
@@ -53,7 +51,11 @@ export default function FavoriteTemplates() {
       .then((data) => {
         setSelectedTemplateBlocks(data);
         navigate("/TemplatePreview", {
-          state: { selectedTemplate: templateClicked, data, user },
+          state: {
+            selectedTemplate: templateClicked,
+            data,
+            user,
+          },
         });
       })
       .catch((error) => {
@@ -89,8 +91,6 @@ export default function FavoriteTemplates() {
         setError("Failed to update recent template. Please try again.");
       });
   };
-
-
 
   const handleFavoriteToggle = async (templateNo) => {
     const updatedFavorites = { Email: user.Email, TemplateNo: templateNo };
@@ -143,7 +143,11 @@ export default function FavoriteTemplates() {
       console.log("Fetched blocks data:", blocksData);
       setSelectedTemplateBlocks(blocksData); // Set the blocks data here
       navigate("/CreateSummary", {
-        state: { template: template, selectedTemplateBlocks: blocksData, user },
+        state: {
+          template: template,
+          selectedTemplateBlocks: blocksData,
+          user,
+        },
       });
     } catch (error) {
       console.error("Error fetching blocks data:", error);
@@ -289,18 +293,15 @@ export default function FavoriteTemplates() {
             {updatedTemplates
               .filter((template) => template.isFavorite)
               .map((template) => (
-                <div
-                  key={template.templateNo}
-                  className="cursor-pointer"
-                  
-                >
+                <div key={template.templateNo} className="cursor-pointer">
                   <Card
                     title={template.templateName}
                     favorite={template.isFavorite}
                     description={template.description}
                     tags={template.tags || []}
                     onFavoriteToggle={() =>
-                      handleFavoriteToggle(template.templateNo)}
+                      handleFavoriteToggle(template.templateNo)
+                    }
                     onCardClick={() => handleTemplateClick(template)}
                     onCreateSummaryClick={() => CreateSummaryClick(template)}
                   />
