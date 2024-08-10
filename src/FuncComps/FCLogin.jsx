@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import ErrorMessage from "./FCErrorMessage";
 
 //const apiUrl = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Users/Login';
-const apiUrl = "https://localhost:44326/api/Users/Login";
+//const apiUrl = "https://localhost:44326/api/Users/Login";
+const apiUrl = "https://localhost:7224/api/Users/Login";
 
 function Login(props) {
   const navigate = useNavigate();

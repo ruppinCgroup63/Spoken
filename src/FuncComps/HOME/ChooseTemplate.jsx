@@ -3,14 +3,24 @@ import React, { useState, useEffect } from "react";
 import "../CreateTemplate/style.css";
 import Card from "./FCCard";
 
-const apiUrlTemplate = "https://localhost:44326/api/Templates/getByUserEmail";
+/*const apiUrlTemplate = "https://localhost:44326/api/Templates/getByUserEmail";
 const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 const apiUrlUpdateFavorite = "https://localhost:44326/api/UserFavorites";
 const apiUrlFavorites = "https://localhost:44326/api/UserFavorites/getByUserEmail";
 const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
 const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
 const apiUrlCreateSummary = "https://localhost:44326/api/Summary";
-const apiUrlCreateBlocksInSummary = "https://localhost:44326/api/BlockInSummary";
+const apiUrlCreateBlocksInSummary = "https://localhost:44326/api/BlockInSummary";*/
+const apiUrlTemplate = "https://localhost:7224/api/Templates/getByUserEmail";
+const apiUrlBlocks =
+  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlUpdateFavorite = "https://localhost:7224/api/UserFavorites";
+const apiUrlFavorites =
+  "https://localhost:7224/api/UserFavorites/getByUserEmail";
+const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
+const apiUrlUpdateRecent = "https://localhost:7224/api/RecentTemplates";
+const apiUrlCreateSummary = "https://localhost:7224/api/Summary";
+const apiUrlCreateBlocksInSummary = "https://localhost:7224/api/BlockInSummary";
 
 function ChooseTemplate() {
   const navigate = useNavigate();
@@ -18,14 +28,14 @@ function ChooseTemplate() {
   const user = state.user;
 
   const [templates, setTemplates] = useState([]);
-  const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  //const [selectedTemplateBlocks, setSelectedTemplateBlocks] = useState([]);
+  // const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [error, setError] = useState(null);
   const [showFavorites, setShowFavorites] = useState(false);
 
   //חזרה לדף הבית
   const handleButtonClick = () => {
-    navigate("/ChooseTemplate");
+    navigate("/HomePage");
   };
 
   useEffect(() => {
@@ -85,12 +95,11 @@ function ChooseTemplate() {
   }, [user.Email]);
 
   const handleTemplateClick = (templateClicked) => {
-    setSelectedTemplate(templateClicked);
+    //setSelectedTemplate(templateClicked);
 
-  
     console.log(
-      "-------------------setSelectedTemplate : ",
-      selectedTemplate,
+      //  "-------------------SelectedTemplate : ",
+      //  selectedTemplate,
       "Temaplte clicked :",
       templateClicked
     );
@@ -107,9 +116,13 @@ function ChooseTemplate() {
         return response.json();
       })
       .then((data) => {
-        setSelectedTemplateBlocks(data);
+        // setSelectedTemplateBlocks(data);
         navigate("/TemplatePreview", {
-          state: { selectedTemplate: templateClicked, data, user },
+          state: {
+            selectedTemplate: templateClicked,
+            data,
+            user,
+          },
         });
       })
       .catch((error) => {
@@ -212,9 +225,14 @@ function ChooseTemplate() {
       }
 
       const blocksData = await responseBlocks.json();
-      setSelectedTemplateBlocks(blocksData);
+      // setSelectedTemplateBlocks(blocksData);
       navigate("/CreateSummary", {
-        state: { template, selectedTemplateBlocks: blocksData, user },
+        state: {
+          template,
+          //selectedTemplateBlocks: blocksData,
+          blocksData,
+          user,
+        },
       });
     } catch (error) {
       setError("Failed to fetch blocks data. Please try again.");
@@ -232,7 +250,13 @@ function ChooseTemplate() {
           <header className="flex justify-between items-start w-full align-self-start mb-4">
             <label
               className="btn btn-circle swap swap-rotate"
-              style={{ position: "absolute", top: "30px", left: "20px" ,backgroundColor: "#E4E9F2", borderColor: "#E4E9F2"}}
+              style={{
+                position: "absolute",
+                top: "30px",
+                left: "20px",
+                backgroundColor: "#E4E9F2",
+                borderColor: "#E4E9F2",
+              }}
               onClick={handleButtonClick} //חזרה למסך הבית
             >
               <input type="checkbox" />
@@ -255,9 +279,11 @@ function ChooseTemplate() {
                 <polygon points="400 145.49 366.51 112 256 222.51 145.49 112 112 145.49 222.51 256 112 366.51 145.49 400 256 289.49 366.51 400 400 366.51 289.49 256 400 145.49" />
               </svg>
             </label>
-            <div style={{ marginTop: "5px" }}> 
-              <h3 className="text-sm" style={{ color: "#070A40", cursor: "pointer" }}>              
-              </h3>
+            <div style={{ marginTop: "5px" }}>
+              <h3
+                className="text-sm"
+                style={{ color: "#070A40", cursor: "pointer" }}
+              ></h3>
             </div>
             <label
               className="btn btn-circle swap swap-rotate self-start"
@@ -266,7 +292,7 @@ function ChooseTemplate() {
                 alignSelf: "start",
                 borderColor: "#E4E9F2",
                 marginTop: "-18px",
-                marginRight:"-15px"
+                marginRight: "-15px",
               }}
             >
               <input type="checkbox" />
@@ -314,7 +340,7 @@ function ChooseTemplate() {
               New Template
             </span>
           </div>
-        
+
           <div
             className="flex items-center"
             style={{

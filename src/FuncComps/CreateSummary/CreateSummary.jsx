@@ -1,30 +1,65 @@
 import "regenerator-runtime/runtime"; // גורם לתמיכה של פונקציות אסינכרוניות ובגינרטורס
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 import "./SummaryPage.css";
 import SummaryPreviewModal from "./SummaryPreviewModal ";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
+import OpenAI from "openai";
 
-const apiUrlClients = "https://localhost:44326/api/Customers";
+/** יצירת לקוח - לבקשה מOpenAI **/
+const apiKey = import.meta.env.VITE_REACT_APP_OPENAI_API_KEY;
+if (!apiKey) {
+  throw new Error(
+    "The OPENAI_API_KEY environment variable is missing or empty."
+  );
+}
+const openai = new OpenAI({ apiKey: apiKey, dangerouslyAllowBrowser: true });
+/****/
+
+/*const apiUrlClients = "https://localhost:44326/api/Customers";
 const apiUrlSummaries = "https://localhost:44326/api/Summary";
 const apiUrlBlocks = "https://localhost:44326/api/BlockInSummary";
-const apiUrlGetBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlGetBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";*/
+
+const apiUrlClients = "https://localhost:7224/api/Customers";
+const apiUrlSummaries = "https://localhost:7224/api/Summary";
+const apiUrlBlocks = "https://localhost:7224/api/BlockInSummary";
+const apiUrlGetBlocks =
+  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
 
 const CreateSummary = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { template, selectedTemplateBlocks, user } = state || {};
-  const [selectedTemplate] = useState(template);
   const [blocks, setBlocks] = useState(selectedTemplateBlocks || []);
+
+  /****/
+  /*  const { template, selectedTemplateBlocks, user } = state || {};
+console.log(
+    "selectedTemplateBlocks ",
+    selectedTemplateBlocks,
+    "setSelectedTemplateBlocks:",
+    setSelectedTemplateBlocks
+  ); // Debugging*/
+  // const [selectedTemplate] = useState(template);
+  /****/
+
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
   const [clients, setClients] = useState([]); // מצב לשמירת שמות הלקוחות
   const [selectedClient, setSelectedClient] = useState(""); // מצב לשמירת הלקוח שנבחר
+
+  /**ניהול תמלול */
   const [isTranscribingStarted, setIsTranscribingStarted] = useState(false); // מצב הכפתור
   const [activeKeyword, setActiveKeyword] = useState(null); // מצב עבור מילת מפתח פעילה
   const [isDictating, setIsDictating] = useState(false); // מצב כדי לעקוב אחר הכתבה ולנהל את ההכתבה לבלוקים
   const [lastProcessedTranscript, setLastProcessedTranscript] = useState("");
+
+  /**סיום ניהול תמלול */
+
   const currentDate = new Date().toLocaleDateString(); // Get current date
   const logoPath = "public/login/SpokenLogoNew.png";
   const voiceGreen = "public/Summery/Voice.png";
@@ -50,6 +85,12 @@ const CreateSummary = () => {
     fetchClients();
   }, []);
 
+  //OnMount- On first render we initialized the blocks (Empty)
+  useEffect(() => {
+    setBlocks(selectedTemplateBlocks);
+  }, []);
+
+  /**Constructing the relevant from SpeechRecognition**/
   const {
     transcript,
     listening,
@@ -57,15 +98,15 @@ const CreateSummary = () => {
     browserSupportsSpeechRecognition, // בדיקה שהדפדפן תומך בתמלול
   } = useSpeechRecognition();
 
-  useEffect(() => {
-    setBlocks(selectedTemplateBlocks);
-  }, [selectedTemplateBlocks]);
-
   const handleTextChange = (index, newText) => {
     const updatedBlocks = [...blocks];
     updatedBlocks[index].text = newText;
     setBlocks(updatedBlocks);
   };
+
+  /* useEffect(()=>{
+    handleTextChange();
+  })*/
 
   const handleSaveAsPDF = () => {
     const doc = new jsPDF();
@@ -73,7 +114,6 @@ const CreateSummary = () => {
     const pageHeight = doc.internal.pageSize.height;
 
     doc.addImage(logoPath, "PNG", 10, 10, 30, 10);
-
     doc.setFontSize(18);
     doc.setFont("helvetica", "bold");
     doc.text(template.templateName, 105, y, { align: "center" });
@@ -161,29 +201,153 @@ const CreateSummary = () => {
     }, 1000);
   };
 
+  /**למחוק**/
+  /*useEffect(() => {
+    setBlocks(selectedTemplateBlocks);
+  }, [selectedTemplateBlocks]);
+  */
+
+  /*
   const handleAIClick = async () => {
     try {
-      const correctedBlocks = await Promise.all(
-        blocks.map(async (block) => {
-          const response = await fetch("http://localhost:3000/correct-text", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              text: block.text,
-            }),
-          });
-          const data = await response.json();
-          return { ...block, text: data.correctedText };
-        })
-      );
-      setBlocks(correctedBlocks);
+      console.log("Correcting text using AI...");
+
+      const correctedBlocks = [];
+
+      for (const block of blocks) {
+        console.log(block.title);
+
+        let blockargs = {
+          temperature: 0,
+          systemPrompt:
+            "You are a helpful assistant for the company Spoken. Your task is to correct any spelling wording discrepancies in the transcribed text. Only add necessary punctuation such as periods, commas, and capitalization, and use only the context provided.",
+          text: block.text,
+        };
+
+        const res = await generateCorrectedTranscript(
+          blockargs.temperature,
+          blockargs.systemPrompt,
+          blockargs.text
+        );
+
+        correctedBlocks.push(res);
+
+        console.log(correctedBlocks);
+      }
+
+      if (typeof setSelectedTemplateBlocks === "function") {
+        setSelectedTemplateBlocks(correctedBlocks); // Update blocks in ChooseTemplate if function is passed
+      } else {
+        console.warn(
+          "setSelectedTemplateBlocks is not a function or was not passed."
+        );
+      }
+
+      setBlocks(correctedBlocks); // Update blocks locally in CreateSummary
     } catch (error) {
       console.error("Error correcting text:", error);
     }
   };
 
+  const generateCorrectedTranscript = async (
+    temperature,
+    systemPrompt,
+    text
+  ) => {
+    try {
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o",
+        temperature: temperature,
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
+          {
+            role: "user",
+            content: text,
+          },
+        ],
+      });
+      return completion.choices[0].message.content;
+    } catch (error) {
+      console.error("Error generating transcript:", error);
+      throw error;
+    }
+  };*/
+
+  //
+  const handleAIClick = async () => {
+    try {
+      console.log("Correcting text using AI...");
+
+      // Create a new array to hold the corrected blocks
+      const correctedBlocks = await Promise.all(
+        blocks.map(async (block) => {
+          const blockargs = {
+            temperature: 0,
+            systemPrompt:
+              "You are a helpful assistant for the company Spoken. Your task is to correct any spelling wording discrepancies in the transcribed text. Only add necessary punctuation such as periods, commas, and capitalization, and use only the context provided.",
+            text: block.text,
+          };
+
+          const correctedText = await generateCorrectedTranscript(
+            blockargs.temperature,
+            blockargs.systemPrompt,
+            blockargs.text
+          );
+
+          // Return the corrected block
+          return { ...block, text: correctedText };
+        })
+      );
+
+      // Update the local state in CreateSummary
+      setBlocks(correctedBlocks);
+
+      /*כנראה יימחק*/
+      // Update the global state in App.js
+      /* if (typeof setSelectedTemplateBlocks === "function") {
+        setSelectedTemplateBlocks(correctedBlocks);
+      } else {
+        console.warn(
+          "setSelectedTemplateBlocks is not a function or was not passed."
+        );
+      }*/
+      /***/
+    } catch (error) {
+      console.error("Error correcting text:", error);
+    }
+  };
+
+  const generateCorrectedTranscript = async (
+    temperature,
+    systemPrompt,
+    text
+  ) => {
+    try {
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o",
+        temperature: temperature,
+        messages: [
+          {
+            role: "system",
+            content: systemPrompt,
+          },
+          {
+            role: "user",
+            content: text,
+          },
+        ],
+      });
+      return completion.choices[0].message.content;
+    } catch (error) {
+      console.error("Error generating transcript:", error);
+      throw error;
+    }
+  };
+
+  //
   const handleDocumentProductionClick = async () => {
     if (!selectedClient) {
       alert("Please select a client before saving the document.");
@@ -287,23 +451,20 @@ const CreateSummary = () => {
 
   const handleStopDictating = useCallback(() => {
     setIsDictating(false);
+    setLastProcessedTranscript("");
     setActiveKeyword(null);
     resetTranscript();
   }, [setIsDictating, setActiveKeyword, resetTranscript]);
 
   const appendTranscriptToActiveBlock = useCallback(() => {
     if (activeKeyword && isDictating) {
-      if (transcript !== lastProcessedTranscript) {
-        const newText = transcript.replace(lastProcessedTranscript, "").trim();
-        setBlocks((prevItems) =>
-          prevItems.map((item) =>
-            item.keyWord.toLowerCase() === activeKeyword.toLowerCase()
-              ? { ...item, text: (item.text || "") + " " + newText }
-              : item
-          )
-        );
-        setLastProcessedTranscript(transcript);
-      }
+      setBlocks((prevItems) =>
+        prevItems.map((item) =>
+          item.keyWord.toLowerCase() === activeKeyword.toLowerCase()
+            ? { ...item, text: `${lastProcessedTranscript} ${transcript}` }
+            : item
+        )
+      );
     }
   }, [activeKeyword, isDictating, transcript, lastProcessedTranscript]);
 
@@ -318,6 +479,7 @@ const CreateSummary = () => {
 
     if (foundKeyword && !isDictating) {
       setIsDictating(true);
+      setLastProcessedTranscript(foundKeyword.text);
       setActiveKeyword(foundKeyword.keyWord);
       resetTranscript();
     }
@@ -383,7 +545,10 @@ const CreateSummary = () => {
               </svg>
             </label>
             <div style={{ marginTop: "5px" }}>
-              <h3 className="text-sm" style={{ color: "#070A40", cursor: "pointer" }}></h3>
+              <h3
+                className="text-sm"
+                style={{ color: "#070A40", cursor: "pointer" }}
+              ></h3>
             </div>
             <label
               className="btn btn-circle swap swap-rotate self-start"
@@ -419,7 +584,10 @@ const CreateSummary = () => {
           <h1 style={{ margin: "0 auto" }}>
             <b>Create Summary</b>
           </h1>
-          <div className="flex flex-col items-center mb-4" style={{ marginTop: "2rem" }}>
+          <div
+            className="flex flex-col items-center mb-4"
+            style={{ marginTop: "2rem" }}
+          >
             <button
               style={startListeningButtonStyle}
               className="restart-button btn btn-xs sm:btn-sm  btn-primary"
@@ -506,10 +674,16 @@ const CreateSummary = () => {
                     padding: "0.5rem",
                   }}
                 >
-                  <h3 className="block-title" style={{ marginBottom: "0.2rem" }}>
+                  <h3
+                    className="block-title"
+                    style={{ marginBottom: "0.2rem" }}
+                  >
                     {block.title}
                   </h3>
-                  <p className="block-subtitle" style={{ marginBottom: "0.2rem" }}>
+                  <p
+                    className="block-subtitle"
+                    style={{ marginBottom: "0.2rem" }}
+                  >
                     keyword: {block.keyWord || ""}
                   </p>
                 </div>

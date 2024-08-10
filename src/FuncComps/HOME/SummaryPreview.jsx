@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 //import "./SummaryPage.css";
 
-const apiUrlBlocks = "https://localhost:44326/api/BlockInSummary/getBlocksBySummaryNo";
+//const apiUrlBlocks = "https://localhost:44326/api/BlockInSummary/getBlocksBySummaryNo";
+const apiUrlBlocks = "https://localhost:7224/api/BlockInSummary/getBlocksBySummaryNo";
 
 const SummaryPreview = () => {
   const { state } = useLocation();
