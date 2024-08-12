@@ -170,7 +170,7 @@ const DraggableItem = ({ item, index, moveItem, updateItem }) => {
           >
             {item.Type !== "file" && item.Type !== "signature" && (
               <img
-                src="/public/createTemplate/keyword.png"
+                src={import.meta.env.BASE_URL +"/createTemplate/keyword.png"}
                 alt="Keyword"
                 style={{
                   position: "relative",

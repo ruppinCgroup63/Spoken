@@ -205,7 +205,7 @@ function CreateTemplate2() {
 
               <div className="flex items-center justify-start mt-6 bg-white p-2 rounded-lg">
                 <img
-                  src="/public/createTemplate/add_box.png"
+                  src={import.meta.env.BASE_URL +"/createTemplate/add_box.png"}
                   alt="Error"
                   onClick={() => addTextBox("textarea")}
                   style={{ cursor: "pointer" }}
@@ -223,7 +223,7 @@ function CreateTemplate2() {
               </div>
               <div className="flex items-center justify-start mt-6 bg-white p-2 rounded-lg">
                 <img
-                  src="/public/createTemplate/add_box.png"
+                  src={import.meta.env.BASE_URL + "/createTemplate/add_box.png"}
                   alt="Error"
                   onClick={addFile}
                   style={{ cursor: "pointer" }}
@@ -241,7 +241,7 @@ function CreateTemplate2() {
               </div>
               <div className="flex items-center justify-start mt-6 bg-white p-2 rounded-lg">
                 <img
-                  src="/public/createTemplate/add_box.png"
+                  src={import.meta.env.BASE_URL + "/createTemplate/add_box.png"}
                   alt="Error"
                   onClick={addSignature}
                   style={{ cursor: "pointer" }}

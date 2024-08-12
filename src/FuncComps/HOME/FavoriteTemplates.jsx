@@ -7,9 +7,15 @@ import CreateSummary from "../CreateSummary/CreateSummary";
 //const apiUrlBlocks =
 //"https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";
 
-const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
+/*const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
 const apiUrlBlocks =
-  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
+  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";*/
+
+  const apiUrlDeleteFavorites = "  https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/UserFavorites";
+  const apiUrlBlocks =
+    "  https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/BlocksInTemplates/getBlocksByTemplateNo";
+  
+
 
 export default function FavoriteTemplates() {
   const navigate = useNavigate();
@@ -48,12 +54,12 @@ export default function FavoriteTemplates() {
         }
         return response.json();
       })
-      .then((data) => {
-        setSelectedTemplateBlocks(data);
+      .then((selectedTemplateBlocks) => {
+        setSelectedTemplateBlocks(selectedTemplateBlocks);
         navigate("/TemplatePreview", {
           state: {
             selectedTemplate: templateClicked,
-            data,
+            selectedTemplateBlocks,
             user,
           },
         });
@@ -235,7 +241,7 @@ export default function FavoriteTemplates() {
             style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}
           >
             <img
-              src="/public/homePage/addTemplate.png"
+              src={import.meta.env.BASE_URL + "/homePage/addTemplate.png"}
               alt="Error"
               onClick={() => {
                 navigate("/CreateTemplate");

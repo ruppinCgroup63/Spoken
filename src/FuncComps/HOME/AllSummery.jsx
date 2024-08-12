@@ -11,10 +11,12 @@ function AllSummery() {
   const [selectedCustomer, setSelectedCustomer] = useState("");
   const [filteredSummaries, setFilteredSummaries] = useState([]);
 
-  const apiUrlSummaries = "https://localhost:7224/api/Summary/getByUserEmail";
-  const apiUrlCustomers = "https://localhost:7224/api/Customers";
-  const user = JSON.parse(sessionStorage.getItem("user")) || {};
+  /*const apiUrlSummaries = "https://localhost:7224/api/Summary/getByUserEmail";
+  const apiUrlCustomers = "https://localhost:7224/api/Customers";*/
 
+  const apiUrlSummaries = "  https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Summary/getByUserEmail";
+  const apiUrlCustomers = "  https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Customers";
+  const user = JSON.parse(sessionStorage.getItem("user")) || {};
   // fetch all summary
   useEffect(() => {
     const fetchAllSummaries = async () => {

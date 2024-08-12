@@ -24,12 +24,17 @@ const openai = new OpenAI({ apiKey: apiKey, dangerouslyAllowBrowser: true });
 const apiUrlSummaries = "https://localhost:44326/api/Summary";
 const apiUrlBlocks = "https://localhost:44326/api/BlockInSummary";
 const apiUrlGetBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByTemplateNo";*/
-
-const apiUrlClients = "https://localhost:7224/api/Customers";
+/*const apiUrlClients = "https://localhost:7224/api/Customers";
 const apiUrlSummaries = "https://localhost:7224/api/Summary";
 const apiUrlBlocks = "https://localhost:7224/api/BlockInSummary";
 const apiUrlGetBlocks =
-  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
+  "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";*/
+
+  const apiUrlClients = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Customers";
+  const apiUrlSummaries = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Summary";
+  const apiUrlBlocks = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/BlockInSummary";
+  const apiUrlGetBlocks ="https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/BlocksInTemplates/getBlocksByTemplateNo";
+
 
 const CreateSummary = () => {
   const navigate = useNavigate();
@@ -61,9 +66,9 @@ console.log(
   /**סיום ניהול תמלול */
 
   const currentDate = new Date().toLocaleDateString(); // Get current date
-  const logoPath = "public/login/SpokenLogoNew.png";
-  const voiceGreen = "public/Summery/Voice.png";
-  const voiceBlack = "public/Summery/VoiceB.png";
+  const logoPath = "login/SpokenLogoNew.png";
+  const voiceGreen = "Summery/Voice.png";
+  const voiceBlack = "Summery/VoiceB.png";
   const startListeningButtonStyle = isTranscribingStarted
     ? { backgroundColor: "#E4E9F2", color: "#070A40", borderColor: "#070A40" }
     : { backgroundColor: "#070A40", color: "#E4E9F2", borderColor: "#070A40" };
@@ -750,7 +755,7 @@ console.log(
             onClick={handleAIClick}
           >
             <img
-              src="/public/Summery/Ai.png"
+              src={import.meta.env.BASE_URL +"/Summery/Ai.png"}
               alt="AI Icon"
               style={{ marginRight: "10px" }} // הוספת שוליים ימניים כדי להזיז שמאלה
             />

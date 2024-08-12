@@ -39,7 +39,7 @@
     "react-tinder-card": "^1.6.4",
     "regenerator-runtime": "^0.14.1"
   },
-  "homepage": "proj.ruppin.ac.il/cgroup63/build",
+  "homepage": "proj.ruppin.ac.il/cgroup63/prod",
   "devDependencies": {
     "@babel/preset-env": "^7.24.5",
     "@babel/preset-react": "^7.24.1",

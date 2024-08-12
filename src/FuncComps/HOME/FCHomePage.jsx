@@ -10,7 +10,7 @@ const apiUrlBlocks = "https://localhost:44326/api/BlocksInTemplates/getBlocksByT
 const apiUrlUpdateFavorite = "https://localhost:44326/api/UserFavorites";
 const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
 const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";*/
-const apiUrlRecent =
+/*const apiUrlRecent =
   "https://localhost:7224/api/RecentTemplates/getByUserEmail";
 const apiUrlTemplates = "https://localhost:7224/api/Templates/getByUserEmail";
 const apiUrlFavorites =
@@ -19,7 +19,18 @@ const apiUrlBlocks =
   "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
 const apiUrlUpdateFavorite = "https://localhost:7224/api/UserFavorites";
 const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
-const apiUrlUpdateRecent = "https://localhost:7224/api/RecentTemplates";
+const apiUrlUpdateRecent = "https://localhost:7224/api/RecentTemplates";*/
+
+const apiUrlRecent =
+  "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/RecentTemplates/getByUserEmail";
+const apiUrlTemplates = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Templates/getByUserEmail";
+const apiUrlFavorites =
+  "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/UserFavorites/getByUserEmail";
+const apiUrlBlocks =
+  "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlUpdateFavorite = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/UserFavorites";
+const apiUrlDeleteFavorites = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/UserFavorites";
+const apiUrlUpdateRecent = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/RecentTemplates";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -213,7 +224,7 @@ function HomePage() {
       }
 
       navigate("/TemplatePreview", {
-        state: { selectedTemplate, Data: blocksData, user },
+        state: { selectedTemplate, selectedTemplateBlocks: blocksData, user },
       });
     } catch (error) {
       setError(error.message);
@@ -309,7 +320,7 @@ function HomePage() {
             style={{ display: "flex", alignItems: "center", marginTop: "3rem" }}
           >
             <img
-              src="/public/homePage/addTemplate.png"
+              src={import.meta.env.BASE_URL + "/homePage/addTemplate.png"}
               alt="Error"
               onClick={() => {
                 navigate("/CreateTemplate");
@@ -392,11 +403,7 @@ function HomePage() {
               onClick={() => navigate("/HomePage")}
             >
               <img
-                src={
-                  location.pathname === "/HomePage"
-                    ? "/public/Menu/HomeB.png"
-                    : "/public/Menu/HomeW.png"
-                }
+                src={import.meta.env.BASE_URL + "/Menu/HomeB.png"}
                 alt="Home"
                 className="h-6 w-6"
               />
@@ -416,7 +423,7 @@ function HomePage() {
               onClick={() => navigate("/AllSummery")}
             >
               <img
-                src="/public/Menu/BookW.png"
+                src={import.meta.env.BASE_URL +"/Menu/BookW.png"}
                 alt="All Summary"
                 className="h-6 w-6"
               />
@@ -436,7 +443,7 @@ function HomePage() {
               onClick={handleLogout}
             >
               <img
-                src="/public/Menu/LogoutW.png"
+                src={import.meta.env.BASE_URL +"/Menu/LogoutW.png"}
                 alt="LogOut"
                 className="h-6 w-6"
               />

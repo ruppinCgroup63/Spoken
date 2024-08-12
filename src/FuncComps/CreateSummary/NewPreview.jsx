@@ -3,8 +3,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 //import "./SummaryPage.css";
 
 //const apiUrlBlocks = "https://localhost:44326/api/BlockInSummary/getBlocksBySummaryNo";
-const apiUrlBlocks =
-  "https://localhost:7224/api/BlockInSummary/getBlocksBySummaryNo";
+//const apiUrlBlocks =
+  //"https://localhost:7224/api/BlockInSummary/getBlocksBySummaryNo";
+
+  const apiUrlBlocks =
+  "  https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/BlockInSummary/getBlocksBySummaryNo";
+
 
 const NewPreview = () => {
   const { state } = useLocation();

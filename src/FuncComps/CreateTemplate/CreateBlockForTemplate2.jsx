@@ -121,7 +121,7 @@ const DraggableItem_ForTemplate2 = ({ // מקבלים אובייקט פרופס 
         }}
       >
         <img
-          src="/public/createTemplate/Trash1.png"
+          src={import.meta.env.BASE_URL +"/createTemplate/Trash1.png"}
           alt="Delete"
           style={{
             height: "65px", // גובה התמונה

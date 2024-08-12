@@ -75,11 +75,11 @@ export default function SummerySuccess() {
           }}
         >
           <img
-            src="public/summarySuc/summarySucc.svg"
+            src={import.meta.env.BASE_URL + "/summarySuc/summarySucc.svg"}
             alt="Success"
             style={{ width: "200px", height: "200px", marginBottom: "2rem" }}
           />{" "}
-          {/* כאן יש להוסיף את התמונה */}
+          {}
         </div>
         <button
           className="btn btn-xs sm:btn-sm  btn-outline btn-primary"

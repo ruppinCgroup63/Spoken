@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ErrorMessage from "./FCErrorMessage";
 
-//const apiUrl = 'https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Users/Login';
+const apiUrl = '  https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Users/Login';
 //const apiUrl = "https://localhost:44326/api/Users/Login";
-const apiUrl = "https://localhost:7224/api/Users/Login";
+//const apiUrl = "https://localhost:7224/api/Users/Login";
 
 function Login(props) {
   const navigate = useNavigate();
@@ -136,7 +136,7 @@ function Login(props) {
           <div className="flex items-center justify-center">
             <div className="w-15 h-13">
               <img
-                src="/public/login/SpokenLogoNew.png"
+                src={import.meta.env.BASE_URL + "/login/SpokenLogoNew.png"}
                 alt="Error"
                 className="w-full h-full object-contain"
                 style={{ width: "10rem", height: "4rem" }}
@@ -223,7 +223,7 @@ function Login(props) {
             {/* Forgot password button */}
             <div className="form-control">
               <button
-                onClick={() => (window.location.href = "/ForgotPassword")}
+                onClick={() => navigate("/ForgotPassword")}
                 style={{
                   color: "#2D4BA6",
                   fontSize: "0.68rem",
@@ -262,7 +262,7 @@ function Login(props) {
             <div className="mt-10 mt-4 flex items-center justify-center">
               <div className="w-96 h-58">
                 <img
-                  src="/public/login/LoginImage.png"
+                  src={import.meta.env.BASE_URL + "/login/LoginImage.png"}
                   alt="Error"
                   className="w-full h-full object-contain"
                 />

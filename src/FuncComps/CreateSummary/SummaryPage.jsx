@@ -30,7 +30,7 @@ const CreateSummary = () => {
   return (
     <div className="container">
       <div className="header">
-        <img src="path/to/user/image.png" alt="User" />
+        <img src={import.meta.env.BASE_URL + "path/to/user/image.png"} alt="User" />
         <h1>New patient admission</h1>
         <span>{summary.CreatorEmail}</span>
       </div>
@@ -61,7 +61,7 @@ const CreateSummary = () => {
       </div>
 
       <button className="ai-button" onClick={handleAIClick}>
-        <img src="path/to/ai-icon.png" alt="AI" />
+        <img src={import.meta.env.BASE_URL +"path/to/ai-icon.png"} alt="AI" />
         AI-assisted drafting
       </button>
 

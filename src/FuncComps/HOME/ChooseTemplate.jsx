@@ -11,7 +11,7 @@ const apiUrlDeleteFavorites = "https://localhost:44326/api/UserFavorites";
 const apiUrlUpdateRecent = "https://localhost:44326/api/RecentTemplates";
 const apiUrlCreateSummary = "https://localhost:44326/api/Summary";
 const apiUrlCreateBlocksInSummary = "https://localhost:44326/api/BlockInSummary";*/
-const apiUrlTemplate = "https://localhost:7224/api/Templates/getByUserEmail";
+/*const apiUrlTemplate = "https://localhost:7224/api/Templates/getByUserEmail";
 const apiUrlBlocks =
   "https://localhost:7224/api/BlocksInTemplates/getBlocksByTemplateNo";
 const apiUrlUpdateFavorite = "https://localhost:7224/api/UserFavorites";
@@ -20,7 +20,18 @@ const apiUrlFavorites =
 const apiUrlDeleteFavorites = "https://localhost:7224/api/UserFavorites";
 const apiUrlUpdateRecent = "https://localhost:7224/api/RecentTemplates";
 const apiUrlCreateSummary = "https://localhost:7224/api/Summary";
-const apiUrlCreateBlocksInSummary = "https://localhost:7224/api/BlockInSummary";
+const apiUrlCreateBlocksInSummary = "https://localhost:7224/api/BlockInSummary";*/
+
+const apiUrlTemplate = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Templates/getByUserEmail";
+const apiUrlBlocks =
+  "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/BlocksInTemplates/getBlocksByTemplateNo";
+const apiUrlUpdateFavorite = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/UserFavorites";
+const apiUrlFavorites =
+  "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/UserFavorites/getByUserEmail";
+const apiUrlDeleteFavorites = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/UserFavorites";
+const apiUrlUpdateRecent = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/RecentTemplates";
+const apiUrlCreateSummary = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Summary";
+const apiUrlCreateBlocksInSummary = "https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/BlockInSummary";
 
 function ChooseTemplate() {
   const navigate = useNavigate();
@@ -324,7 +335,7 @@ function ChooseTemplate() {
             style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}
           >
             <img
-              src="/public/homePage/addTemplate.png"
+              src={import.meta.env.BASE_URL + "/homePage/addTemplate.png"}
               alt="Error"
               onClick={() => {
                 navigate("/CreateTemplate");

@@ -19,7 +19,7 @@ const SummaryPreviewModal = ({
           &times;
         </button>
         <div className="header">
-          <img src="path/to/user/image.png" alt="UserImage" />
+          <img src={import.meta.env.BASE_URL + "path/to/user/image.png"} alt="UserImage" />
           <h1>New patient admission</h1>
           <span>{userName}</span>
         </div>

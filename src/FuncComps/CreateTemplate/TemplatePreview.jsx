@@ -5,8 +5,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 function TemplateToDictate() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { selectedTemplate, Data } = location.state || {}; //data is the items array
-  const [items, setItems] = useState(Data || []);
+  const { selectedTemplate, selectedTemplateBlocks } = location.state || {}; //data is the items array
+  const [items, setItems] = useState(selectedTemplateBlocks || []);
 
   //לשנות את גודל תיבת הטקסט של התמלול
   useEffect(() => {
@@ -31,11 +31,11 @@ function TemplateToDictate() {
 
   //UseEffect עבור בדיקה האם הועברה תבנית ובלוקים של התבנית
   useEffect(() => {
-    if (!selectedTemplate || !Data) {
+    if (!selectedTemplate || !selectedTemplateBlocks) {
       console.error("No template data found!");
       return;
     }
-  }, [selectedTemplate, Data]);
+  }, [selectedTemplate, selectedTemplateBlocks]);
 
   console.log(items);
   console.log(selectedTemplate);

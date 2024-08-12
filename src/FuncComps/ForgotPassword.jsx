@@ -21,9 +21,8 @@ const ForgotPassword = () => {
 
     try {
       const response = await fetch(
-        //`https://localhost:44326/api/Users/ForgotPassword?email=${encodeURIComponent(
-        `https://localhost:7224/api/Users/ForgotPassword?email=${encodeURIComponent(
-          email
+        // https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Users/ForgotPassword?email=raz%40gmail.com&Password=Raz%21%40123
+        `https://proj.ruppin.ac.il/cgroup63/test2/tar1/api/Users/ForgotPassword?email=${encodeURIComponent(email
         )}&Password=${encodeURIComponent(Password)}`,
         {
           method: "POST",

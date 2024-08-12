@@ -258,7 +258,7 @@ function CreateTemplate() {
               <div className="mt-10 mt-4 flex items-center justify-center">
                 <div className="w-40 h-40" style={{ marginTop: "2rem" }}>
                   <img
-                    src="/public/createTemplate/createTem.png"
+                    src={import.meta.env.BASE_URL +"/createTemplate/createTem.png"}
                     alt="Error"
                     className="w-full h-full object-contain"
                   />

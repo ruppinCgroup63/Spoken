@@ -74,7 +74,7 @@ export default function TemplateCreatedSuccessfully() {
           <div className="flex items-center justify-center mt-20 mb-10">
             <div className="w-50 h-40">
               <img
-                src="/public/createTemplate/Successfully.png"
+                src={import.meta.env.BASE_URL + "/createTemplate/Successfully.png"}
                 alt="Success"
                 className="w-full h-full object-contain"
               />

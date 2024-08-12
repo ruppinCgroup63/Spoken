@@ -38,7 +38,7 @@ function App() {
   return (
     <div>
       <div>
-        <BrowserRouter>
+        <BrowserRouter basename="/cgroup63/prod/">
           <Routes>
             <Route path="/" element={<Login userList={usersList} />} />
             <Route path="/Register" element={<RegistrationPage />} />
